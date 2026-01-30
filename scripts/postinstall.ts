@@ -2,6 +2,7 @@ import { exec } from "child_process";
 import { IS_VERCEL_ENV, IS_DOCKER_ENV, FILE_BASED_MCP_CONFIG } from "lib/const";
 import { promisify } from "util";
 import "load-env";
+
 const execPromise = promisify(exec);
 
 async function runCommand(command: string, description: string) {
@@ -32,6 +33,14 @@ async function main() {
       console.error("File based MCP config is not supported on Vercel.");
       process.exit(1);
     }
+
+    if (process.env.SKIP_DB_MIGRATIONS === "true") {
+      console.log(
+        "SKIP_DB_MIGRATIONS=true; skipping database migration on Vercel.",
+      );
+      return;
+    }
+
     console.log("Running on Vercel, performing database migration.");
     await runCommand("pnpm db:migrate", "Database migration");
   } else if (IS_DOCKER_ENV) {
