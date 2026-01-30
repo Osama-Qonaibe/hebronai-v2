@@ -141,6 +141,7 @@
     "@types/pg": "^8.16.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "baseline-browser-mapping": "^2.6.2",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^10.0.0",
     "drizzle-kit": "^0.30.6",
@@ -165,6 +166,8 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "@biomejs/biome",
+      "@parcel/watcher",
+      "@swc/core",
       "@tailwindcss/oxide",
       "esbuild",
       "sharp",
