@@ -20,8 +20,7 @@ import {
   ANTHROPIC_FILE_MIME_TYPES,
   XAI_FILE_MIME_TYPES,
 } from "./file-support";
-
-// Ollama configuration with Cloud support
+ // Ollama configuration with Cloud support
 const ollamaConfig: Parameters<typeof createOllama>[0] = {
   baseURL: process.env.OLLAMA_BASE_URL || "http://localhost:11434/api",
 };
