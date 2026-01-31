@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.2](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.6.1...hebronai-v2-v1.6.2) (2026-01-31)
+
+
+### Bug Fixes
+
+* use correct Ollama Cloud model names ([ce70b4f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ce70b4f6f8e6d9e35de5faa43d5a8a4f46a7e67d))
+
 ## [1.6.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.6.0...hebronai-v2-v1.6.1) (2026-01-31)
 
 
