@@ -4,7 +4,8 @@ import { z } from "zod";
 import { serverCache } from "lib/cache";
 import { CacheKeys } from "lib/cache/cache-keys";
 import { AgentCreateSchema, AgentQuerySchema } from "app-types/agent";
-import { canCreateAgent } from "lib/auth/permissions";
+import { canCreateResource } from "@/lib/permissions/plan-permissions";
+import { incrementAgentCount } from "@/lib/usage/usage-tracker";
 
 export async function GET(request: Request) {
   const session = await getSession();
@@ -22,16 +23,13 @@ export async function GET(request: Request) {
       limit,
     } = AgentQuerySchema.parse(queryParams);
 
-    // Parse filters - can be passed as comma-separated string or single type
     let filters;
     if (filtersParam) {
       filters = filtersParam.split(",").map((f) => f.trim());
     } else {
-      // Fallback to single type parameter for backward compatibility
       filters = [type];
     }
 
-    // Use the new simplified selectAgents method with database-level filtering and limiting
     const agents = await agentRepository.selectAgents(
       session.user.id,
       filters,
@@ -58,11 +56,11 @@ export async function POST(request: Request): Promise<Response> {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  // Check if user has permission to create agents
-  const hasPermission = await canCreateAgent();
-  if (!hasPermission) {
+  // Check subscription limits
+  const limitCheck = await canCreateResource(session.user.id, "agents");
+  if (!limitCheck.allowed) {
     return Response.json(
-      { error: "You don't have permission to create agents" },
+      { error: limitCheck.reason || "Agent limit reached" },
       { status: 403 },
     );
   }
@@ -75,6 +73,10 @@ export async function POST(request: Request): Promise<Response> {
       ...data,
       userId: session.user.id,
     });
+    
+    // Track usage
+    await incrementAgentCount(session.user.id);
+    
     serverCache.delete(CacheKeys.agentInstructions(agent.id));
 
     return Response.json(agent);
@@ -89,9 +91,7 @@ export async function POST(request: Request): Promise<Response> {
     console.error("Failed to upsert agent:", error);
     return Response.json(
       { message: "Internal Server Error" },
-      {
-        status: 500,
-      },
+      { status: 500 },
     );
   }
 }
