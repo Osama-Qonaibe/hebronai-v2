@@ -67,13 +67,11 @@ const staticModels = {
     "grok-3-mini": xai("grok-3-mini"),
   },
   ollama: {
-    // Verified Ollama Cloud-compatible models only
-    "llama3.2": ollama("llama3.2"),
-    "llama3.2:3b": ollama("llama3.2:3b"),
-    "gemma2": ollama("gemma2"),
-    "gemma2:9b": ollama("gemma2:9b"),
-    "phi3": ollama("phi3"),
-    "mistral": ollama("mistral"),
+    // Official Ollama Cloud models (all end with -cloud suffix)
+    "qwen3-coder:480b-cloud": ollama("qwen3-coder:480b-cloud"),
+    "gpt-oss:120b-cloud": ollama("gpt-oss:120b-cloud"),
+    "gpt-oss:20b-cloud": ollama("gpt-oss:20b-cloud"),
+    "deepseek-v3.1:671b-cloud": ollama("deepseek-v3.1:671b-cloud"),
   },
   groq: {
     "kimi-k2-instruct": groq("moonshotai/kimi-k2-instruct"),
@@ -95,7 +93,6 @@ const staticModels = {
 
 const staticUnsupportedModels = new Set([
   staticModels.openai["o4-mini"],
-  staticModels.ollama["phi3"],
   staticModels.openRouter["gpt-oss-20b:free"],
   staticModels.openRouter["qwen3-8b:free"],
   staticModels.openRouter["qwen3-14b:free"],
