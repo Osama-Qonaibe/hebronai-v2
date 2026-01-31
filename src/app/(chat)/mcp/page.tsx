@@ -3,7 +3,7 @@ import { IS_VERCEL_ENV } from "lib/const";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "auth/server";
 import { redirect } from "next/navigation";
-import { BasicUser } from "@/types/user";
+import { toBasicUser } from "@/lib/utils/session-user";
 
 // Force dynamic rendering to avoid static generation issues with session
 export const dynamic = "force-dynamic";
@@ -25,10 +25,7 @@ export default async function Page() {
     message = t("vercelSyncDelay");
   }
 
-  const user = {
-    ...session.user,
-    planId: null,
-  } as BasicUser;
+  const user = toBasicUser(session.user);
 
   return <MCPDashboard message={message} user={user} />;
 }
