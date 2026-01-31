@@ -20,10 +20,20 @@ import {
   ANTHROPIC_FILE_MIME_TYPES,
   XAI_FILE_MIME_TYPES,
 } from "./file-support";
-
-const ollama = createOllama({
+ // Ollama configuration with Cloud support
+const ollamaConfig: Parameters<typeof createOllama>[0] = {
   baseURL: process.env.OLLAMA_BASE_URL || "http://localhost:11434/api",
-});
+};
+
+// Add authentication header if API key is provided (for Ollama Cloud)
+if (process.env.OLLAMA_API_KEY) {
+  ollamaConfig.headers = {
+    Authorization: `Bearer ${process.env.OLLAMA_API_KEY}`,
+  };
+}
+
+const ollama = createOllama(ollamaConfig);
+
 const groq = createGroq({
   baseURL: process.env.GROQ_BASE_URL || "https://api.groq.com/openai/v1",
   apiKey: process.env.GROQ_API_KEY,
@@ -57,6 +67,16 @@ const staticModels = {
     "grok-3-mini": xai("grok-3-mini"),
   },
   ollama: {
+    // Cloud-compatible models (work with both local and cloud)
+    "llama3.2": ollama("llama3.2"),
+    "llama3.2:3b": ollama("llama3.2:3b"),
+    "gemma2": ollama("gemma2"),
+    "gemma2:9b": ollama("gemma2:9b"),
+    "phi3": ollama("phi3"),
+    "mistral": ollama("mistral"),
+    "qwen2.5": ollama("qwen2.5"),
+    "qwen2.5:7b": ollama("qwen2.5:7b"),
+    // Legacy models (for backward compatibility with local setup)
     "gemma3:1b": ollama("gemma3:1b"),
     "gemma3:4b": ollama("gemma3:4b"),
     "gemma3:12b": ollama("gemma3:12b"),
@@ -84,6 +104,7 @@ const staticUnsupportedModels = new Set([
   staticModels.ollama["gemma3:1b"],
   staticModels.ollama["gemma3:4b"],
   staticModels.ollama["gemma3:12b"],
+  staticModels.ollama["phi3"],
   staticModels.openRouter["gpt-oss-20b:free"],
   staticModels.openRouter["qwen3-8b:free"],
   staticModels.openRouter["qwen3-14b:free"],
@@ -218,6 +239,10 @@ function checkProviderAPIKey(provider: keyof typeof staticModels) {
       break;
     case "openRouter":
       key = process.env.OPENROUTER_API_KEY;
+      break;
+    case "ollama":
+      // For Ollama: either API key (cloud) or assume local setup is available
+      key = process.env.OLLAMA_API_KEY || "local";
       break;
     default:
       return true; // assume the provider has an API key
