@@ -127,71 +127,37 @@ const staticModels = {
   },
   openRouter: {
     // ============================================
-    // Ultra-Large Models (400B+ Parameters)
+    // OpenRouter Premium Models (Paid Plans Only)
+    // All models verified from openrouter.ai/models
+    // No :free suffix to avoid unexpected charges
     // ============================================
-    "deepseek-r1t2-chimera": openrouter("tng/deepseek-r1t2-chimera:free"), // 671B - Latest & most powerful (TNG)
-    "deepseek-r1t-chimera": openrouter("tng/deepseek-r1t-chimera:free"), // 671B - Fast reasoning (TNG)
-    "trinity-large-preview": openrouter("nousresearch/trinity-large-preview:free"), // 400B MoE
     
-    // ============================================
-    // Large Models (100B-200B Parameters)
-    // ============================================
-    "gpt-oss-120b": openrouter("openai/gpt-oss-120b:free"), // 120B
-    "solar-pro-preview": openrouter("upstage/solar-pro-preview:free"), // 102B MoE
+    // Ultra Premium (Best Performance)
+    "claude-opus-4": openrouter("anthropic/claude-opus-4"), // Most intelligent
+    "o1": openrouter("openai/o1"), // Advanced reasoning
+    "gemini-2.0-pro-exp": openrouter("google/gemini-2.0-pro-exp"), // Google's best
     
-    // ============================================
-    // Medium Models (50B-100B Parameters)
-    // ============================================
-    "llama-3.3-70b": openrouter("meta-llama/llama-3.3-70b-instruct:free"), // Meta Llama 70B
-    "nemotron-70b": openrouter("nvidia/llama-3.1-nemotron-70b-instruct:free"), // Nvidia 70B
+    // Premium Chat Models
+    "claude-3.5-sonnet": openrouter("anthropic/claude-3.5-sonnet"), // Balanced excellence
+    "gpt-4-turbo": openrouter("openai/gpt-4-turbo"), // Fast & capable
+    "gemini-pro-1.5": openrouter("google/gemini-pro-1.5"), // Long context
     
-    // ============================================
-    // Small-Medium Models (20B-50B Parameters)
-    // ============================================
-    "gemma-3-27b": openrouter("google/gemma-3-27b-it:free"), // Google 27B
-    "phi-4": openrouter("microsoft/phi-4:free"), // Microsoft Phi-4
+    // Large Scale Models
+    "llama-3.1-405b": openrouter("meta-llama/llama-3.1-405b-instruct"), // Largest open model
+    "mixtral-8x22b": openrouter("mistralai/mixtral-8x22b-instruct"), // MoE architecture
     
-    // ============================================
-    // Efficient Models (8B-20B Parameters)
-    // ============================================
-    "gpt-oss-20b": openrouter("openai/gpt-oss-20b:free"), // 20B
-    "qwen-3-14b": openrouter("qwen/qwen-3-14b:free"), // 14B
-    "qwen-3-coder": openrouter("qwen/qwen-3-coder:free"), // Coding specialist
-    "qwen-3-8b": openrouter("qwen/qwen-3-8b:free"), // 8B - Fast
-    "llama-3.2-3b": openrouter("meta-llama/llama-3.2-3b-instruct:free"), // 3B - Very fast
-    "llama-3.2-1b": openrouter("meta-llama/llama-3.2-1b-instruct:free"), // 1B - Ultra fast
+    // Specialized Models
+    "command-r-plus": openrouter("cohere/command-r-plus"), // RAG & retrieval
+    "codestral": openrouter("mistralai/codestral-latest"), // Code generation
+    "perplexity-sonar-pro": openrouter("perplexity/llama-3.1-sonar-huge-128k-online"), // Online search
     
-    // ============================================
-    // Reasoning & Research Models
-    // ============================================
-    "deepseek-r1": openrouter("deepseek/deepseek-r1:free"), // Reasoning model
-    "deepseek-r1-distill-llama-70b": openrouter("deepseek/deepseek-r1-distill-llama-70b:free"), // R1 distilled
-    "deepseek-r1-distill-qwen-32b": openrouter("deepseek/deepseek-r1-distill-qwen-32b:free"), // R1 distilled
-    "deepseek-r1-distill-qwen-14b": openrouter("deepseek/deepseek-r1-distill-qwen-14b:free"), // R1 distilled
-    "deepseek-r1-distill-qwen-7b": openrouter("deepseek/deepseek-r1-distill-qwen-7b:free"), // R1 distilled
-    "deepseek-r1-distill-llama-8b": openrouter("deepseek/deepseek-r1-distill-llama-8b:free"), // R1 distilled
-    
-    // ============================================
-    // Chat Models
-    // ============================================
-    "deepseek-chat": openrouter("deepseek/deepseek-chat:free"), // Chat specialist
-    
-    // ============================================
-    // Vision & Multimodal
-    // ============================================
-    "gemini-2.0-flash-exp": openrouter("google/gemini-2.0-flash-exp:free"), // Vision support
-    "llama-3.2-90b-vision": openrouter("meta-llama/llama-3.2-90b-vision-instruct:free"), // Vision model
-    "llama-3.2-11b-vision": openrouter("meta-llama/llama-3.2-11b-vision-instruct:free"), // Vision model
+    // Cost-Effective Premium
+    "deepseek-chat-v3": openrouter("deepseek/deepseek-chat"), // High quality, lower cost
   },
 };
 
 const staticUnsupportedModels = new Set([
   staticModels.openai["o4-mini"],
-  staticModels.openRouter["gpt-oss-20b"],
-  staticModels.openRouter["qwen-3-8b"],
-  staticModels.openRouter["qwen-3-14b"],
-  staticModels.openRouter["deepseek-r1"],
-  staticModels.openRouter["gemini-2.0-flash-exp"],
 ]);
 
 const staticSupportImageInputModels = {
@@ -258,18 +224,24 @@ registerFileSupport(staticModels.xai["grok-4"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-3"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-3-mini"], XAI_FILE_MIME_TYPES);
 
-// OpenRouter support
+// OpenRouter Claude support
 registerFileSupport(
-  staticModels.openRouter["gemini-2.0-flash-exp"],
+  staticModels.openRouter["claude-opus-4"],
+  ANTHROPIC_FILE_MIME_TYPES,
+);
+registerFileSupport(
+  staticModels.openRouter["claude-3.5-sonnet"],
+  ANTHROPIC_FILE_MIME_TYPES,
+);
+
+// OpenRouter Gemini support
+registerFileSupport(
+  staticModels.openRouter["gemini-2.0-pro-exp"],
   GEMINI_FILE_MIME_TYPES,
 );
 registerFileSupport(
-  staticModels.openRouter["llama-3.2-90b-vision"],
-  DEFAULT_FILE_PART_MIME_TYPES,
-);
-registerFileSupport(
-  staticModels.openRouter["llama-3.2-11b-vision"],
-  DEFAULT_FILE_PART_MIME_TYPES,
+  staticModels.openRouter["gemini-pro-1.5"],
+  GEMINI_FILE_MIME_TYPES,
 );
 
 const openaiCompatibleProviders = openaiCompatibleModelsSafeParse(
