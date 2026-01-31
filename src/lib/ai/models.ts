@@ -22,7 +22,7 @@ import {
 } from "./file-support";
 
 // Ollama configuration with Cloud support
-const ollamaConfig: any = {
+const ollamaConfig: Parameters<typeof createOllama>[0] = {
   baseURL: process.env.OLLAMA_BASE_URL || "http://localhost:11434/api",
 };
 
