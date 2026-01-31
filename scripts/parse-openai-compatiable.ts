@@ -5,9 +5,28 @@ import "load-env";
 import logger from "logger";
 import { openaiCompatibleModelsSafeParse } from "lib/ai/create-openai-compatiable";
 
-const ROOT = process.cwd();
+const ROOT = path.resolve(path.normalize(process.cwd()));
 const FILE_NAME = "openai-compatible.config.ts";
-const CONFIG_PATH = pathToFileURL(path.join(ROOT, FILE_NAME)).href;
+
+/**
+ * Validates that a resolved path is within the allowed base directory
+ * Prevents path traversal attacks
+ */
+function validatePath(basePath: string, targetPath: string): string {
+  const normalizedBase = path.resolve(path.normalize(basePath));
+  const normalizedTarget = path.resolve(path.normalize(targetPath));
+  
+  // Ensure the resolved path starts with the base directory
+  if (!normalizedTarget.startsWith(normalizedBase)) {
+    throw new Error(`Path traversal detected: ${targetPath} is outside of ${basePath}`);
+  }
+  
+  return normalizedTarget;
+}
+
+const CONFIG_PATH = pathToFileURL(
+  validatePath(ROOT, path.join(ROOT, FILE_NAME))
+).href;
 
 async function load() {
   try {
@@ -33,9 +52,12 @@ function updateEnvVariable(
   newValue: string,
 ): boolean {
   try {
+    // Validate the env file path is within ROOT
+    const validatedPath = validatePath(ROOT, envFilePath);
+    
     let envContent = "";
-    if (fs.existsSync(envFilePath)) {
-      envContent = fs.readFileSync(envFilePath, "utf8");
+    if (fs.existsSync(validatedPath)) {
+      envContent = fs.readFileSync(validatedPath, "utf8");
     }
 
     const envVars: { [key: string]: string } = {};
@@ -66,9 +88,9 @@ function updateEnvVariable(
 
     newEnvContent = newEnvContent.trim();
 
-    fs.writeFileSync(envFilePath, newEnvContent, "utf8");
+    fs.writeFileSync(validatedPath, newEnvContent, "utf8");
     console.log(
-      `Successfully updated ${keyToModify} in ${envFilePath} to: \n\n${newValue}\n`,
+      `Successfully updated ${keyToModify} in ${validatedPath} to: \n\n${newValue}\n`,
     );
     return true;
   } catch (error) {
@@ -77,7 +99,7 @@ function updateEnvVariable(
   }
 }
 
-const envPath = path.join(ROOT, ".env");
+const envPath = validatePath(ROOT, path.join(ROOT, ".env"));
 
 const openaiCompatibleProviders = await load();
 
