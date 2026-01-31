@@ -159,7 +159,7 @@
 * **workflow:** enhance structured output handling and improve user notifications ([dd43de9](https://github.com/Osama-Qonaibe/hebronai-v2/commit/dd43de99881d64ca0c557e29033e953bcd4adc0e))
 * **workflow:** improve mention handling by ensuring empty values are represented correctly ([92ff9c3](https://github.com/Osama-Qonaibe/hebronai-v2/commit/92ff9c3e14b97d9f58a22f9df2559e479f14537c))
 * **workflow:** llm structure Output ([c529292](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c529292ddc1a4b836a5921e25103598afd7e3ab7))
-* **workflow:** MPC Tool Response Structure  And Workflow  ([#113](https://github.com/Osama-Qonaibe/hebronai-v2/issues/113)) ([836ffd7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/836ffd7ef5858210bdce44d18ca82a1c8f0fc87f))
+* **workflow:** MCP tool response structure and workflow ([#113](https://github.com/Osama-Qonaibe/hebronai-v2/issues/113)) ([836ffd7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/836ffd7ef5858210bdce44d18ca82a1c8f0fc87f))
 * **workflow:** simplify mention formatting by removing bold styling for non-empty values ([ef65fd7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ef65fd713ab59c7d8464cae480df7626daeff5cd))
 
 
