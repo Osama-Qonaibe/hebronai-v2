@@ -1,31 +1,30 @@
 #!/usr/bin/env tsx
-import { migrate } from "drizzle-orm/postgres-js/migrator";
-import { pgDb as db } from "@/lib/db/pg/db.pg";
-import postgres from "postgres";
+import { migrate } from "drizzle-orm/node-postgres/migrator";
+import { pgDb } from "@/lib/db/pg/db.pg";
 import { consola } from "consola";
 import { seedPlansIfNeeded } from "@/lib/db/seeds/plans.seed";
+import { join } from "path";
 
 async function main() {
-  const client = postgres(process.env.DATABASE_URL!, { max: 1 });
-  
   try {
     consola.info("🚀 Running migrations...");
     
-    await migrate(db, {
-      migrationsFolder: "./src/lib/db/migrations/pg",
+    const start = Date.now();
+    await migrate(pgDb, {
+      migrationsFolder: join(process.cwd(), "src/lib/db/migrations/pg"),
     });
+    const end = Date.now();
     
-    consola.success("✅ Migrations completed!");
+    consola.success(`✅ Migrations completed in ${end - start}ms`);
     
     // Auto-seed plans if they don't exist
     consola.info("🌱 Checking if plans need seeding...");
     await seedPlansIfNeeded();
     
-    await client.end();
+    consola.success("🎉 All done!");
     process.exit(0);
   } catch (error) {
     consola.error("❌ Migration failed:", error);
-    await client.end();
     process.exit(1);
   }
 }
