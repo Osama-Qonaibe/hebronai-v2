@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { auth } from "auth/server";
 import { getMySubscription } from "@/app/actions/subscription.actions";
 import { getRemainingQuota, getUsageStats } from "@/lib/permissions/plan-permissions";
 import { UsageCard } from "@/components/usage/usage-card";
