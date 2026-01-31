@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.6.0...hebronai-v2-v1.6.1) (2026-01-31)
+
+
+### Bug Fixes
+
+* correct XAI_FILE_TYPES typo ([275ab60](https://github.com/Osama-Qonaibe/hebronai-v2/commit/275ab60b901185f8e1b7f9e9043516845957a247))
+* remove unsupported Ollama Cloud models ([c819ef8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c819ef81a1e0fad4c107fbd77dce1b868c4bce7c))
+
 ## [1.6.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.5.2...hebronai-v2-v1.6.0) (2026-01-31)
 
 
