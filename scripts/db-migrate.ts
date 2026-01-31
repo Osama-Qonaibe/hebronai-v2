@@ -1,39 +1,30 @@
-import { colorize } from "consola/utils";
-import "load-env";
+#!/usr/bin/env tsx
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+import { db, client } from "@/lib/db/pg/db.pg";
+import { consola } from "consola";
+import { seedPlansIfNeeded } from "@/lib/db/seeds/plans.seed";
 
-const { runMigrate } = await import("lib/db/pg/migrate.pg");
-
-await runMigrate()
-  .then(() => {
-    console.info("🚀 DB Migration completed");
+async function main() {
+  try {
+    consola.info("🚀 Running migrations...");
+    
+    await migrate(db, {
+      migrationsFolder: "./src/lib/db/migrations/pg",
+    });
+    
+    consola.success("✅ Migrations completed!");
+    
+    // Auto-seed plans if they don't exist
+    consola.info("🌱 Checking if plans need seeding...");
+    await seedPlansIfNeeded();
+    
+    await client.end();
     process.exit(0);
-  })
-  .catch((err) => {
-    console.error(err);
-
-    console.warn(
-      `
-      ${colorize("red", "🚨 Migration failed due to incompatible schema.")}
-      
-❗️DB Migration failed – incompatible schema detected.
-
-This version introduces a complete rework of the database schema.
-As a result, your existing database structure may no longer be compatible.
-
-**To resolve this:**
-
-1. Drop all existing tables in your database.
-2. Then run the following command to apply the latest schema:
-
-
-${colorize("green", "pnpm db:migrate")}
-
-**Note:** This schema overhaul lays the foundation for more stable updates moving forward.
-You shouldn’t have to do this kind of reset again in future releases.
-
-Need help? Open an issue on GitHub 🙏
-      `.trim(),
-    );
-
+  } catch (error) {
+    consola.error("❌ Migration failed:", error);
+    await client.end();
     process.exit(1);
-  });
+  }
+}
+
+main();
