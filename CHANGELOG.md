@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.7.0...hebronai-v2-v1.8.0) (2026-01-31)
+
+
+### Features
+
+* add 13 new OpenAI models (chat, image, video, audio) ([d64e50b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/d64e50b5cdbef2612434dcefa8e77a6cdd0657e2))
+
 ## [1.7.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.6.2...hebronai-v2-v1.7.0) (2026-01-31)
 
 
