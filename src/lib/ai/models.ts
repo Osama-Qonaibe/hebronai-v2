@@ -68,10 +68,15 @@ const staticModels = {
   },
   ollama: {
     // Official Ollama Cloud models (all end with -cloud suffix)
+    // Core models
+    "deepseek-v3.1:671b-cloud": ollama("deepseek-v3.1:671b-cloud"),
     "qwen3-coder:480b-cloud": ollama("qwen3-coder:480b-cloud"),
     "gpt-oss:120b-cloud": ollama("gpt-oss:120b-cloud"),
     "gpt-oss:20b-cloud": ollama("gpt-oss:20b-cloud"),
-    "deepseek-v3.1:671b-cloud": ollama("deepseek-v3.1:671b-cloud"),
+    // Advanced models
+    "kimi-k2:1t-cloud": ollama("kimi-k2:1t-cloud"), // 1 Trillion parameters!
+    "glm-4.6:cloud": ollama("glm-4.6:cloud"),
+    "qwen3-vl:235b-cloud": ollama("qwen3-vl:235b-cloud"), // Vision support
   },
   groq: {
     "kimi-k2-instruct": groq("moonshotai/kimi-k2-instruct"),
