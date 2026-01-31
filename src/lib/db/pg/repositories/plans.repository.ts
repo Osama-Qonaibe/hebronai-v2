@@ -15,6 +15,11 @@ export const plansRepository = {
     return db.select().from(PlanTable).where(eq(PlanTable.isActive, true));
   },
 
+  // Get all plans (including inactive)
+  async getAllPlans(): Promise<Plan[]> {
+    return db.select().from(PlanTable);
+  },
+
   // Get plan by slug
   async getPlanBySlug(slug: string): Promise<Plan | undefined> {
     const [plan] = await db
@@ -52,6 +57,18 @@ export const plansRepository = {
       ...subscription.user_subscription,
       plan: subscription.plan,
     };
+  },
+
+  // Create subscription
+  async createSubscription(
+    data: NewUserSubscription,
+  ): Promise<UserSubscription> {
+    const [subscription] = await db
+      .insert(UserSubscriptionTable)
+      .values(data)
+      .returning();
+
+    return subscription;
   },
 
   // Create or update subscription
@@ -113,3 +130,14 @@ export const plansRepository = {
       .orderBy(SubscriptionHistoryTable.changedAt);
   },
 };
+
+// Named exports for backward compatibility
+export const getAllPlans = plansRepository.getAllPlans.bind(plansRepository);
+export const getPlanBySlug =
+  plansRepository.getPlanBySlug.bind(plansRepository);
+export const getUserSubscription =
+  plansRepository.getUserSubscription.bind(plansRepository);
+export const createSubscription =
+  plansRepository.createSubscription.bind(plansRepository);
+export const cancelSubscription =
+  plansRepository.cancelSubscription.bind(plansRepository);
