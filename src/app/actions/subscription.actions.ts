@@ -1,14 +1,15 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { auth } from "auth/server";
 import {
   getAllPlans,
   getPlanBySlug,
   getUserSubscription,
   createSubscription,
   cancelSubscription,
+  plansRepository,
 } from "@/lib/db/pg/repositories/plans.repository";
-import { db } from "@/lib/db/pg/db.pg";
+import { pgDb as db } from "@/lib/db/pg/db.pg";
 import { SubscriptionHistoryTable } from "@/lib/db/pg/schema.pg";
 import { revalidatePath } from "next/cache";
 
@@ -59,10 +60,20 @@ export async function subscribeToPlan(data: {
       userId: session.user.id,
       planId: plan.id,
       billingCycle: data.billingCycle,
+      status: "active",
     });
 
-    revalidatePath("/settings/subscription");
-    revalidatePath("/settings/usage");
+    // Log subscription history
+    await plansRepository.logSubscriptionChange(
+      session.user.id,
+      plan.id,
+      "subscribed",
+      undefined,
+      plan.id
+    );
+
+    revalidatePath("/subscription");
+    revalidatePath("/usage");
 
     return { success: true, data: subscription };
   } catch (error) {
@@ -87,24 +98,27 @@ export async function upgradePlan(newPlanSlug: string) {
       return { success: false, error: "Plan not found" };
     }
 
-    // Cancel using userId not subscription.id
+    // Cancel using userId
     await cancelSubscription(session.user.id);
 
     const newSubscription = await createSubscription({
       userId: session.user.id,
       planId: newPlan.id,
       billingCycle: currentSubscription.billingCycle,
+      status: "active",
     });
 
-    await db.insert(SubscriptionHistoryTable).values({
-      userId: session.user.id,
-      oldPlanId: currentSubscription.plan.id,
-      newPlanId: newPlan.id,
-      action: "upgraded",
-    });
+    // Log subscription history
+    await plansRepository.logSubscriptionChange(
+      session.user.id,
+      newPlan.id,
+      "upgraded",
+      currentSubscription.plan.id,
+      newPlan.id
+    );
 
-    revalidatePath("/settings/subscription");
-    revalidatePath("/settings/usage");
+    revalidatePath("/subscription");
+    revalidatePath("/usage");
 
     return { success: true, data: newSubscription };
   } catch (error) {
@@ -129,24 +143,27 @@ export async function downgradePlan(newPlanSlug: string) {
       return { success: false, error: "Plan not found" };
     }
 
-    // Cancel using userId not subscription.id
+    // Cancel using userId
     await cancelSubscription(session.user.id);
 
     const newSubscription = await createSubscription({
       userId: session.user.id,
       planId: newPlan.id,
       billingCycle: currentSubscription.billingCycle,
+      status: "active",
     });
 
-    await db.insert(SubscriptionHistoryTable).values({
-      userId: session.user.id,
-      oldPlanId: currentSubscription.plan.id,
-      newPlanId: newPlan.id,
-      action: "downgraded",
-    });
+    // Log subscription history
+    await plansRepository.logSubscriptionChange(
+      session.user.id,
+      newPlan.id,
+      "downgraded",
+      currentSubscription.plan.id,
+      newPlan.id
+    );
 
-    revalidatePath("/settings/subscription");
-    revalidatePath("/settings/usage");
+    revalidatePath("/subscription");
+    revalidatePath("/usage");
 
     return { success: true, data: newSubscription };
   } catch (error) {
@@ -169,15 +186,17 @@ export async function cancelMySubscription() {
     // Cancel using userId
     await cancelSubscription(session.user.id);
 
-    await db.insert(SubscriptionHistoryTable).values({
-      userId: session.user.id,
-      oldPlanId: subscription.plan.id,
-      newPlanId: subscription.plan.id,
-      action: "cancelled",
-    });
+    // Log subscription history
+    await plansRepository.logSubscriptionChange(
+      session.user.id,
+      subscription.plan.id,
+      "cancelled",
+      subscription.plan.id,
+      undefined
+    );
 
-    revalidatePath("/settings/subscription");
-    revalidatePath("/settings/usage");
+    revalidatePath("/subscription");
+    revalidatePath("/usage");
 
     return { success: true };
   } catch (error) {
