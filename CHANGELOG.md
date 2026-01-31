@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.8.0...hebronai-v2-v1.9.0) (2026-01-31)
+
+
+### Features
+
+* add 25+ free OpenRouter models (newest first) ([b73ee43](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b73ee43de70fad98f91ea5389176c6099b4467da))
+
 ## [1.8.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.7.0...hebronai-v2-v1.8.0) (2026-01-31)
 
 
