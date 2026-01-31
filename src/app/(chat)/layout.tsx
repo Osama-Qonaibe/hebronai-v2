@@ -26,10 +26,10 @@ export default async function ChatLayout({
   const isCollapsed =
     cookieStore.get(COOKIE_KEY_SIDEBAR_STATE)?.value !== "true";
   
-  const user: BasicUser = {
+  const user = {
     ...session.user,
-    planId: session.user.planId ?? null,
-  };
+    planId: null,
+  } as BasicUser;
 
   return (
     <SidebarProvider defaultOpen={!isCollapsed}>
