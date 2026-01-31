@@ -126,23 +126,73 @@ const staticModels = {
     "qwen3-32b": groq("qwen/qwen3-32b"),
   },
   openRouter: {
-    "gpt-oss-20b:free": openrouter("openai/gpt-oss-20b:free"),
-    "qwen3-8b:free": openrouter("qwen/qwen3-8b:free"),
-    "qwen3-14b:free": openrouter("qwen/qwen3-14b:free"),
-    "qwen3-coder:free": openrouter("qwen/qwen3-coder:free"),
-    "deepseek-r1:free": openrouter("deepseek/deepseek-r1-0528:free"),
-    "deepseek-v3:free": openrouter("deepseek/deepseek-chat-v3-0324:free"),
-    "gemini-2.0-flash-exp:free": openrouter("google/gemini-2.0-flash-exp:free"),
+    // ============================================
+    // Ultra-Large Models (400B+ Parameters)
+    // ============================================
+    "deepseek-r1t2-chimera": openrouter("deepseek/deepseek-r1t2-chimera:free"), // 671B - Latest & most powerful!
+    "deepseek-r1t-chimera": openrouter("deepseek/deepseek-r1t-chimera:free"), // 671B - Fast reasoning
+    "qwen3-coder-480b": openrouter("qwen/qwen3-coder:480b:free"), // 480B - Best for coding
+    "trinity-large-preview": openrouter("nousresearch/trinity-large-preview:free"), // 400B MoE
+    
+    // ============================================
+    // Large Models (100B-300B Parameters)
+    // ============================================
+    "xiaomi-mimo-v2-flash": openrouter("xiaomi/mimo-v2-flash:free"), // 309B MoE
+    "qwen3-235b-a22b": openrouter("qwen/qwen3-235b-a22b:free"), // 235B
+    "devstral-2-2512": openrouter("mistralai/devstral-2-2512:free"), // 123B - Coding specialist
+    "gpt-oss-120b": openrouter("openai/gpt-oss-120b:free"), // 120B
+    "solar-pro-3": openrouter("upstage/solar-pro-3:free"), // 102B MoE
+    
+    // ============================================
+    // Medium Models (50B-100B Parameters)
+    // ============================================
+    "qwen3-next-80b": openrouter("qwen/qwen3-next-80b:free"), // 80B - Fast
+    "llama-3.3-70b": openrouter("meta-llama/llama-3.3-70b-instruct:free"), // Meta Llama 70B
+    "llama-4-maverick": openrouter("meta-llama/llama-4-maverick:free"), // Llama 4!
+    
+    // ============================================
+    // Small-Medium Models (20B-50B Parameters)
+    // ============================================
+    "nvidia-nemotron-3-nano": openrouter("nvidia/nemotron-3-nano:free"), // 30B MoE
+    "gemma-3-27b": openrouter("google/gemma-3-27b-it:free"), // Google 27B
+    "trinity-mini": openrouter("nousresearch/trinity-mini:free"), // 26B - Very fast
+    
+    // ============================================
+    // Efficient Models (8B-20B Parameters)
+    // ============================================
+    "gpt-oss-20b": openrouter("openai/gpt-oss-20b:free"), // 20B
+    "qwen3-14b": openrouter("qwen/qwen3-14b:free"), // 14B
+    "qwen3-coder": openrouter("qwen/qwen3-coder:free"), // Coding specialist
+    "qwen3-8b": openrouter("qwen/qwen3-8b:free"), // 8B - Fast
+    
+    // ============================================
+    // Reasoning & Research Models
+    // ============================================
+    "deepseek-r1-0528": openrouter("deepseek/deepseek-r1-0528:free"), // Latest R1 reasoning
+    "deepseek-r1": openrouter("deepseek/deepseek-r1:free"), // Reasoning model
+    "tng-r1t-chimera": openrouter("tng/tng-r1t-chimera:free"), // Creative reasoning
+    "glm-4.5-air": openrouter("zhipu/glm-4.5-air:free"), // Reasoning mode
+    
+    // ============================================
+    // Chat Models
+    // ============================================
+    "deepseek-v3": openrouter("deepseek/deepseek-chat-v3-0324:free"), // Chat specialist
+    
+    // ============================================
+    // Vision & Image Generation
+    // ============================================
+    "gemini-2.0-flash-exp": openrouter("google/gemini-2.0-flash-exp:free"), // Vision support
+    "seedream-4.5": openrouter("seedream/seedream-4.5:free"), // Image generation
   },
 };
 
 const staticUnsupportedModels = new Set([
   staticModels.openai["o4-mini"],
-  staticModels.openRouter["gpt-oss-20b:free"],
-  staticModels.openRouter["qwen3-8b:free"],
-  staticModels.openRouter["qwen3-14b:free"],
-  staticModels.openRouter["deepseek-r1:free"],
-  staticModels.openRouter["gemini-2.0-flash-exp:free"],
+  staticModels.openRouter["gpt-oss-20b"],
+  staticModels.openRouter["qwen3-8b"],
+  staticModels.openRouter["qwen3-14b"],
+  staticModels.openRouter["deepseek-r1"],
+  staticModels.openRouter["gemini-2.0-flash-exp"],
 ]);
 
 const staticSupportImageInputModels = {
@@ -211,7 +261,7 @@ registerFileSupport(staticModels.xai["grok-3-mini"], XAI_FILE_MIME_TYPES);
 
 // OpenRouter support
 registerFileSupport(
-  staticModels.openRouter["gemini-2.0-flash-exp:free"],
+  staticModels.openRouter["gemini-2.0-flash-exp"],
   GEMINI_FILE_MIME_TYPES,
 );
 
