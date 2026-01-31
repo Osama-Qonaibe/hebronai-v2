@@ -109,7 +109,7 @@
 * generate title by user message ([9ee4be6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9ee4be69c6b90f44134d110e90f9c3da5219c79f))
 * generate title sync ([5f3afdc](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5f3afdc4cb7304460606b3480f54f513ef24940c))
 * hide MCP server credentials from non-owners ([#317](https://github.com/Osama-Qonaibe/hebronai-v2/issues/317)) ([#319](https://github.com/Osama-Qonaibe/hebronai-v2/issues/319)) ([6e32417](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6e32417535c27f1215f96d68b7302dba4a1b904d))
-* hsuky ([3dcde85](https://github.com/Osama-Qonaibe/hebronai-v2/commit/3dcde858a365ee57fb67c518e61855485c34c6e3))
+* husky ([3dcde85](https://github.com/Osama-Qonaibe/hebronai-v2/commit/3dcde858a365ee57fb67c518e61855485c34c6e3))
 * **i18n:** update agent description fields in English, Spanish, and French JSON files to improve clarity and consistency ([f07d1c4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f07d1c4dc64b96584faa7e558f981199834a5370))
 * ignore tool binding on unsupported models (server-side) ([#160](https://github.com/Osama-Qonaibe/hebronai-v2/issues/160)) ([277b4fe](https://github.com/Osama-Qonaibe/hebronai-v2/commit/277b4fe986d5b6d9780d9ade83f294d8f34806f6))
 * implement responsive horizontal layout for chat mention input with improved UX And generate Agent Prompt ([43ec980](https://github.com/Osama-Qonaibe/hebronai-v2/commit/43ec98059e0d27ab819491518263df55fb1c9ad3))
