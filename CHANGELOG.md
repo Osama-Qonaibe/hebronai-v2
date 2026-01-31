@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.6.2...hebronai-v2-v1.7.0) (2026-01-31)
+
+
+### Features
+
+* add 3 additional Ollama Cloud models ([649c1b8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/649c1b8f33212286535ad59b82ab573c40e316a2))
+
 ## [1.6.2](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.6.1...hebronai-v2-v1.6.2) (2026-01-31)
 
 
