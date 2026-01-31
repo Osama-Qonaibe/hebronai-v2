@@ -9,6 +9,7 @@ import { AppPopupProvider } from "@/components/layouts/app-popup-provider";
 import { SWRConfigProvider } from "./swr-config";
 import { UserDetailContent } from "@/components/user/user-detail/user-detail-content";
 import { UserDetailContentSkeleton } from "@/components/user/user-detail/user-detail-content-skeleton";
+import { BasicUser } from "types/user";
 
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
@@ -24,9 +25,15 @@ export default async function ChatLayout({
   }
   const isCollapsed =
     cookieStore.get(COOKIE_KEY_SIDEBAR_STATE)?.value !== "true";
+  
+  const user: BasicUser = {
+    ...session.user,
+    planId: session.user.planId ?? null,
+  };
+
   return (
     <SidebarProvider defaultOpen={!isCollapsed}>
-      <SWRConfigProvider user={session.user}>
+      <SWRConfigProvider user={user}>
         <AppPopupProvider
           userSettingsComponent={
             <Suspense fallback={<UserDetailContentSkeleton />}>
@@ -34,7 +41,7 @@ export default async function ChatLayout({
             </Suspense>
           }
         />
-        <AppSidebar user={session.user} />
+        <AppSidebar user={user} />
         <main className="relative bg-background  w-full flex flex-col h-screen">
           <AppHeader />
           <div className="flex-1 overflow-y-auto">{children}</div>
