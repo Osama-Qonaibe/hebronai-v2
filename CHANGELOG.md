@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.10.0...hebronai-v2-v1.11.0) (2026-01-31)
+
+
+### Features
+
+* add OpenRouter Auto Router (smart routing) ([8968ca4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8968ca437ac2ae348d4c8d89906a2d818df91b20))
+
 ## [1.10.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.9.0...hebronai-v2-v1.10.0) (2026-01-31)
 
 
