@@ -129,38 +129,25 @@ const staticModels = {
     // ============================================
     // Auto Router (Smart Model Selection)
     // ============================================
-    // Routes to best model from 50+ options automatically
+    // Routes to best model automatically based on task
     // Configure allowed models at: https://openrouter.ai/settings/preferences
-    // Recommended: Allow only cost-effective models to control spending
     "auto": openrouter("openrouter/auto"),
     
     // ============================================
-    // OpenRouter Premium Models (Paid Plans Only)
-    // All models verified from openrouter.ai/models
-    // No :free suffix to avoid unexpected charges
+    // OpenRouter Premium Models (Verified Working)
+    // Models not available via direct API keys
+    // No duplicates with OpenAI/Anthropic/Google providers
     // ============================================
     
-    // Ultra Premium (Best Performance)
-    "claude-opus-4": openrouter("anthropic/claude-opus-4"), // Most intelligent
-    "o1": openrouter("openai/o1"), // Advanced reasoning
-    "gemini-2.0-pro-exp": openrouter("google/gemini-2.0-pro-exp"), // Google's best
+    // Balanced Performance
+    "claude-3.5-sonnet": openrouter("anthropic/claude-3.5-sonnet"), // $3/$15 per 1M tokens
     
-    // Premium Chat Models
-    "claude-3.5-sonnet": openrouter("anthropic/claude-3.5-sonnet"), // Balanced excellence
-    "gpt-4-turbo": openrouter("openai/gpt-4-turbo"), // Fast & capable
-    "gemini-pro-1.5": openrouter("google/gemini-pro-1.5"), // Long context
+    // Large Scale Open Models
+    "llama-3.1-405b": openrouter("meta-llama/llama-3.1-405b-instruct"), // $2.70/$2.70 per 1M tokens
+    "mixtral-8x22b": openrouter("mistralai/mixtral-8x22b-instruct"), // $0.65/$0.65 per 1M tokens
     
-    // Large Scale Models
-    "llama-3.1-405b": openrouter("meta-llama/llama-3.1-405b-instruct"), // Largest open model
-    "mixtral-8x22b": openrouter("mistralai/mixtral-8x22b-instruct"), // MoE architecture
-    
-    // Specialized Models
-    "command-r-plus": openrouter("cohere/command-r-plus"), // RAG & retrieval
-    "codestral": openrouter("mistralai/codestral-latest"), // Code generation
-    "perplexity-sonar-pro": openrouter("perplexity/llama-3.1-sonar-huge-128k-online"), // Online search
-    
-    // Cost-Effective Premium
-    "deepseek-chat-v3": openrouter("deepseek/deepseek-chat"), // High quality, lower cost
+    // Most Cost-Effective
+    "deepseek-chat-v3": openrouter("deepseek/deepseek-chat"), // $0.14/$0.28 per 1M tokens - Best value!
   },
 };
 
@@ -234,22 +221,8 @@ registerFileSupport(staticModels.xai["grok-3-mini"], XAI_FILE_MIME_TYPES);
 
 // OpenRouter Claude support
 registerFileSupport(
-  staticModels.openRouter["claude-opus-4"],
-  ANTHROPIC_FILE_MIME_TYPES,
-);
-registerFileSupport(
   staticModels.openRouter["claude-3.5-sonnet"],
   ANTHROPIC_FILE_MIME_TYPES,
-);
-
-// OpenRouter Gemini support
-registerFileSupport(
-  staticModels.openRouter["gemini-2.0-pro-exp"],
-  GEMINI_FILE_MIME_TYPES,
-);
-registerFileSupport(
-  staticModels.openRouter["gemini-pro-1.5"],
-  GEMINI_FILE_MIME_TYPES,
 );
 
 const openaiCompatibleProviders = openaiCompatibleModelsSafeParse(
