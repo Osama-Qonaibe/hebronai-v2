@@ -127,6 +127,14 @@ const staticModels = {
   },
   openRouter: {
     // ============================================
+    // Auto Router (Smart Model Selection)
+    // ============================================
+    // Routes to best model from 50+ options automatically
+    // Configure allowed models at: https://openrouter.ai/settings/preferences
+    // Recommended: Allow only cost-effective models to control spending
+    "auto": openrouter("openrouter/auto"),
+    
+    // ============================================
     // OpenRouter Premium Models (Paid Plans Only)
     // All models verified from openrouter.ai/models
     // No :free suffix to avoid unexpected charges
