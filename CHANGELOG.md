@@ -1,5 +1,44 @@
 # Changelog
 
+## [1.12.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.11.0...hebronai-v2-v1.12.0) (2026-01-31)
+
+
+### Features
+
+* add automated migration and seeding for Vercel ([92271c5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/92271c5c75e8f31891b2705c85677c3473566925))
+* add billing toggle and plan comparison components ([9468a27](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9468a275eba1db84610372884c600287d62ebb78))
+* add missing Progress UI component for usage tracking ([a39fc5e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a39fc5e7d4d0d5d11596ab1b2850c8be50db4729))
+* add plan permissions helper ([e79d3f9](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e79d3f98e713dc60f85d35ed64bb12bb3c299eaa))
+* add plans repository ([a2bda4d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a2bda4d3a0fcb1ee98bfa39b19eef3014885e0ee))
+* add pricing card component ([37b2799](https://github.com/Osama-Qonaibe/hebronai-v2/commit/37b27995d72cd192d0e2a47a6bb96d80d39d881d))
+* add pricing page ([10b23f7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/10b23f74a5478dc8664873ea4fb1c33e1b2c6d00))
+* add subscription plan system schema ([69c9a8f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/69c9a8f3c17ef94cb2b89817c5ac466c3b0e1028))
+* add subscription plans migration ([776a16e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/776a16ed0cf2db60656882231610a9e5af899938))
+* add subscription plans seed data ([2e1ff72](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2e1ff720d5f4bfd2e20031aa247a09aa67d57781))
+* add subscription server actions ([bf558f8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/bf558f82bdd3430e6f88ac6c92cb5371961dc863))
+* Add updateUsage function to plans repository ([f9aadb7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f9aadb76f785943831308625b79c9632a0545bc5))
+* add usage and subscription settings pages ([fdf5a7a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/fdf5a7a870f4a5594ea6782dfa0256d524899e2b))
+* add usage tracker ([555ea1f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/555ea1f0d9beb232db17abf887174d481b3e6ede))
+* **admin:** Add admin server actions for plans management ([c101868](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c1018685052aef73f6279b880769655b0ad5798e))
+* **admin:** Add CRUD operations to plans repository for admin management ([65919c5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/65919c52ba0a8f4f040a393e784871112b2a280a))
+* **admin:** Add plans management page for admin dashboard ([3389cce](https://github.com/Osama-Qonaibe/hebronai-v2/commit/3389cce451ba9c332c2ca94fa75e03b8c5046315))
+* **admin:** Add plans table component with CRUD actions ([eeb8f1e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/eeb8f1ed7b1422ac0155b09fc135ca1dbac7636c))
+* integrate subscription limits into all resource creation ([03b4725](https://github.com/Osama-Qonaibe/hebronai-v2/commit/03b4725ccea800444744e15cf24a4e6ad2ef5eef))
+
+
+### Bug Fixes
+
+* Add missing @radix-ui/react-progress dependency ([42ecdfe](https://github.com/Osama-Qonaibe/hebronai-v2/commit/42ecdfe4e3a965429e2da5ad3b2f09bd04e40549))
+* add missing exports to plans.repository for subscription actions ([adaa7e0](https://github.com/Osama-Qonaibe/hebronai-v2/commit/adaa7e086aa48e619a72d71ec0d20f3966e44300))
+* **admin:** Remove toast dependency from plans table ([20775d1](https://github.com/Osama-Qonaibe/hebronai-v2/commit/20775d115e4fe18e4a2bd4062dac31fb0f118777))
+* correct database import path from 'db' to 'pgDb' ([71dc762](https://github.com/Osama-Qonaibe/hebronai-v2/commit/71dc76268f4bcb8cb1695b9d44c7ee0721a2430f))
+* correct subscription.actions.ts to match repository interface ([842b7c6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/842b7c6c6b4cd355c0746b32aa3606895b7fdf3f))
+* remove auto-seeding from migration script ([7bacb6a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7bacb6a3f2855b077be82adcdc886368c3c104a3))
+* remove postgres import from db-migrate script ([43e43d4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/43e43d4fceaae8edbe23fafd038bdf23cec1331e))
+* Update auth import path in usage page ([532c3fe](https://github.com/Osama-Qonaibe/hebronai-v2/commit/532c3fe9e46d87ab2941f6b1d22654876cc0590a))
+* Update auth import path to auth/server ([0c6be3d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/0c6be3decef6c408ac4e816f57bfca4d416624ac))
+* Update imports and fix subscription history in actions ([219f60a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/219f60a8045ca34fb2f1639282c78e5a89852417))
+
 ## [1.11.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.10.0...hebronai-v2-v1.11.0) (2026-01-31)
 
 
