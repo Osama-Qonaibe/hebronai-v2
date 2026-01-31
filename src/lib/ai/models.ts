@@ -129,68 +129,67 @@ const staticModels = {
     // ============================================
     // Ultra-Large Models (400B+ Parameters)
     // ============================================
-    "deepseek-r1t2-chimera": openrouter("deepseek/deepseek-r1t2-chimera:free"), // 671B - Latest & most powerful!
-    "deepseek-r1t-chimera": openrouter("deepseek/deepseek-r1t-chimera:free"), // 671B - Fast reasoning
-    "qwen3-coder-480b": openrouter("qwen/qwen3-coder:480b:free"), // 480B - Best for coding
+    "deepseek-r1t2-chimera": openrouter("tng/deepseek-r1t2-chimera:free"), // 671B - Latest & most powerful (TNG)
+    "deepseek-r1t-chimera": openrouter("tng/deepseek-r1t-chimera:free"), // 671B - Fast reasoning (TNG)
     "trinity-large-preview": openrouter("nousresearch/trinity-large-preview:free"), // 400B MoE
     
     // ============================================
-    // Large Models (100B-300B Parameters)
+    // Large Models (100B-200B Parameters)
     // ============================================
-    "xiaomi-mimo-v2-flash": openrouter("xiaomi/mimo-v2-flash:free"), // 309B MoE
-    "qwen3-235b-a22b": openrouter("qwen/qwen3-235b-a22b:free"), // 235B
-    "devstral-2-2512": openrouter("mistralai/devstral-2-2512:free"), // 123B - Coding specialist
     "gpt-oss-120b": openrouter("openai/gpt-oss-120b:free"), // 120B
-    "solar-pro-3": openrouter("upstage/solar-pro-3:free"), // 102B MoE
+    "solar-pro-preview": openrouter("upstage/solar-pro-preview:free"), // 102B MoE
     
     // ============================================
     // Medium Models (50B-100B Parameters)
     // ============================================
-    "qwen3-next-80b": openrouter("qwen/qwen3-next-80b:free"), // 80B - Fast
     "llama-3.3-70b": openrouter("meta-llama/llama-3.3-70b-instruct:free"), // Meta Llama 70B
-    "llama-4-maverick": openrouter("meta-llama/llama-4-maverick:free"), // Llama 4!
+    "nemotron-70b": openrouter("nvidia/llama-3.1-nemotron-70b-instruct:free"), // Nvidia 70B
     
     // ============================================
     // Small-Medium Models (20B-50B Parameters)
     // ============================================
-    "nvidia-nemotron-3-nano": openrouter("nvidia/nemotron-3-nano:free"), // 30B MoE
     "gemma-3-27b": openrouter("google/gemma-3-27b-it:free"), // Google 27B
-    "trinity-mini": openrouter("nousresearch/trinity-mini:free"), // 26B - Very fast
+    "phi-4": openrouter("microsoft/phi-4:free"), // Microsoft Phi-4
     
     // ============================================
     // Efficient Models (8B-20B Parameters)
     // ============================================
     "gpt-oss-20b": openrouter("openai/gpt-oss-20b:free"), // 20B
-    "qwen3-14b": openrouter("qwen/qwen3-14b:free"), // 14B
-    "qwen3-coder": openrouter("qwen/qwen3-coder:free"), // Coding specialist
-    "qwen3-8b": openrouter("qwen/qwen3-8b:free"), // 8B - Fast
+    "qwen-3-14b": openrouter("qwen/qwen-3-14b:free"), // 14B
+    "qwen-3-coder": openrouter("qwen/qwen-3-coder:free"), // Coding specialist
+    "qwen-3-8b": openrouter("qwen/qwen-3-8b:free"), // 8B - Fast
+    "llama-3.2-3b": openrouter("meta-llama/llama-3.2-3b-instruct:free"), // 3B - Very fast
+    "llama-3.2-1b": openrouter("meta-llama/llama-3.2-1b-instruct:free"), // 1B - Ultra fast
     
     // ============================================
     // Reasoning & Research Models
     // ============================================
-    "deepseek-r1-0528": openrouter("deepseek/deepseek-r1-0528:free"), // Latest R1 reasoning
     "deepseek-r1": openrouter("deepseek/deepseek-r1:free"), // Reasoning model
-    "tng-r1t-chimera": openrouter("tng/tng-r1t-chimera:free"), // Creative reasoning
-    "glm-4.5-air": openrouter("zhipu/glm-4.5-air:free"), // Reasoning mode
+    "deepseek-r1-distill-llama-70b": openrouter("deepseek/deepseek-r1-distill-llama-70b:free"), // R1 distilled
+    "deepseek-r1-distill-qwen-32b": openrouter("deepseek/deepseek-r1-distill-qwen-32b:free"), // R1 distilled
+    "deepseek-r1-distill-qwen-14b": openrouter("deepseek/deepseek-r1-distill-qwen-14b:free"), // R1 distilled
+    "deepseek-r1-distill-qwen-7b": openrouter("deepseek/deepseek-r1-distill-qwen-7b:free"), // R1 distilled
+    "deepseek-r1-distill-llama-8b": openrouter("deepseek/deepseek-r1-distill-llama-8b:free"), // R1 distilled
     
     // ============================================
     // Chat Models
     // ============================================
-    "deepseek-v3": openrouter("deepseek/deepseek-chat-v3-0324:free"), // Chat specialist
+    "deepseek-chat": openrouter("deepseek/deepseek-chat:free"), // Chat specialist
     
     // ============================================
-    // Vision & Image Generation
+    // Vision & Multimodal
     // ============================================
     "gemini-2.0-flash-exp": openrouter("google/gemini-2.0-flash-exp:free"), // Vision support
-    "seedream-4.5": openrouter("seedream/seedream-4.5:free"), // Image generation
+    "llama-3.2-90b-vision": openrouter("meta-llama/llama-3.2-90b-vision-instruct:free"), // Vision model
+    "llama-3.2-11b-vision": openrouter("meta-llama/llama-3.2-11b-vision-instruct:free"), // Vision model
   },
 };
 
 const staticUnsupportedModels = new Set([
   staticModels.openai["o4-mini"],
   staticModels.openRouter["gpt-oss-20b"],
-  staticModels.openRouter["qwen3-8b"],
-  staticModels.openRouter["qwen3-14b"],
+  staticModels.openRouter["qwen-3-8b"],
+  staticModels.openRouter["qwen-3-14b"],
   staticModels.openRouter["deepseek-r1"],
   staticModels.openRouter["gemini-2.0-flash-exp"],
 ]);
@@ -263,6 +262,14 @@ registerFileSupport(staticModels.xai["grok-3-mini"], XAI_FILE_MIME_TYPES);
 registerFileSupport(
   staticModels.openRouter["gemini-2.0-flash-exp"],
   GEMINI_FILE_MIME_TYPES,
+);
+registerFileSupport(
+  staticModels.openRouter["llama-3.2-90b-vision"],
+  DEFAULT_FILE_PART_MIME_TYPES,
+);
+registerFileSupport(
+  staticModels.openRouter["llama-3.2-11b-vision"],
+  DEFAULT_FILE_PART_MIME_TYPES,
 );
 
 const openaiCompatibleProviders = openaiCompatibleModelsSafeParse(
