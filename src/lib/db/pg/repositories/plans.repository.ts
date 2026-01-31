@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { pgDb as db } from "@/lib/db/pg/db.pg";
 import {
   PlanTable,
@@ -108,6 +108,50 @@ export const plansRepository = {
       .set({
         status: "cancelled",
         cancelledAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(UserSubscriptionTable.userId, userId));
+  },
+
+  // Update usage statistics
+  async updateUsage(
+    userId: string,
+    updates: Partial<{
+      chatsThisMonth: number;
+      agentsCreated: number;
+      workflowsCreated: number;
+      mcpServersAdded: number;
+      storageUsedMB: number;
+    }>,
+  ): Promise<void> {
+    const currentUsage = await db
+      .select({ currentUsage: UserSubscriptionTable.currentUsage })
+      .from(UserSubscriptionTable)
+      .where(eq(UserSubscriptionTable.userId, userId))
+      .limit(1);
+
+    if (!currentUsage[0]) return;
+
+    const existing = currentUsage[0].currentUsage || {
+      chatsThisMonth: 0,
+      agentsCreated: 0,
+      workflowsCreated: 0,
+      mcpServersAdded: 0,
+      storageUsedMB: 0,
+    };
+
+    await db
+      .update(UserSubscriptionTable)
+      .set({
+        currentUsage: {
+          chatsThisMonth: updates.chatsThisMonth !== undefined 
+            ? updates.chatsThisMonth 
+            : existing.chatsThisMonth + (updates.chatsThisMonth || 0),
+          agentsCreated: existing.agentsCreated + (updates.agentsCreated || 0),
+          workflowsCreated: existing.workflowsCreated + (updates.workflowsCreated || 0),
+          mcpServersAdded: existing.mcpServersAdded + (updates.mcpServersAdded || 0),
+          storageUsedMB: existing.storageUsedMB + (updates.storageUsedMB || 0),
+        },
         updatedAt: new Date(),
       })
       .where(eq(UserSubscriptionTable.userId, userId));
@@ -231,6 +275,7 @@ export const getPlanBySlug = plansRepository.getPlanBySlug.bind(plansRepository)
 export const getUserSubscription = plansRepository.getUserSubscription.bind(plansRepository);
 export const createSubscription = plansRepository.createSubscription.bind(plansRepository);
 export const cancelSubscription = plansRepository.cancelSubscription.bind(plansRepository);
+export const updateUsage = plansRepository.updateUsage.bind(plansRepository);
 
 // New admin exports
 export const createPlan = plansRepository.createPlan.bind(plansRepository);
