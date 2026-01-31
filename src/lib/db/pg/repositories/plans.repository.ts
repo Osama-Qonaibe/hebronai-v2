@@ -4,24 +4,31 @@ import {
   PlanTable,
   UserSubscriptionTable,
   SubscriptionHistoryTable,
-  type Plan,
-  type UserSubscription,
-  type NewUserSubscription,
+  type PlanEntity,
+  type UserSubscriptionEntity,
 } from "@/lib/db/pg/schema.pg";
 
+// Type for creating a new plan
+export type NewPlan = typeof PlanTable.$inferInsert;
+
+// Type for updating a plan
+export type UpdatePlan = Partial<Omit<NewPlan, "id" | "createdAt">>;
+
 export const plansRepository = {
+  // ==================== USER OPERATIONS ====================
+  
   // Get all active plans
-  async getActivePlans(): Promise<Plan[]> {
+  async getActivePlans(): Promise<PlanEntity[]> {
     return db.select().from(PlanTable).where(eq(PlanTable.isActive, true));
   },
 
   // Get all plans (including inactive)
-  async getAllPlans(): Promise<Plan[]> {
+  async getAllPlans(): Promise<PlanEntity[]> {
     return db.select().from(PlanTable);
   },
 
   // Get plan by slug
-  async getPlanBySlug(slug: string): Promise<Plan | undefined> {
+  async getPlanBySlug(slug: string): Promise<PlanEntity | undefined> {
     const [plan] = await db
       .select()
       .from(PlanTable)
@@ -31,7 +38,7 @@ export const plansRepository = {
   },
 
   // Get plan by ID
-  async getPlanById(id: number): Promise<Plan | undefined> {
+  async getPlanById(id: string): Promise<PlanEntity | undefined> {
     const [plan] = await db
       .select()
       .from(PlanTable)
@@ -43,7 +50,7 @@ export const plansRepository = {
   // Get user's active subscription
   async getUserSubscription(
     userId: string,
-  ): Promise<(UserSubscription & { plan: Plan }) | undefined> {
+  ): Promise<(UserSubscriptionEntity & { plan: PlanEntity }) | undefined> {
     const [subscription] = await db
       .select()
       .from(UserSubscriptionTable)
@@ -61,8 +68,8 @@ export const plansRepository = {
 
   // Create subscription
   async createSubscription(
-    data: NewUserSubscription,
-  ): Promise<UserSubscription> {
+    data: typeof UserSubscriptionTable.$inferInsert,
+  ): Promise<UserSubscriptionEntity> {
     const [subscription] = await db
       .insert(UserSubscriptionTable)
       .values(data)
@@ -73,8 +80,8 @@ export const plansRepository = {
 
   // Create or update subscription
   async upsertSubscription(
-    data: NewUserSubscription,
-  ): Promise<UserSubscription> {
+    data: typeof UserSubscriptionTable.$inferInsert,
+  ): Promise<UserSubscriptionEntity> {
     const [subscription] = await db
       .insert(UserSubscriptionTable)
       .values(data)
@@ -84,8 +91,8 @@ export const plansRepository = {
           planId: data.planId,
           billingCycle: data.billingCycle,
           status: data.status,
-          currentPeriodStart: data.currentPeriodStart,
-          currentPeriodEnd: data.currentPeriodEnd,
+          startDate: data.startDate,
+          endDate: data.endDate,
           updatedAt: new Date(),
         },
       })
@@ -109,15 +116,17 @@ export const plansRepository = {
   // Log subscription change
   async logSubscriptionChange(
     userId: string,
-    oldPlanId: number | null,
-    newPlanId: number,
-    action: "subscribed" | "upgraded" | "downgraded" | "cancelled",
+    planId: string,
+    action: "subscribed" | "upgraded" | "downgraded" | "cancelled" | "renewed" | "expired",
+    fromPlanId?: string,
+    toPlanId?: string,
   ): Promise<void> {
     await db.insert(SubscriptionHistoryTable).values({
       userId,
-      oldPlanId,
-      newPlanId,
+      planId,
       action,
+      fromPlanId,
+      toPlanId,
     });
   },
 
@@ -127,17 +136,104 @@ export const plansRepository = {
       .select()
       .from(SubscriptionHistoryTable)
       .where(eq(SubscriptionHistoryTable.userId, userId))
-      .orderBy(SubscriptionHistoryTable.changedAt);
+      .orderBy(SubscriptionHistoryTable.createdAt);
+  },
+
+  // ==================== ADMIN OPERATIONS ====================
+
+  /**
+   * Create a new plan (Admin only)
+   */
+  async createPlan(data: NewPlan): Promise<PlanEntity> {
+    const [plan] = await db
+      .insert(PlanTable)
+      .values({
+        ...data,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+
+    return plan;
+  },
+
+  /**
+   * Update an existing plan (Admin only)
+   */
+  async updatePlan(id: string, data: UpdatePlan): Promise<PlanEntity | undefined> {
+    const [plan] = await db
+      .update(PlanTable)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(PlanTable.id, id))
+      .returning();
+
+    return plan;
+  },
+
+  /**
+   * Delete a plan (Admin only)
+   * Note: This will fail if there are active subscriptions using this plan
+   */
+  async deletePlan(id: string): Promise<boolean> {
+    const result = await db
+      .delete(PlanTable)
+      .where(eq(PlanTable.id, id));
+
+    return result.rowCount ? result.rowCount > 0 : false;
+  },
+
+  /**
+   * Toggle plan active status (Admin only)
+   */
+  async togglePlanActive(id: string, isActive: boolean): Promise<PlanEntity | undefined> {
+    const [plan] = await db
+      .update(PlanTable)
+      .set({
+        isActive,
+        updatedAt: new Date(),
+      })
+      .where(eq(PlanTable.id, id))
+      .returning();
+
+    return plan;
+  },
+
+  /**
+   * Get all subscriptions for a specific plan (Admin only)
+   */
+  async getPlanSubscriptions(planId: string): Promise<UserSubscriptionEntity[]> {
+    return db
+      .select()
+      .from(UserSubscriptionTable)
+      .where(eq(UserSubscriptionTable.planId, planId));
+  },
+
+  /**
+   * Check if plan can be deleted (has no active subscriptions)
+   */
+  async canDeletePlan(planId: string): Promise<boolean> {
+    const subscriptions = await db
+      .select()
+      .from(UserSubscriptionTable)
+      .where(eq(UserSubscriptionTable.planId, planId))
+      .limit(1);
+
+    return subscriptions.length === 0;
   },
 };
 
 // Named exports for backward compatibility
 export const getAllPlans = plansRepository.getAllPlans.bind(plansRepository);
-export const getPlanBySlug =
-  plansRepository.getPlanBySlug.bind(plansRepository);
-export const getUserSubscription =
-  plansRepository.getUserSubscription.bind(plansRepository);
-export const createSubscription =
-  plansRepository.createSubscription.bind(plansRepository);
-export const cancelSubscription =
-  plansRepository.cancelSubscription.bind(plansRepository);
+export const getPlanBySlug = plansRepository.getPlanBySlug.bind(plansRepository);
+export const getUserSubscription = plansRepository.getUserSubscription.bind(plansRepository);
+export const createSubscription = plansRepository.createSubscription.bind(plansRepository);
+export const cancelSubscription = plansRepository.cancelSubscription.bind(plansRepository);
+
+// New admin exports
+export const createPlan = plansRepository.createPlan.bind(plansRepository);
+export const updatePlan = plansRepository.updatePlan.bind(plansRepository);
+export const deletePlan = plansRepository.deletePlan.bind(plansRepository);
+export const togglePlanActive = plansRepository.togglePlanActive.bind(plansRepository);
