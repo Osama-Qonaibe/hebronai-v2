@@ -67,19 +67,13 @@ const staticModels = {
     "grok-3-mini": xai("grok-3-mini"),
   },
   ollama: {
-    // Cloud-compatible models (work with both local and cloud)
+    // Verified Ollama Cloud-compatible models only
     "llama3.2": ollama("llama3.2"),
     "llama3.2:3b": ollama("llama3.2:3b"),
     "gemma2": ollama("gemma2"),
     "gemma2:9b": ollama("gemma2:9b"),
     "phi3": ollama("phi3"),
     "mistral": ollama("mistral"),
-    "qwen2.5": ollama("qwen2.5"),
-    "qwen2.5:7b": ollama("qwen2.5:7b"),
-    // Legacy models (for backward compatibility with local setup)
-    "gemma3:1b": ollama("gemma3:1b"),
-    "gemma3:4b": ollama("gemma3:4b"),
-    "gemma3:12b": ollama("gemma3:12b"),
   },
   groq: {
     "kimi-k2-instruct": groq("moonshotai/kimi-k2-instruct"),
@@ -101,9 +95,6 @@ const staticModels = {
 
 const staticUnsupportedModels = new Set([
   staticModels.openai["o4-mini"],
-  staticModels.ollama["gemma3:1b"],
-  staticModels.ollama["gemma3:4b"],
-  staticModels.ollama["gemma3:12b"],
   staticModels.ollama["phi3"],
   staticModels.openRouter["gpt-oss-20b:free"],
   staticModels.openRouter["qwen3-8b:free"],
@@ -164,7 +155,7 @@ registerFileSupport(
 );
 
 registerFileSupport(staticModels.xai["grok-4-fast"], XAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.xai["grok-4"], XAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.xai["grok-4"], XAI_FILE_TYPES);
 registerFileSupport(staticModels.xai["grok-3"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-3-mini"], XAI_FILE_MIME_TYPES);
 registerFileSupport(
