@@ -36,7 +36,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal, Edit, Trash2, Power, PowerOff } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 
 interface PlansTableProps {
@@ -45,7 +44,6 @@ interface PlansTableProps {
 
 export function PlansTable({ plans }: PlansTableProps) {
   const router = useRouter();
-  const { toast } = useToast();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<PlanEntity | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -63,17 +61,10 @@ export function PlansTable({ plans }: PlansTableProps) {
     const result = await deletePlanAction({ id: selectedPlan.id });
 
     if (result.success) {
-      toast({
-        title: "Success",
-        description: result.message,
-      });
+      alert(`Success: ${result.message}`);
       router.refresh();
     } else {
-      toast({
-        title: "Error",
-        description: result.message,
-        variant: "destructive",
-      });
+      alert(`Error: ${result.message}`);
     }
 
     setIsDeleting(false);
@@ -89,17 +80,9 @@ export function PlansTable({ plans }: PlansTableProps) {
     });
 
     if (result.success) {
-      toast({
-        title: "Success",
-        description: result.message,
-      });
       router.refresh();
     } else {
-      toast({
-        title: "Error",
-        description: result.message,
-        variant: "destructive",
-      });
+      alert(`Error: ${result.message}`);
     }
 
     setIsToggling(null);
