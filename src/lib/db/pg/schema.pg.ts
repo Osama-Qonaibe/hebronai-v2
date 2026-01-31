@@ -12,6 +12,7 @@ import {
   unique,
   varchar,
   index,
+  integer,
 } from "drizzle-orm/pg-core";
 import { isNotNull } from "drizzle-orm";
 import { DBWorkflow, DBEdge, DBNode } from "app-types/workflow";
@@ -112,9 +113,6 @@ export const UserTable = pgTable("user", {
   role: text("role").notNull().default("user"),
 });
 
-// Role tables removed - using Better Auth's built-in role system
-// Roles are now managed via the 'role' field on UserTable
-
 export const SessionTable = pgTable("session", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   expiresAt: timestamp("expires_at").notNull(),
@@ -126,7 +124,6 @@ export const SessionTable = pgTable("session", {
   userId: uuid("user_id")
     .notNull()
     .references(() => UserTable.id, { onDelete: "cascade" }),
-  // Admin plugin field (from better-auth generated schema)
   impersonatedBy: text("impersonated_by"),
 });
 
@@ -154,14 +151,13 @@ export const VerificationTable = pgTable("verification", {
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date(),
+    () => new Date(),
   ),
   updatedAt: timestamp("updated_at").$defaultFn(
-    () => /* @__PURE__ */ new Date(),
+    () => new Date(),
   ),
 });
 
-// Tool customization table for per-user additional instructions
 export const McpToolCustomizationTable = pgTable(
   "mcp_server_tool_custom_instructions",
   {
@@ -303,7 +299,7 @@ export const McpOAuthSessionTable = pgTable(
     clientInfo: json("client_info"),
     tokens: json("tokens"),
     codeVerifier: text("code_verifier"),
-    state: text("state").unique(), // OAuth state parameter for current flow (unique for security)
+    state: text("state").unique(),
     createdAt: timestamp("created_at")
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
@@ -314,25 +310,11 @@ export const McpOAuthSessionTable = pgTable(
   (t) => [
     index("mcp_oauth_session_server_id_idx").on(t.mcpServerId),
     index("mcp_oauth_session_state_idx").on(t.state),
-    // Partial index for sessions with tokens for better performance
     index("mcp_oauth_session_tokens_idx")
       .on(t.mcpServerId)
       .where(isNotNull(t.tokens)),
   ],
 );
-
-export type McpServerEntity = typeof McpServerTable.$inferSelect;
-export type ChatThreadEntity = typeof ChatThreadTable.$inferSelect;
-export type ChatMessageEntity = typeof ChatMessageTable.$inferSelect;
-
-export type AgentEntity = typeof AgentTable.$inferSelect;
-export type UserEntity = typeof UserTable.$inferSelect;
-export type SessionEntity = typeof SessionTable.$inferSelect;
-
-export type ToolCustomizationEntity =
-  typeof McpToolCustomizationTable.$inferSelect;
-export type McpServerCustomizationEntity =
-  typeof McpServerCustomizationTable.$inferSelect;
 
 export const ChatExportTable = pgTable("chat_export", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
@@ -371,6 +353,135 @@ export const ChatExportCommentTable = pgTable("chat_export_comment", {
   updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+export const PlanTable = pgTable(
+  "plan",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    name: text("name").notNull().unique(),
+    slug: text("slug").notNull().unique(),
+    monthlyPrice: integer("monthly_price").notNull().default(0),
+    yearlyPrice: integer("yearly_price").notNull().default(0),
+    currency: text("currency").notNull().default("USD"),
+    features: json("features").notNull().$type<{
+      maxChatsPerMonth: number | "unlimited";
+      maxAgents: number | "unlimited";
+      maxWorkflows: number | "unlimited";
+      maxMcpServers: number | "unlimited";
+      maxFileUploadSizeMB: number;
+      customBranding: boolean;
+      prioritySupport: boolean;
+      apiAccess: boolean;
+      webhooks: boolean;
+      advancedAnalytics: boolean;
+      customDomain: boolean;
+    }>(),
+    description: text("description"),
+    icon: text("icon"),
+    badge: text("badge"),
+    color: text("color"),
+    isActive: boolean("is_active").notNull().default(true),
+    isPublic: boolean("is_public").notNull().default(true),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    index("plan_slug_idx").on(t.slug),
+    index("plan_active_idx").on(t.isActive),
+  ],
+);
+
+export const UserSubscriptionTable = pgTable(
+  "user_subscription",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => UserTable.id, { onDelete: "cascade" }),
+    planId: uuid("plan_id")
+      .notNull()
+      .references(() => PlanTable.id, { onDelete: "restrict" }),
+    status: varchar("status", {
+      enum: ["active", "cancelled", "expired", "suspended"],
+    })
+      .notNull()
+      .default("active"),
+    billingCycle: varchar("billing_cycle", {
+      enum: ["monthly", "yearly", "lifetime"],
+    }).notNull(),
+    startDate: timestamp("start_date").notNull().default(sql`CURRENT_TIMESTAMP`),
+    endDate: timestamp("end_date"),
+    cancelledAt: timestamp("cancelled_at"),
+    paymentProvider: text("payment_provider"),
+    subscriptionId: text("subscription_id"),
+    customerId: text("customer_id"),
+    currentUsage: json("current_usage")
+      .$type<{
+        chatsThisMonth: number;
+        agentsCreated: number;
+        workflowsCreated: number;
+        mcpServersAdded: number;
+        storageUsedMB: number;
+      }>()
+      .default({
+        chatsThisMonth: 0,
+        agentsCreated: 0,
+        workflowsCreated: 0,
+        mcpServersAdded: 0,
+        storageUsedMB: 0,
+      }),
+    createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    index("user_subscription_user_id_idx").on(t.userId),
+    index("user_subscription_status_idx").on(t.status),
+    index("user_subscription_plan_id_idx").on(t.planId),
+  ],
+);
+
+export const SubscriptionHistoryTable = pgTable(
+  "subscription_history",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => UserTable.id, { onDelete: "cascade" }),
+    planId: uuid("plan_id")
+      .notNull()
+      .references(() => PlanTable.id, { onDelete: "restrict" }),
+    action: varchar("action", {
+      enum: [
+        "subscribed",
+        "upgraded",
+        "downgraded",
+        "cancelled",
+        "renewed",
+        "expired",
+      ],
+    }).notNull(),
+    fromPlanId: uuid("from_plan_id").references(() => PlanTable.id),
+    toPlanId: uuid("to_plan_id").references(() => PlanTable.id),
+    metadata: json("metadata"),
+    createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    index("subscription_history_user_id_idx").on(t.userId),
+    index("subscription_history_action_idx").on(t.action),
+  ],
+);
+
+export type McpServerEntity = typeof McpServerTable.$inferSelect;
+export type ChatThreadEntity = typeof ChatThreadTable.$inferSelect;
+export type ChatMessageEntity = typeof ChatMessageTable.$inferSelect;
+export type AgentEntity = typeof AgentTable.$inferSelect;
+export type UserEntity = typeof UserTable.$inferSelect;
+export type SessionEntity = typeof SessionTable.$inferSelect;
+export type ToolCustomizationEntity = typeof McpToolCustomizationTable.$inferSelect;
+export type McpServerCustomizationEntity = typeof McpServerCustomizationTable.$inferSelect;
 export type ArchiveEntity = typeof ArchiveTable.$inferSelect;
 export type ArchiveItemEntity = typeof ArchiveItemTable.$inferSelect;
 export type BookmarkEntity = typeof BookmarkTable.$inferSelect;
+export type PlanEntity = typeof PlanTable.$inferSelect;
+export type UserSubscriptionEntity = typeof UserSubscriptionTable.$inferSelect;
+export type SubscriptionHistoryEntity = typeof SubscriptionHistoryTable.$inferSelect;
