@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.12.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.11.0...hebronai-v2-v1.12.0) (2026-01-31)
+
+
+### Features
+
+* add Plan table and integrate with User schema ([711bf31](https://github.com/Osama-Qonaibe/hebronai-v2/commit/711bf312232a45413940a0c87b5c39d7d0190316))
+* add safe session user to BasicUser converter ([f523835](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f52383565d71ebdfcf5ea883fcbd9f877d6d097e))
+
+
+### Bug Fixes
+
+* add planId to session.user type in layout ([aedf5cf](https://github.com/Osama-Qonaibe/hebronai-v2/commit/aedf5cfcda2099bd5cfee3e3de7ab1f3e78c0771))
+* cast session.user to BasicUser in MCP page ([ce35cd8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ce35cd84a58706c1b46750eb0abe4ad3b019d3a6))
+* cast session.user to BasicUser with planId ([1cd84c8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1cd84c8e2bb2c4e4e597703b4cf7971fbd16e11b))
+* correct import path for BasicUser type ([a0fb690](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a0fb690cd1733824963ab1673445f0d006dd49e7))
+* include planId in User and BasicUser types ([f2f8e34](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f2f8e34c8a0b80678dbd09641f35d0ed5ecd7c25))
+* use safe toBasicUser converter in chat layout ([c7c4340](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c7c4340ad91433c4eb3c24c8dd20ac075f3662b7))
+* use safe toBasicUser converter in MCP page ([2b85a20](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2b85a2082bd1c73e41ee4d44f226b2880640a776))
+
+
+### Reverts
+
+* remove all Plans feature changes and toBasicUser helper ([c901dd0](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c901dd01244848eba27649509c3caf3f38fceffb))
+
 ## [1.11.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.10.0...hebronai-v2-v1.11.0) (2026-01-31)
 
 
