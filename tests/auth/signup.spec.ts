@@ -8,7 +8,7 @@ test.describe("User Signup", () => {
       Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
     const testEmail = `playwright.signup.${uniqueSuffix}@example.com`;
     const testName = `Signup Test User ${uniqueSuffix}`;
-    const testPassword = "SignupTest123";
+    const testPassword = process.env.TEST_USER_PASSWORD || "TestPassword123";
 
     // Navigate to sign-up page
     await page.goto("/sign-up");
