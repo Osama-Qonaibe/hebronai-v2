@@ -9,7 +9,7 @@ import { AppPopupProvider } from "@/components/layouts/app-popup-provider";
 import { SWRConfigProvider } from "./swr-config";
 import { UserDetailContent } from "@/components/user/user-detail/user-detail-content";
 import { UserDetailContentSkeleton } from "@/components/user/user-detail/user-detail-content-skeleton";
-import { BasicUser } from "types/user";
+import { BasicUser } from "@/types/user";
 
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
