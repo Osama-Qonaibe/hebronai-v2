@@ -34,7 +34,7 @@
 * **agent:** agent and archive  ([#192](https://github.com/Osama-Qonaibe/hebronai-v2/issues/192)) ([c63ae17](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c63ae179363b66bfa4f4b5524bdf27b71166c299))
 * ai v5 ([#230](https://github.com/Osama-Qonaibe/hebronai-v2/issues/230)) ([0461879](https://github.com/Osama-Qonaibe/hebronai-v2/commit/0461879740860055a278c96656328367980fa533))
 * **chat:** enable [@mention](https://github.com/mention) and tool click to trigger workflow execution in chat ([#122](https://github.com/Osama-Qonaibe/hebronai-v2/issues/122)) ([b4e7f02](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b4e7f022fa155ef70be2aee9228a4d1d2643bf10))
-* credit contributors in releases and changlogs ([#104](https://github.com/Osama-Qonaibe/hebronai-v2/issues/104)) ([e0e4443](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e0e444382209a36f03b6e898f26ebd805032c306))
+* credit contributors in releases and changelogs ([#104](https://github.com/Osama-Qonaibe/hebronai-v2/issues/104)) ([e0e4443](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e0e444382209a36f03b6e898f26ebd805032c306))
 * enhance authentication UI and add Korean translations ([1389e0a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1389e0ab1e8e639cfa6f248001ffa2d9c13f6c47))
 * enhance localization by adding new translations for chat, project, and keyboard shortcuts, and improve UI components with dynamic text rendering ([d71997d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/d71997dad6d685fa10099dd2e80d3e83aa403ecf))
 * enhance MCPClient transport handling with StreamableHTTPClientTransport and fallback to SSE ([c3413c3](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c3413c3b6aa23e933bf27184c01aaf9a6c9bc333))
