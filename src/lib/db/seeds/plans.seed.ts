@@ -1,4 +1,4 @@
-import { db } from "@/lib/db/pg/db.pg";
+import { pgDb as db } from "@/lib/db/pg/db.pg";
 import { PlanTable } from "@/lib/db/pg/schema.pg";
 import { consola } from "consola";
 import { eq } from "drizzle-orm";

@@ -1,10 +1,13 @@
 #!/usr/bin/env tsx
 import { migrate } from "drizzle-orm/postgres-js/migrator";
-import { db, client } from "@/lib/db/pg/db.pg";
+import { pgDb as db } from "@/lib/db/pg/db.pg";
+import postgres from "postgres";
 import { consola } from "consola";
 import { seedPlansIfNeeded } from "@/lib/db/seeds/plans.seed";
 
 async function main() {
+  const client = postgres(process.env.DATABASE_URL!, { max: 1 });
+  
   try {
     consola.info("🚀 Running migrations...");
     
