@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.5.2...hebronai-v2-v1.6.0) (2026-01-31)
+
+
+### Features
+
+* add Ollama Cloud authentication support ([fcccaa5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/fcccaa52921a1d8f54b3d55da109b92f7e175ad7))
+* Add Ollama Cloud authentication support ([434c643](https://github.com/Osama-Qonaibe/hebronai-v2/commit/434c64323ae6bb5de0adcfebc62c520885fec66f))
+
+
+### Bug Fixes
+
+* add config-file path to release-please action ([8637513](https://github.com/Osama-Qonaibe/hebronai-v2/commit/86375133112214a0ec589bb54b98161cd2bbf3b8))
+
 ## 1.5.2 (2026-01-31)
 
 
