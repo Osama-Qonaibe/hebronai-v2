@@ -96,7 +96,7 @@
 * blur prompt-input after submit to collapse mobile keyboard ([#337](https://github.com/Osama-Qonaibe/hebronai-v2/issues/337)) ([aec3530](https://github.com/Osama-Qonaibe/hebronai-v2/commit/aec35300c1ca7269aa5086a95f1a4f480b2564c7))
 * bug(LineChart): series are incorrectly represented [#165](https://github.com/Osama-Qonaibe/hebronai-v2/issues/165) ([4e4905c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/4e4905c0f7f6a3eca73ea2ac06f718fa29b0f821))
 * **chat:** prevent infinite MCP tool call loop by precomputing toolChoice ([#49](https://github.com/Osama-Qonaibe/hebronai-v2/issues/49)) ([ba7673b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ba7673becd9eaa6acdcfb36a05997e14ab597cc5))
-* clean changlelog and stop duplicate attributions in the changelog file ([#119](https://github.com/Osama-Qonaibe/hebronai-v2/issues/119)) ([aa970b6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/aa970b6a2d39ac1f0ca22db761dd452e3c7a5542))
+* clean changelog and stop duplicate attributions in the changelog file ([#119](https://github.com/Osama-Qonaibe/hebronai-v2/issues/119)) ([aa970b6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/aa970b6a2d39ac1f0ca22db761dd452e3c7a5542))
 * css ([6a2f8e9](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6a2f8e9f19c9279fdc1cb5dfd2d8d9cfb63d89e2))
 * Enhance component styles and configurations ([a7284f1](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a7284f12ca02ee29f7da4d57e4fe6e8c6ecb2dfc))
 * enhance error handling in chat bot component ([1519799](https://github.com/Osama-Qonaibe/hebronai-v2/commit/15197996ba1f175db002b06e3eac2765cfae1518))
