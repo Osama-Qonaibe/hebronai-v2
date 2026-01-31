@@ -6,12 +6,11 @@ import { getSession } from "auth/server";
 
 export type UserPreferences = {
   displayName?: string;
-  profession?: string; // User's job or profession
-  responseStyleExample?: string; // Example of preferred response style
-  botName?: string; // Name of the bot
+  profession?: string;
+  responseStyleExample?: string;
+  botName?: string;
 };
 
-// user without password
 export interface User extends Omit<UserEntity, "password"> {
   preferences: UserPreferences | null;
   lastLogin?: Date | null;
@@ -32,6 +31,7 @@ export type BasicUser = Omit<
   banned?: boolean | null;
   banReason?: string | null;
   banExpires?: Date | null;
+  planId?: string | null;
 };
 
 export interface BasicUserWithLastLogin extends BasicUser {
