@@ -155,7 +155,7 @@ registerFileSupport(
 );
 
 registerFileSupport(staticModels.xai["grok-4-fast"], XAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.xai["grok-4"], XAI_FILE_TYPES);
+registerFileSupport(staticModels.xai["grok-4"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-3"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-3-mini"], XAI_FILE_MIME_TYPES);
 registerFileSupport(
