@@ -87,20 +87,20 @@ export async function upgradePlan(newPlanSlug: string) {
       return { success: false, error: "Plan not found" };
     }
 
-    await cancelSubscription(currentSubscription.subscription.id);
+    // Cancel using userId not subscription.id
+    await cancelSubscription(session.user.id);
 
     const newSubscription = await createSubscription({
       userId: session.user.id,
       planId: newPlan.id,
-      billingCycle: currentSubscription.subscription.billingCycle,
+      billingCycle: currentSubscription.billingCycle,
     });
 
     await db.insert(SubscriptionHistoryTable).values({
       userId: session.user.id,
-      planId: newPlan.id,
+      oldPlanId: currentSubscription.plan.id,
+      newPlanId: newPlan.id,
       action: "upgraded",
-      fromPlanId: currentSubscription.plan.id,
-      toPlanId: newPlan.id,
     });
 
     revalidatePath("/settings/subscription");
@@ -129,20 +129,20 @@ export async function downgradePlan(newPlanSlug: string) {
       return { success: false, error: "Plan not found" };
     }
 
-    await cancelSubscription(currentSubscription.subscription.id);
+    // Cancel using userId not subscription.id
+    await cancelSubscription(session.user.id);
 
     const newSubscription = await createSubscription({
       userId: session.user.id,
       planId: newPlan.id,
-      billingCycle: currentSubscription.subscription.billingCycle,
+      billingCycle: currentSubscription.billingCycle,
     });
 
     await db.insert(SubscriptionHistoryTable).values({
       userId: session.user.id,
-      planId: newPlan.id,
+      oldPlanId: currentSubscription.plan.id,
+      newPlanId: newPlan.id,
       action: "downgraded",
-      fromPlanId: currentSubscription.plan.id,
-      toPlanId: newPlan.id,
     });
 
     revalidatePath("/settings/subscription");
@@ -166,11 +166,13 @@ export async function cancelMySubscription() {
       return { success: false, error: "No active subscription found" };
     }
 
-    await cancelSubscription(subscription.subscription.id);
+    // Cancel using userId
+    await cancelSubscription(session.user.id);
 
     await db.insert(SubscriptionHistoryTable).values({
       userId: session.user.id,
-      planId: subscription.plan.id,
+      oldPlanId: subscription.plan.id,
+      newPlanId: subscription.plan.id,
       action: "cancelled",
     });
 
