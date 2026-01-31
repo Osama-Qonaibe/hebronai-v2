@@ -2,7 +2,6 @@
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import { pgDb } from "@/lib/db/pg/db.pg";
 import { consola } from "consola";
-import { seedPlansIfNeeded } from "@/lib/db/seeds/plans.seed";
 import { join } from "path";
 
 async function main() {
@@ -16,12 +15,8 @@ async function main() {
     const end = Date.now();
     
     consola.success(`✅ Migrations completed in ${end - start}ms`);
+    consola.info("ℹ️  Note: Seed plans manually using 'pnpm db:seed:plans' if needed");
     
-    // Auto-seed plans if they don't exist
-    consola.info("🌱 Checking if plans need seeding...");
-    await seedPlansIfNeeded();
-    
-    consola.success("🎉 All done!");
     process.exit(0);
   } catch (error) {
     consola.error("❌ Migration failed:", error);
