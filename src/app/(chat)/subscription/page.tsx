@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { auth } from "auth/server";
 import { getMySubscription } from "@/app/actions/subscription.actions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
