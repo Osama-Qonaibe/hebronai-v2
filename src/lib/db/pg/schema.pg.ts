@@ -12,6 +12,7 @@ import {
   unique,
   varchar,
   index,
+  integer,
 } from "drizzle-orm/pg-core";
 import { isNotNull } from "drizzle-orm";
 import { DBWorkflow, DBEdge, DBNode } from "app-types/workflow";
@@ -96,6 +97,26 @@ export const McpServerTable = pgTable("mcp_server", {
   updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+export const PlanTable = pgTable("plan", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  monthlyPrice: integer("monthly_price").notNull().default(0),
+  yearlyPrice: integer("yearly_price").notNull().default(0),
+  currency: text("currency").notNull().default("USD"),
+  features: json("features").notNull(),
+  allowedModels: json("allowed_models").notNull().default([]),
+  description: text("description"),
+  icon: text("icon"),
+  badge: text("badge"),
+  color: text("color"),
+  isActive: boolean("is_active").notNull().default(true),
+  isPublic: boolean("is_public").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const UserTable = pgTable("user", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   name: text("name").notNull(),
@@ -110,10 +131,8 @@ export const UserTable = pgTable("user", {
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
   role: text("role").notNull().default("user"),
+  planId: uuid("plan_id").references(() => PlanTable.id),
 });
-
-// Role tables removed - using Better Auth's built-in role system
-// Roles are now managed via the 'role' field on UserTable
 
 export const SessionTable = pgTable("session", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
@@ -126,7 +145,6 @@ export const SessionTable = pgTable("session", {
   userId: uuid("user_id")
     .notNull()
     .references(() => UserTable.id, { onDelete: "cascade" }),
-  // Admin plugin field (from better-auth generated schema)
   impersonatedBy: text("impersonated_by"),
 });
 
@@ -161,7 +179,6 @@ export const VerificationTable = pgTable("verification", {
   ),
 });
 
-// Tool customization table for per-user additional instructions
 export const McpToolCustomizationTable = pgTable(
   "mcp_server_tool_custom_instructions",
   {
@@ -303,7 +320,7 @@ export const McpOAuthSessionTable = pgTable(
     clientInfo: json("client_info"),
     tokens: json("tokens"),
     codeVerifier: text("code_verifier"),
-    state: text("state").unique(), // OAuth state parameter for current flow (unique for security)
+    state: text("state").unique(),
     createdAt: timestamp("created_at")
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
@@ -314,25 +331,11 @@ export const McpOAuthSessionTable = pgTable(
   (t) => [
     index("mcp_oauth_session_server_id_idx").on(t.mcpServerId),
     index("mcp_oauth_session_state_idx").on(t.state),
-    // Partial index for sessions with tokens for better performance
     index("mcp_oauth_session_tokens_idx")
       .on(t.mcpServerId)
       .where(isNotNull(t.tokens)),
   ],
 );
-
-export type McpServerEntity = typeof McpServerTable.$inferSelect;
-export type ChatThreadEntity = typeof ChatThreadTable.$inferSelect;
-export type ChatMessageEntity = typeof ChatMessageTable.$inferSelect;
-
-export type AgentEntity = typeof AgentTable.$inferSelect;
-export type UserEntity = typeof UserTable.$inferSelect;
-export type SessionEntity = typeof SessionTable.$inferSelect;
-
-export type ToolCustomizationEntity =
-  typeof McpToolCustomizationTable.$inferSelect;
-export type McpServerCustomizationEntity =
-  typeof McpServerCustomizationTable.$inferSelect;
 
 export const ChatExportTable = pgTable("chat_export", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
@@ -371,6 +374,15 @@ export const ChatExportCommentTable = pgTable("chat_export_comment", {
   updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+export type McpServerEntity = typeof McpServerTable.$inferSelect;
+export type ChatThreadEntity = typeof ChatThreadTable.$inferSelect;
+export type ChatMessageEntity = typeof ChatMessageTable.$inferSelect;
+export type AgentEntity = typeof AgentTable.$inferSelect;
+export type UserEntity = typeof UserTable.$inferSelect;
+export type SessionEntity = typeof SessionTable.$inferSelect;
+export type ToolCustomizationEntity = typeof McpToolCustomizationTable.$inferSelect;
+export type McpServerCustomizationEntity = typeof McpServerCustomizationTable.$inferSelect;
 export type ArchiveEntity = typeof ArchiveTable.$inferSelect;
 export type ArchiveItemEntity = typeof ArchiveItemTable.$inferSelect;
 export type BookmarkEntity = typeof BookmarkTable.$inferSelect;
+export type PlanEntity = typeof PlanTable.$inferSelect;
