@@ -41,14 +41,54 @@ const groq = createGroq({
 
 const staticModels = {
   openai: {
-    "gpt-4.1": openai("gpt-4.1"),
-    "gpt-4.1-mini": openai("gpt-4.1-mini"),
-    "o4-mini": openai("o4-mini"),
-    o3: openai("o3"),
-    "gpt-5.1-chat": openai("gpt-5.1-chat-latest"),
+    // ============================================
+    // GPT-5 Series (Latest - 2026)
+    // ============================================
+    "gpt-5.2-pro": openai("gpt-5.2-pro"), // Latest & most capable
+    "gpt-5.2": openai("gpt-5.2"), // Latest general purpose
+    "gpt-5.2-chat": openai("gpt-5.2-chat-latest"), // Latest chat
+    "gpt-5.2-codex": openai("gpt-5.2-codex"), // Latest coding
+    "gpt-5-nano": openai("gpt-5-nano"), // Fastest & cheapest GPT-5
+    "gpt-5-mini": openai("gpt-5-mini"), // Fast & affordable
+    
+    // GPT-5.1 Series
     "gpt-5.1": openai("gpt-5.1"),
+    "gpt-5.1-chat": openai("gpt-5.1-chat-latest"),
     "gpt-5.1-codex": openai("gpt-5.1-codex"),
     "gpt-5.1-codex-mini": openai("gpt-5.1-codex-mini"),
+    
+    // ============================================
+    // GPT-4 Series
+    // ============================================
+    "gpt-4.1": openai("gpt-4.1"),
+    "gpt-4.1-mini": openai("gpt-4.1-mini"),
+    "gpt-4.1-nano": openai("gpt-4.1-nano"), // Cheapest GPT-4
+    
+    // ============================================
+    // Reasoning Models (o-series)
+    // ============================================
+    "o4-mini": openai("o4-mini"),
+    "o3": openai("o3"),
+    
+    // ============================================
+    // Image Generation Models
+    // ============================================
+    "gpt-image-1.5": openai("gpt-image-1.5"), // Latest image generation
+    "dall-e-3": openai("dall-e-3"), // DALL-E 3
+    
+    // ============================================
+    // Video Generation Models (Sora)
+    // ============================================
+    "sora-2-pro": openai("sora-2-pro"), // 4K video with audio sync
+    "sora-2": openai("sora-2"), // 1080p video generation
+    
+    // ============================================
+    // Audio Models
+    // ============================================
+    "gpt-audio": openai("gpt-audio"), // Advanced audio I/O
+    "whisper": openai("whisper"), // Speech-to-text (best accuracy)
+    "tts-1-hd": openai("tts-1-hd"), // Text-to-speech HD quality
+    "tts-1": openai("tts-1"), // Text-to-speech standard
   },
   google: {
     "gemini-2.5-flash-lite": google("gemini-2.5-flash-lite"),
@@ -125,15 +165,21 @@ const registerFileSupport = (
   staticFilePartSupportByModel.set(model, Array.from(mimeTypes));
 };
 
-registerFileSupport(staticModels.openai["gpt-4.1"], OPENAI_FILE_MIME_TYPES);
-registerFileSupport(
-  staticModels.openai["gpt-4.1-mini"],
-  OPENAI_FILE_MIME_TYPES,
-);
-registerFileSupport(staticModels.openai["gpt-5"], OPENAI_FILE_MIME_TYPES);
+// OpenAI GPT-5 series support
+registerFileSupport(staticModels.openai["gpt-5.2-pro"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.openai["gpt-5.2"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.openai["gpt-5.2-chat"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.openai["gpt-5-mini"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.openai["gpt-5-nano"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.openai["gpt-5.1"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.openai["gpt-5.1-chat"], OPENAI_FILE_MIME_TYPES);
 
+// OpenAI GPT-4 series support
+registerFileSupport(staticModels.openai["gpt-4.1"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.openai["gpt-4.1-mini"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.openai["gpt-4.1-nano"], OPENAI_FILE_MIME_TYPES);
+
+// Google Gemini support
 registerFileSupport(
   staticModels.google["gemini-2.5-flash-lite"],
   GEMINI_FILE_MIME_TYPES,
@@ -147,6 +193,7 @@ registerFileSupport(
   GEMINI_FILE_MIME_TYPES,
 );
 
+// Anthropic Claude support
 registerFileSupport(
   staticModels.anthropic["sonnet-4.5"],
   ANTHROPIC_FILE_MIME_TYPES,
@@ -156,10 +203,13 @@ registerFileSupport(
   ANTHROPIC_FILE_MIME_TYPES,
 );
 
+// XAI Grok support
 registerFileSupport(staticModels.xai["grok-4-fast"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-4"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-3"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-3-mini"], XAI_FILE_MIME_TYPES);
+
+// OpenRouter support
 registerFileSupport(
   staticModels.openRouter["gemini-2.0-flash-exp:free"],
   GEMINI_FILE_MIME_TYPES,
