@@ -1,7 +1,7 @@
 MIT License
 
-Copyright (c) 2025 HebronAI (based on better-chatbot)
-Copyright (c) 2025 better-chatbot contributors
+Copyright (c) 2024-2025 better-chatbot contributors (Original Framework)
+Copyright (c) 2025-2026 HebronAI (Modifications and Extensions)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,3 +20,18 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+## Attribution
+
+This project is based on better-chatbot and includes significant modifications
+and extensions by HebronAI, including:
+
+- Arabic language support and RTL interface
+- Multi-model AI provider integration
+- Enhanced authentication and user management
+- Enterprise features and customizations
+- Additional database schemas and business logic
+
+Original project: https://github.com/better-chatbot/better-chatbot
