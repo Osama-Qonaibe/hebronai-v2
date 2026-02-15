@@ -1,7 +1,7 @@
 # HebronAI v2 🤖
 
 [![CI](https://github.com/Osama-Qonaibe/hebronai-v2/actions/workflows/pr-check.yml/badge.svg)](https://github.com/Osama-Qonaibe/hebronai-v2/actions/workflows/pr-check.yml)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.12.0-green.svg)](https://github.com/Osama-Qonaibe/hebronai-v2/releases)
 
 > Enterprise-grade AI chatbot platform built with Next.js 16, TypeScript, and modern AI frameworks.
@@ -116,7 +116,9 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
 
 ## 📄 License
 
-Apache License 2.0 - see [LICENSE](LICENSE) for details.
+MIT License - see [LICENSE](LICENSE) for details.
+
+Based on [better-chatbot](https://github.com/better-chatbot/better-chatbot) with significant modifications by HebronAI.
 
 ## 🔗 Links
 
