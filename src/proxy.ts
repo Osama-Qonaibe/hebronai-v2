@@ -14,7 +14,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // ============================================
-  // Locale/RTL Handling
+  // Locale/RTL Handling (runs on ALL pages)
   // ============================================
 
   // Check if pathname starts with a locale (e.g., /ar, /en)
@@ -27,20 +27,19 @@ export async function proxy(request: NextRequest) {
     // Extract the locale from pathname
     const locale = pathnameLocale.code;
 
-    // Set locale cookie
-    const response = NextResponse.next();
+    // Redirect to pathname without locale prefix, but set cookie
+    const newPathname = pathname.replace(`/${locale}`, "") || "/";
+    const url = request.nextUrl.clone();
+    url.pathname = newPathname;
+
+    const response = NextResponse.redirect(url);
     response.cookies.set(COOKIE_KEY_LOCALE, locale, {
       path: "/",
       maxAge: 60 * 60 * 24 * 365, // 1 year
       sameSite: "lax",
     });
 
-    // Redirect to pathname without locale prefix
-    const newPathname = pathname.replace(`/${locale}`, "") || "/";
-    const url = request.nextUrl.clone();
-    url.pathname = newPathname;
-
-    return NextResponse.redirect(url);
+    return response;
   }
 
   // Check for locale in query parameter (e.g., ?locale=ar)
@@ -48,17 +47,18 @@ export async function proxy(request: NextRequest) {
   const queryLocale = searchParams.get("locale");
 
   if (queryLocale && SUPPORTED_LOCALES.some((l) => l.code === queryLocale)) {
-    const response = NextResponse.next();
+    // Redirect to clean URL without query parameter, but set cookie
+    const url = request.nextUrl.clone();
+    url.searchParams.delete("locale");
+
+    const response = NextResponse.redirect(url);
     response.cookies.set(COOKIE_KEY_LOCALE, queryLocale, {
       path: "/",
       maxAge: 60 * 60 * 24 * 365, // 1 year
       sameSite: "lax",
     });
 
-    // Redirect to clean URL without query parameter
-    const url = request.nextUrl.clone();
-    url.searchParams.delete("locale");
-    return NextResponse.redirect(url);
+    return response;
   }
 
   // ============================================
@@ -67,6 +67,15 @@ export async function proxy(request: NextRequest) {
 
   if (pathname === "/admin") {
     return NextResponse.redirect(new URL("/admin/users", request.url));
+  }
+
+  // Skip authentication check for public pages
+  if (
+    pathname.startsWith("/sign-in") ||
+    pathname.startsWith("/sign-up") ||
+    pathname.startsWith("/export")
+  ) {
+    return NextResponse.next();
   }
 
   const sessionCookie = getSessionCookie(request);
@@ -80,6 +89,14 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|api/auth|export|sign-in|sign-up).*)",
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - api/auth (auth API routes)
+     * - favicon.ico, sitemap.xml, robots.txt
+     * - Files with extensions
+     */
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|api/auth|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|xml|txt)$).*)",
   ],
 };
