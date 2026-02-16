@@ -257,9 +257,10 @@ const pgAdminRepository: AdminRepository = {
     planCounts.forEach((item) => {
       if (item.plan === "basic") {
         subscriptionsByPlan.basic = item.count;
-      } else if (item.plan === "premium") {
+      } else if (item.plan === "pro") {
         subscriptionsByPlan.pro = item.count;
-        subscriptionsByPlan.enterprise += item.count;
+      } else if (item.plan === "enterprise") {
+        subscriptionsByPlan.enterprise = item.count;
       } else if (item.plan === "free") {
         subscriptionsByPlan.free = item.count;
       }
