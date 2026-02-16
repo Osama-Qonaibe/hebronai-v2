@@ -1842,3 +1842,87 @@
   left: auto !important;
   right: 0 !important;
 }
+
+/* ============================================
+   Fix Absolute Positioned Elements in RTL
+   ============================================ */
+
+/* Reset absolute positioning for input elements */
+[dir="rtl"] .absolute {
+  left: auto;
+  right: auto;
+}
+
+/* Fix input field icons and buttons */
+[dir="rtl"] .relative .absolute.right-0 {
+  right: auto !important;
+  left: 0 !important;
+}
+
+[dir="rtl"] .relative .absolute.left-0 {
+  left: auto !important;
+  right: 0 !important;
+}
+
+[dir="rtl"] .relative .absolute.right-2 {
+  right: auto !important;
+  left: 0.5rem !important;
+}
+
+[dir="rtl"] .relative .absolute.left-2 {
+  left: auto !important;
+  right: 0.5rem !important;
+}
+
+[dir="rtl"] .relative .absolute.right-3 {
+  right: auto !important;
+  left: 0.75rem !important;
+}
+
+[dir="rtl"] .relative .absolute.left-3 {
+  left: auto !important;
+  right: 0.75rem !important;
+}
+
+[dir="rtl"] .relative .absolute.right-4 {
+  right: auto !important;
+  left: 1rem !important;
+}
+
+[dir="rtl"] .relative .absolute.left-4 {
+  left: auto !important;
+  right: 1rem !important;
+}
+
+/* Fix bottom positioned elements */
+[dir="rtl"] .absolute.bottom-0 {
+  left: auto;
+  right: auto;
+}
+
+/* Fix top positioned elements */
+[dir="rtl"] .absolute.top-0 {
+  left: auto;
+  right: auto;
+}
+
+/* Fix inset positioning */
+[dir="rtl"] .absolute.inset-0 {
+  left: 0 !important;
+  right: 0 !important;
+}
+
+/* Fix avatar and user menu positioning */
+[dir="rtl"] [data-sidebar="footer"] .absolute {
+  left: auto;
+  right: auto;
+}
+
+/* Ensure z-index is maintained */
+[dir="rtl"] .absolute.z-10,
+[dir="rtl"] .absolute.z-20,
+[dir="rtl"] .absolute.z-30,
+[dir="rtl"] .absolute.z-40,
+[dir="rtl"] .absolute.z-50 {
+  position: absolute;
+}
