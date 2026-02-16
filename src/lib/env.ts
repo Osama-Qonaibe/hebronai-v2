@@ -34,7 +34,12 @@ const envSchema = z.object({
   OLLAMA_BASE_URL: z.string().url().optional(),
 
   // Optional Services
-  REDIS_URL: z.string().url().optional(),
+  REDIS_URL: z
+    .string()
+    .url()
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => (val === "" ? undefined : val)),
   EXA_API_KEY: z.string().optional(),
 
   // File Storage (optional)
