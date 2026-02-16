@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.13.0...hebronai-v2-v1.13.1) (2026-02-16)
+
+
+### Bug Fixes
+
+* Add English translations for Subscription page ([55390a5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/55390a5d57920d03e7e3b7bbbd8ad40efe268f85))
+
 ## [1.13.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.12.0...hebronai-v2-v1.13.0) (2026-02-16)
 
 
