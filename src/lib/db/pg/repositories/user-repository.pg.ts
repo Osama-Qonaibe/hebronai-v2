@@ -180,7 +180,7 @@ export const pgUserRepository: UserRepository = {
     planExpiresAt: Date | null,
   ): Promise<void> => {
     const updateData: any = {
-      plan: plan as "free" | "basic" | "premium",
+      plan: plan as "free" | "basic" | "pro" | "enterprise",
       planStatus: planStatus as "trial" | "active" | "expired",
       updatedAt: new Date(),
     };

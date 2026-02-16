@@ -5,6 +5,7 @@ import { serverCache } from "lib/cache";
 import { CacheKeys } from "lib/cache/cache-keys";
 import { AgentCreateSchema, AgentQuerySchema } from "app-types/agent";
 import { canCreateAgent } from "lib/auth/permissions";
+import { checkAgentCreationLimit } from "lib/auth/usage-limits";
 
 export async function GET(request: Request) {
   const session = await getSession();
@@ -63,6 +64,19 @@ export async function POST(request: Request): Promise<Response> {
   if (!hasPermission) {
     return Response.json(
       { error: "You don't have permission to create agents" },
+      { status: 403 },
+    );
+  }
+
+  // Check usage limits
+  const limitCheck = await checkAgentCreationLimit(session.user.id);
+  if (!limitCheck.allowed) {
+    return Response.json(
+      {
+        error: limitCheck.reason,
+        current: limitCheck.current,
+        max: limitCheck.max,
+      },
       { status: 403 },
     );
   }

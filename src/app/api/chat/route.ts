@@ -45,6 +45,8 @@ import {
   rememberMcpServerCustomizationsAction,
 } from "./actions";
 import { getSession } from "auth/server";
+import { getUserSubscription } from "lib/auth/subscription";
+import { canAccessModel, getRequiredPlan } from "lib/subscription/model-access";
 import { colorize } from "consola/utils";
 import { generateUUID } from "lib/utils";
 import { nanoBananaTool, openaiImageTool } from "lib/ai/tools/image";
@@ -76,6 +78,42 @@ export async function POST(request: Request) {
       mentions = [],
       attachments = [],
     } = chatApiSchemaRequestBodySchema.parse(json);
+
+    // Check subscription and model access
+    const subscription = await getUserSubscription();
+    if (!subscription?.isActive) {
+      return Response.json(
+        {
+          error:
+            "Your subscription is not active. Please renew your subscription.",
+        },
+        { status: 403 },
+      );
+    }
+
+    // Check if user can access the requested model
+    if (chatModel) {
+      const hasAccess = canAccessModel(
+        subscription.plan,
+        chatModel.provider,
+        chatModel.model,
+      );
+
+      if (!hasAccess) {
+        const requiredPlan = getRequiredPlan(
+          chatModel.provider,
+          chatModel.model,
+        );
+        return Response.json(
+          {
+            error: `The model "${chatModel.provider}/${chatModel.model}" is not available in your ${subscription.plan} plan.`,
+            requiredPlan: requiredPlan || "pro",
+            currentPlan: subscription.plan,
+          },
+          { status: 403 },
+        );
+      }
+    }
 
     const model = customModelProvider.getModel(chatModel);
 

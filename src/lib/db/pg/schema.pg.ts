@@ -113,7 +113,7 @@ export const UserTable = pgTable("user", {
   role: text("role").notNull().default("user"),
 
   plan: varchar("plan", {
-    enum: ["free", "basic", "premium"],
+    enum: ["free", "basic", "pro", "enterprise"],
   })
     .notNull()
     .default("free"),
@@ -425,6 +425,38 @@ export const ChatExportCommentTable = pgTable("chat_export_comment", {
   updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+export const UsageTable = pgTable(
+  "usage",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => UserTable.id, { onDelete: "cascade" }),
+    resourceType: varchar("resource_type", {
+      enum: ["tokens", "api_calls", "storage"],
+    }).notNull(),
+    amount: numeric("amount", { precision: 15, scale: 2 }).notNull(),
+    metadata: json("metadata").$type<{
+      model?: string;
+      endpoint?: string;
+      threadId?: string;
+      provider?: string;
+      [key: string]: any;
+    }>(),
+    periodStart: timestamp("period_start").notNull(),
+    periodEnd: timestamp("period_end").notNull(),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    index("usage_user_id_idx").on(t.userId),
+    index("usage_period_idx").on(t.periodStart, t.periodEnd),
+    index("usage_resource_type_idx").on(t.resourceType),
+  ],
+);
+
 export type ArchiveEntity = typeof ArchiveTable.$inferSelect;
 export type ArchiveItemEntity = typeof ArchiveItemTable.$inferSelect;
 export type BookmarkEntity = typeof BookmarkTable.$inferSelect;
+export type UsageEntity = typeof UsageTable.$inferSelect;

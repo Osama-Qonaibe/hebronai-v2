@@ -1,6 +1,7 @@
 import { getSession } from "auth/server";
 import { workflowRepository } from "lib/db/repository";
 import { canCreateWorkflow, canEditWorkflow } from "lib/auth/permissions";
+import { checkWorkflowCreationLimit } from "lib/auth/usage-limits";
 
 export async function GET() {
   const session = await getSession();
@@ -51,6 +52,19 @@ export async function POST(request: Request) {
     if (!canCreate) {
       return Response.json(
         { error: "You don't have permission to create workflows" },
+        { status: 403 },
+      );
+    }
+
+    // Check usage limits
+    const limitCheck = await checkWorkflowCreationLimit(session.user.id);
+    if (!limitCheck.allowed) {
+      return Response.json(
+        {
+          error: limitCheck.reason,
+          current: limitCheck.current,
+          max: limitCheck.max,
+        },
         { status: 403 },
       );
     }

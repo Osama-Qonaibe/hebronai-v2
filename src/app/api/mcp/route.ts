@@ -3,6 +3,7 @@ import { McpServerTable } from "lib/db/pg/schema.pg";
 import { NextResponse } from "next/server";
 import { saveMcpClientAction } from "./actions";
 import { canCreateMCP } from "lib/auth/permissions";
+import { checkMCPServerCreationLimit } from "lib/auth/usage-limits";
 import { logger } from "better-auth";
 
 export async function POST(request: Request) {
@@ -16,6 +17,19 @@ export async function POST(request: Request) {
   if (!hasPermission) {
     return NextResponse.json(
       { error: "You don't have permission to create MCP connections" },
+      { status: 403 },
+    );
+  }
+
+  // Check usage limits
+  const limitCheck = await checkMCPServerCreationLimit(session.user.id);
+  if (!limitCheck.allowed) {
+    return NextResponse.json(
+      {
+        error: limitCheck.reason,
+        current: limitCheck.current,
+        max: limitCheck.max,
+      },
       { status: 403 },
     );
   }

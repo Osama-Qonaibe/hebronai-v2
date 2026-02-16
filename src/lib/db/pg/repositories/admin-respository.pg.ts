@@ -24,6 +24,7 @@ import {
 } from "drizzle-orm";
 import type { SubscriptionPlan } from "@/lib/subscription/plans";
 import type { RequestStatus } from "./subscription-request-repository.pg";
+import { calculateExpirationDate } from "@/lib/subscription/expiration";
 
 const getUserColumnsWithoutPassword = () => {
   const { password, ...userColumns } = getTableColumns(UserTable);
@@ -170,18 +171,22 @@ const pgAdminRepository: AdminRepository = {
         })
         .where(eq(SubscriptionRequestTable.id, requestId));
 
-      const planMapping: Record<string, "free" | "basic" | "premium"> = {
-        free: "free",
-        basic: "basic",
-        pro: "premium",
-        enterprise: "premium",
-      };
+      // Calculate expiration date based on plan
+      const expirationDate = calculateExpirationDate(
+        request.requestedPlan as SubscriptionPlan,
+      );
 
       await tx
         .update(UserTable)
         .set({
-          plan: planMapping[request.requestedPlan] || "free",
+          plan: request.requestedPlan as
+            | "free"
+            | "basic"
+            | "pro"
+            | "enterprise",
           planStatus: "active",
+          planExpiresAt: expirationDate,
+          updatedAt: new Date(),
         })
         .where(eq(UserTable.id, request.userId));
     });
