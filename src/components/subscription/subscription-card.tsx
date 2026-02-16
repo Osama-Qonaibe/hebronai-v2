@@ -272,7 +272,9 @@ export function SubscriptionCard({
                 <CardHeader>
                   <CardTitle>{t(`plans.${plan.name}`)}</CardTitle>
                   <div className="text-3xl font-bold">
-                    {plan.priceDisplay}
+                    {plan.priceDisplay === "Custom"
+                      ? t("custom")
+                      : plan.priceDisplay}
                     {plan.price > 0 && (
                       <span className="text-sm font-normal text-muted-foreground">
                         /{t(plan.period)}
