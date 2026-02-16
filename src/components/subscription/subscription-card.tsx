@@ -108,6 +108,9 @@ export function SubscriptionCard({
 
     setLoading(true);
     try {
+      if (!PLANS || !selectedPlan) {
+        throw new Error("Invalid plan selection");
+      }
       const planDetails = PLANS[selectedPlan];
 
       const response = await fetch("/api/user/subscription-request", {
@@ -162,6 +165,9 @@ export function SubscriptionCard({
 
     setLoading(true);
     try {
+      if (!PLANS || !selectedPlan) {
+        throw new Error("Invalid plan selection");
+      }
       const planDetails = PLANS[selectedPlan];
 
       const response = await fetch("/api/user/subscription-request", {
@@ -205,7 +211,7 @@ export function SubscriptionCard({
   };
 
   const handleWhatsAppContact = () => {
-    if (!selectedPlan) return;
+    if (!selectedPlan || !PLANS) return;
 
     const planDetails = PLANS[selectedPlan];
     const message = encodeURIComponent(
@@ -225,8 +231,9 @@ export function SubscriptionCard({
     return methods[method] || method;
   }
 
-  const plans = Object.values(PLANS);
-  const selectedPlanDetails = selectedPlan ? PLANS[selectedPlan] : null;
+  const plans = PLANS ? Object.values(PLANS) : [];
+  const selectedPlanDetails =
+    selectedPlan && PLANS ? PLANS[selectedPlan] : null;
   const isEnterprisePlan = selectedPlan === "enterprise";
   const showPayButton =
     selectedPlan &&
