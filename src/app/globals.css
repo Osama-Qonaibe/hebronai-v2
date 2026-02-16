@@ -1821,12 +1821,12 @@
 }
 
 /* Content area adjustment for RTL */
-[dir="rtl"] .peer-data-[state="collapsed"]:pl-12 {
+[dir="rtl"] .peer-data-\[state\=collapsed\]\:pl-12 {
   padding-left: 0 !important;
   padding-right: 3rem !important;
 }
 
-[dir="rtl"] .peer-data-[state="expanded"]:pl-64 {
+[dir="rtl"] .peer-data-\[state\=expanded\]\:pl-64 {
   padding-left: 0 !important;
   padding-right: 16rem !important;
 }
