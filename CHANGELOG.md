@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.0.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.14.0...hebronai-v2-v2.0.0) (2026-02-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Plan names updated from 'premium' to 'pro' and added 'enterprise' tier
+
+### Features
+
+* implement comprehensive subscription system with model access control and usage limits ([d6c1025](https://github.com/Osama-Qonaibe/hebronai-v2/commit/d6c10259e83f12d468d4868137df1896d7a618d3))
+
+
+### Bug Fixes
+
+* replace premium with pro and enterprise in admin repository stats ([ebf4e43](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ebf4e4348ef7ce6934123bf0fe45ccae0644cf43))
+* update BasicUser type to support pro and enterprise plans ([81be81b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/81be81b82a5e78a421a83200692e055c29d2762f))
+
 ## [1.14.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.13.1...hebronai-v2-v1.14.0) (2026-02-16)
 
 
