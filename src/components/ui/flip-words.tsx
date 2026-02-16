@@ -5,6 +5,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useMounted } from "@/hooks/use-mounted";
 
+// Helper function to detect if text contains Arabic characters
+const isArabic = (text: string): boolean => {
+  const arabicRegex = /[\u0600-\u06FF]/;
+  return arabicRegex.test(text);
+};
+
 export const FlipWords = ({
   words,
   duration = 3000,
@@ -33,6 +39,9 @@ export const FlipWords = ({
   }, [isAnimating, duration, startAnimation]);
 
   if (!mounted) return null;
+
+  // Check if current word contains Arabic
+  const containsArabic = isArabic(currentWord);
 
   return (
     <AnimatePresence
@@ -68,36 +77,49 @@ export const FlipWords = ({
         )}
         key={currentWord}
       >
-        {/* edit suggested by Sajal: https://x.com/DewanganSajal */}
-        {currentWord.split(" ").map((word, wordIndex) => (
+        {/* For Arabic text, display the whole word without splitting */}
+        {containsArabic ? (
           <motion.span
-            key={word + wordIndex}
             initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{
-              delay: wordIndex * 0.01,
-              duration: 0.03,
+              duration: 0.3,
             }}
             className="inline-block whitespace-nowrap"
           >
-            {word.split("").map((letter, letterIndex) => (
-              <motion.span
-                key={word + letterIndex}
-                initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{
-                  delay: wordIndex * 0.2 + letterIndex * 0.08,
-                  duration: 0.2,
-                }}
-                className="inline-block"
-                style={{ unicodeBidi: "isolate" }}
-              >
-                {letter}
-              </motion.span>
-            ))}
-            <span className="inline-block">&nbsp;</span>
+            {currentWord}
           </motion.span>
-        ))}
+        ) : (
+          /* For non-Arabic text, use the original letter-by-letter animation */
+          currentWord.split(" ").map((word, wordIndex) => (
+            <motion.span
+              key={word + wordIndex}
+              initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{
+                delay: wordIndex * 0.01,
+                duration: 0.03,
+              }}
+              className="inline-block whitespace-nowrap"
+            >
+              {word.split("").map((letter, letterIndex) => (
+                <motion.span
+                  key={word + letterIndex}
+                  initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  transition={{
+                    delay: wordIndex * 0.2 + letterIndex * 0.08,
+                    duration: 0.2,
+                  }}
+                  className="inline-block"
+                >
+                  {letter}
+                </motion.span>
+              ))}
+              <span className="inline-block">&nbsp;</span>
+            </motion.span>
+          ))
+        )}
       </motion.div>
     </AnimatePresence>
   );
