@@ -1519,29 +1519,308 @@
 }
 
 /* ============================================
-   RTL Support - Clean and Professional
+   RTL Support for Arabic
    ============================================ */
 
-/* Flip directional icons */
+/* Base RTL direction */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Text alignment */
+[dir="rtl"] .text-left {
+  text-align: right;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left;
+}
+
+/* Float */
+[dir="rtl"] .float-left {
+  float: right;
+}
+
+[dir="rtl"] .float-right {
+  float: left;
+}
+
+/* Margins - Auto */
+[dir="rtl"] .ml-auto {
+  margin-left: unset;
+  margin-right: auto;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-right: unset;
+  margin-left: auto;
+}
+
+/* Margins - Specific sizes (Tailwind classes) */
+[dir="rtl"] .ml-1 {
+  margin-left: 0;
+  margin-right: 0.25rem;
+}
+[dir="rtl"] .ml-2 {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+[dir="rtl"] .ml-3 {
+  margin-left: 0;
+  margin-right: 0.75rem;
+}
+[dir="rtl"] .ml-4 {
+  margin-left: 0;
+  margin-right: 1rem;
+}
+[dir="rtl"] .ml-6 {
+  margin-left: 0;
+  margin-right: 1.5rem;
+}
+[dir="rtl"] .ml-8 {
+  margin-left: 0;
+  margin-right: 2rem;
+}
+
+[dir="rtl"] .mr-1 {
+  margin-right: 0;
+  margin-left: 0.25rem;
+}
+[dir="rtl"] .mr-2 {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+[dir="rtl"] .mr-3 {
+  margin-right: 0;
+  margin-left: 0.75rem;
+}
+[dir="rtl"] .mr-4 {
+  margin-right: 0;
+  margin-left: 1rem;
+}
+[dir="rtl"] .mr-6 {
+  margin-right: 0;
+  margin-left: 1.5rem;
+}
+[dir="rtl"] .mr-8 {
+  margin-right: 0;
+  margin-left: 2rem;
+}
+
+/* Padding */
+[dir="rtl"] .pl-1 {
+  padding-left: 0;
+  padding-right: 0.25rem;
+}
+[dir="rtl"] .pl-2 {
+  padding-left: 0;
+  padding-right: 0.5rem;
+}
+[dir="rtl"] .pl-3 {
+  padding-left: 0;
+  padding-right: 0.75rem;
+}
+[dir="rtl"] .pl-4 {
+  padding-left: 0;
+  padding-right: 1rem;
+}
+[dir="rtl"] .pl-6 {
+  padding-left: 0;
+  padding-right: 1.5rem;
+}
+[dir="rtl"] .pl-8 {
+  padding-left: 0;
+  padding-right: 2rem;
+}
+
+[dir="rtl"] .pr-1 {
+  padding-right: 0;
+  padding-left: 0.25rem;
+}
+[dir="rtl"] .pr-2 {
+  padding-right: 0;
+  padding-left: 0.5rem;
+}
+[dir="rtl"] .pr-3 {
+  padding-right: 0;
+  padding-left: 0.75rem;
+}
+[dir="rtl"] .pr-4 {
+  padding-right: 0;
+  padding-left: 1rem;
+}
+[dir="rtl"] .pr-6 {
+  padding-right: 0;
+  padding-left: 1.5rem;
+}
+[dir="rtl"] .pr-8 {
+  padding-right: 0;
+  padding-left: 2rem;
+}
+
+/* Flex direction */
+[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+/* Border radius */
+[dir="rtl"] .rounded-l,
+[dir="rtl"] .rounded-l-lg,
+[dir="rtl"] .rounded-l-md,
+[dir="rtl"] .rounded-l-sm {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+}
+
+[dir="rtl"] .rounded-r,
+[dir="rtl"] .rounded-r-lg,
+[dir="rtl"] .rounded-r-md,
+[dir="rtl"] .rounded-r-sm {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: var(--radius);
+  border-bottom-left-radius: var(--radius);
+}
+
+/* Borders */
+[dir="rtl"] .border-l {
+  border-left: 0;
+  border-right: 1px solid;
+}
+[dir="rtl"] .border-r {
+  border-right: 0;
+  border-left: 1px solid;
+}
+
+/* Left/Right positioning */
+[dir="rtl"] .left-0 {
+  left: auto;
+  right: 0;
+}
+[dir="rtl"] .right-0 {
+  right: auto;
+  left: 0;
+}
+[dir="rtl"] .left-4 {
+  left: auto;
+  right: 1rem;
+}
+[dir="rtl"] .right-4 {
+  right: auto;
+  left: 1rem;
+}
+
+/* Icons and arrows */
 [dir="rtl"] .lucide-chevron-right,
 [dir="rtl"] .lucide-chevron-left,
 [dir="rtl"] .lucide-arrow-right,
-[dir="rtl"] .lucide-arrow-left {
+[dir="rtl"] .lucide-arrow-left,
+[dir="rtl"] svg[class*="chevron"],
+[dir="rtl"] svg[class*="arrow"] {
   transform: scaleX(-1);
 }
 
-/* Sidebar positioning */
+/* Sidebar specific RTL */
 [dir="rtl"] [data-sidebar="sidebar"] {
+  left: auto;
+  right: 0;
+}
+
+[dir="rtl"] [data-sidebar="sidebar"][data-state="collapsed"] {
+  left: auto;
+  right: 0;
+}
+
+/* Fix for sidebar trigger button */
+[dir="rtl"] [data-sidebar="trigger"] {
+  left: auto;
+  right: 0;
+}
+
+/* Dropdown menus */
+[dir="rtl"] [data-radix-popper-content-wrapper] {
   left: auto !important;
   right: 0 !important;
 }
 
+/* Input icons */
+[dir="rtl"] .relative > svg:first-child {
+  left: auto;
+  right: 0.75rem;
+}
+
+[dir="rtl"] .relative > svg:last-child {
+  right: auto;
+  left: 0.75rem;
+}
+
+/* ============================================
+   Enhanced Sidebar RTL Support
+   ============================================ */
+
+/* Sidebar container positioning */
 [dir="rtl"] .group.peer[data-side="left"] {
   left: auto !important;
   right: 0 !important;
 }
 
-/* Content padding for sidebar states */
+[dir="rtl"] [data-sidebar="sidebar"] {
+  left: auto !important;
+  right: 0 !important;
+}
+
+/* Sidebar trigger button */
+[dir="rtl"] [data-sidebar="trigger"] {
+  left: auto !important;
+  right: 0 !important;
+}
+
+/* Sidebar menu action buttons (right aligned in LTR, left aligned in RTL) */
+[dir="rtl"] [data-sidebar="menu-action"],
+[dir="rtl"] [data-sidebar="group-action"] {
+  right: auto !important;
+  left: 3px !important;
+}
+
+/* Sidebar menu badge (right aligned in LTR, left aligned in RTL) */
+[dir="rtl"] [data-sidebar="menu-badge"] {
+  right: auto !important;
+  left: 0.25rem !important;
+}
+
+/* Sidebar sub-menu border (left border in LTR, right border in RTL) */
+[dir="rtl"] [data-sidebar="menu-sub"] {
+  border-left: none !important;
+  border-right: 1px solid var(--sidebar-border) !important;
+  margin-left: 0 !important;
+  margin-right: 0.875rem !important;
+  padding-left: 0 !important;
+  padding-right: 0.625rem !important;
+  transform: translateX(-1px) !important;
+}
+
+/* Fix for sheet content (mobile sidebar) */
+[dir="rtl"] [data-mobile="true"] {
+  left: auto !important;
+  right: 0 !important;
+}
+
+/* Sidebar rail (hover area) */
+[dir="rtl"] [data-sidebar="rail"] {
+  left: auto !important;
+  right: 0 !important;
+}
+
+/* Fix for collapsed sidebar state */
+[dir="rtl"] .group.peer[data-state="collapsed"] {
+  left: auto !important;
+  right: 0 !important;
+}
+
+/* Content area adjustment for RTL */
 [dir="rtl"] .peer-data-\[state\=collapsed\]\:pl-12 {
   padding-left: 0 !important;
   padding-right: 3rem !important;
@@ -1552,18 +1831,20 @@
   padding-right: 16rem !important;
 }
 
-/* Sidebar sub-menu */
-[dir="rtl"] [data-sidebar="menu-sub"] {
-  border-left: none !important;
-  border-right: 1px solid var(--sidebar-border) !important;
-  margin-left: 0 !important;
-  margin-right: 0.875rem !important;
-  padding-left: 0 !important;
-  padding-right: 0.625rem !important;
+/* Inset adjustments */
+[dir="rtl"] .inset-x-0 {
+  left: 0 !important;
+  right: 0 !important;
 }
 
-/* Mobile sidebar */
-[dir="rtl"] [data-mobile="true"] {
+/* Group data positioning */
+[dir="rtl"] .group[data-side="left"] > div {
   left: auto !important;
   right: 0 !important;
 }
+
+/* ============================================
+   RTL Support - Minimal and Safe Approach
+   ============================================ */
+
+/* Let Tailwind handle RTL automatically - no manual overrides needed */

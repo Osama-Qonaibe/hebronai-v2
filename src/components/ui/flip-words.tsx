@@ -90,6 +90,7 @@ export const FlipWords = ({
                   duration: 0.2,
                 }}
                 className="inline-block"
+                style={{ unicodeBidi: "isolate" }}
               >
                 {letter}
               </motion.span>
