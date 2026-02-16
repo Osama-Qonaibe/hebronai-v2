@@ -79,64 +79,66 @@ export const SelectModel = (props: PropsWithChildren<SelectModelProps>) => {
           />
           <CommandList className="p-2">
             <CommandEmpty>No results found.</CommandEmpty>
-            {providers?.map((provider, i) => (
-              <Fragment key={provider.provider}>
-                <CommandGroup
-                  heading={
-                    <ProviderHeader
-                      provider={provider.provider}
-                      hasAPIKey={provider.hasAPIKey}
-                    />
-                  }
-                  className={cn(
-                    "pb-4 group",
-                    !provider.hasAPIKey && "opacity-50",
-                  )}
-                  onWheel={(e) => {
-                    e.stopPropagation();
-                  }}
-                  data-testid={`model-provider-${provider.provider}`}
-                >
-                  {provider.models.map((item) => (
-                    <CommandItem
-                      key={item.name}
-                      disabled={!provider.hasAPIKey}
-                      className="cursor-pointer"
-                      onSelect={() => {
-                        setModel({
-                          provider: provider.provider,
-                          model: item.name,
-                        });
-                        props.onSelect({
-                          provider: provider.provider,
-                          model: item.name,
-                        });
-                        setOpen(false);
-                      }}
-                      value={item.name}
-                      data-testid={`model-option-${provider.provider}-${item.name}`}
-                    >
-                      {model?.provider === provider.provider &&
-                      model?.model === item.name ? (
-                        <CheckIcon
-                          className="size-3"
-                          data-testid="selected-model-check"
-                        />
-                      ) : (
-                        <div className="ml-3" />
-                      )}
-                      <span className="pr-2">{item.name}</span>
-                      {item.isToolCallUnsupported && (
-                        <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
-                          No tools
-                        </div>
-                      )}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-                {i < providers?.length - 1 && <CommandSeparator />}
-              </Fragment>
-            ))}
+            {providers &&
+              Array.isArray(providers) &&
+              providers.map((provider, i) => (
+                <Fragment key={provider.provider}>
+                  <CommandGroup
+                    heading={
+                      <ProviderHeader
+                        provider={provider.provider}
+                        hasAPIKey={provider.hasAPIKey}
+                      />
+                    }
+                    className={cn(
+                      "pb-4 group",
+                      !provider.hasAPIKey && "opacity-50",
+                    )}
+                    onWheel={(e) => {
+                      e.stopPropagation();
+                    }}
+                    data-testid={`model-provider-${provider.provider}`}
+                  >
+                    {provider.models.map((item) => (
+                      <CommandItem
+                        key={item.name}
+                        disabled={!provider.hasAPIKey}
+                        className="cursor-pointer"
+                        onSelect={() => {
+                          setModel({
+                            provider: provider.provider,
+                            model: item.name,
+                          });
+                          props.onSelect({
+                            provider: provider.provider,
+                            model: item.name,
+                          });
+                          setOpen(false);
+                        }}
+                        value={item.name}
+                        data-testid={`model-option-${provider.provider}-${item.name}`}
+                      >
+                        {model?.provider === provider.provider &&
+                        model?.model === item.name ? (
+                          <CheckIcon
+                            className="size-3"
+                            data-testid="selected-model-check"
+                          />
+                        ) : (
+                          <div className="ml-3" />
+                        )}
+                        <span className="pr-2">{item.name}</span>
+                        {item.isToolCallUnsupported && (
+                          <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
+                            No tools
+                          </div>
+                        )}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                  {i < providers?.length - 1 && <CommandSeparator />}
+                </Fragment>
+              ))}
           </CommandList>
         </Command>
       </PopoverContent>
