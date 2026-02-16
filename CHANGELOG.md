@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.14.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.13.1...hebronai-v2-v1.14.0) (2026-02-16)
+
+
+### Features
+
+* Add PWA support with manifest and service worker ([f23e27c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f23e27ca2928fcf94a5704c26c5ffa081ed226a2))
+* Create icons folder for PWA setup ([f0a0b7d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f0a0b7d7d072c057f9fa33001a1624736ccd7314))
+
 ## [1.13.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.13.0...hebronai-v2-v1.13.1) (2026-02-16)
 
 
