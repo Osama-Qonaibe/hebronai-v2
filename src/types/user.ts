@@ -31,7 +31,7 @@ export type BasicUser = Omit<
   banned?: boolean | null;
   banReason?: string | null;
   banExpires?: Date | null;
-  plan?: "free" | "basic" | "premium";
+  plan?: "free" | "basic" | "pro" | "enterprise";
   planStatus?: "trial" | "active" | "expired";
   planExpiresAt?: Date;
 };
