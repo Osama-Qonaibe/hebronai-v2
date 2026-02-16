@@ -1517,3 +1517,73 @@
     @apply transition-colors duration-300;
   }
 }
+
+/* RTL Support for Arabic */
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] .text-left {
+  text-align: right;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left;
+}
+
+[dir="rtl"] .float-left {
+  float: right;
+}
+
+[dir="rtl"] .float-right {
+  float: left;
+}
+
+/* Flip margins and paddings */
+[dir="rtl"] .ml-auto {
+  margin-left: unset;
+  margin-right: auto;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-right: unset;
+  margin-left: auto;
+}
+
+/* Flip flex direction */
+[dir="rtl"] .flex-row {
+  flex-direction: row-reverse;
+}
+
+/* Flip border radius */
+[dir="rtl"] .rounded-l {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+}
+
+[dir="rtl"] .rounded-r {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: var(--radius);
+  border-bottom-left-radius: var(--radius);
+}
+
+/* Flip icons and arrows */
+[dir="rtl"] .lucide-chevron-right {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .lucide-chevron-left {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .lucide-arrow-right {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .lucide-arrow-left {
+  transform: scaleX(-1);
+}
