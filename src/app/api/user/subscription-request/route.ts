@@ -21,6 +21,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Check for existing pending request
+    const pendingRequest =
+      await subscriptionRequestRepository.getPendingRequest(session.user.id);
+
+    if (pendingRequest) {
+      return NextResponse.json(
+        {
+          error: "You already have a pending subscription request",
+          pendingRequest: {
+            id: pendingRequest.id,
+            requestedPlan: pendingRequest.requestedPlan,
+            status: pendingRequest.status,
+            createdAt: pendingRequest.createdAt,
+          },
+        },
+        { status: 409 },
+      );
+    }
+
     const body = await req.json();
     const validatedData = createRequestSchema.parse(body);
 

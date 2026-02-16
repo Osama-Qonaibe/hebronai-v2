@@ -44,6 +44,7 @@ interface SubscriptionCardProps {
   currentStatus: SubscriptionStatus;
   expiresAt: Date | null;
   isActive: boolean;
+  pendingRequest?: any | null;
 }
 
 function formatDate(date: Date): string {
@@ -59,6 +60,7 @@ export function SubscriptionCard({
   currentStatus,
   expiresAt,
   isActive,
+  pendingRequest,
 }: SubscriptionCardProps) {
   const t = useTranslations("Subscription");
   const [loading, setLoading] = useState(false);
@@ -75,6 +77,13 @@ export function SubscriptionCard({
 
   const handleUpgradeClick = (plan: SubscriptionPlan) => {
     if (plan === currentPlan) return;
+
+    // Prevent upgrade if there's a pending request
+    if (pendingRequest) {
+      alert(t("pendingRequestAlert", { plan: pendingRequest.requestedPlan }));
+      return;
+    }
+
     setSelectedPlan(plan);
     setTransactionId("");
     setNotes("");
@@ -326,7 +335,7 @@ export function SubscriptionCard({
                   <Button
                     className="w-full"
                     variant={isCurrent ? "outline" : "default"}
-                    disabled={isCurrent || loading}
+                    disabled={isCurrent || loading || pendingRequest !== null}
                     onClick={() => handleUpgradeClick(plan.name)}
                   >
                     {isCurrent

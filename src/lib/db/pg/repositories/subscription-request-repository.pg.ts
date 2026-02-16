@@ -1,6 +1,6 @@
 import { pgDb as db } from "../db.pg";
 import { SubscriptionRequestTable } from "../schema.pg";
-import { eq } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 
 export type RequestStatus = "pending" | "approved" | "rejected" | "processing";
 export type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "manual";
@@ -54,5 +54,21 @@ export const subscriptionRequestRepository = {
       .limit(1);
 
     return request;
+  },
+
+  getPendingRequest: async (userId: string) => {
+    const [request] = await db
+      .select()
+      .from(SubscriptionRequestTable)
+      .where(
+        and(
+          eq(SubscriptionRequestTable.userId, userId),
+          eq(SubscriptionRequestTable.status, "pending"),
+        ),
+      )
+      .orderBy(desc(SubscriptionRequestTable.createdAt))
+      .limit(1);
+
+    return request || null;
   },
 };

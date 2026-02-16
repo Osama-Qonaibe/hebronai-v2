@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { SubscriptionCard } from "@/components/subscription/subscription-card";
 import { getUserSubscription } from "lib/auth/subscription";
 import { getTranslations } from "next-intl/server";
+import { subscriptionRequestRepository } from "@/lib/db/pg/repositories/subscription-request-repository.pg";
+import { Alert, AlertDescription } from "ui/alert";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +21,11 @@ export default async function SubscriptionPage() {
     notFound();
   }
 
+  // Get pending subscription request
+  const pendingRequest = await subscriptionRequestRepository.getPendingRequest(
+    session.user.id,
+  );
+
   const t = await getTranslations("Subscription");
 
   return (
@@ -29,11 +36,22 @@ export default async function SubscriptionPage() {
           <p className="mt-2 text-muted-foreground">{t("subtitle")}</p>
         </div>
 
+        {pendingRequest && (
+          <Alert className="mb-6">
+            <AlertDescription>
+              {t("pendingRequestMessage", {
+                plan: pendingRequest.requestedPlan,
+              })}
+            </AlertDescription>
+          </Alert>
+        )}
+
         <SubscriptionCard
           currentPlan={subscription.plan}
           currentStatus={subscription.status}
           expiresAt={subscription.expiresAt}
           isActive={subscription.isActive}
+          pendingRequest={pendingRequest}
         />
       </div>
     </div>
