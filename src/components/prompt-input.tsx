@@ -118,7 +118,8 @@ export default function PromptInput({
   );
 
   const modelInfo = useMemo(() => {
-    const provider = providers?.find(
+    if (!providers || !Array.isArray(providers)) return undefined;
+    const provider = providers.find(
       (provider) => provider.provider === globalModel?.provider,
     );
     const model = provider?.models.find(
