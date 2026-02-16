@@ -1530,15 +1530,21 @@
   transform: scaleX(-1);
 }
 
-/* Sidebar positioning */
-[dir="rtl"] [data-sidebar="sidebar"] {
+/* Sidebar positioning - Fixed container */
+[dir="rtl"] [data-slot="sidebar-container"][data-side="left"] {
   left: auto !important;
   right: 0 !important;
 }
 
-[dir="rtl"] .group.peer[data-side="left"] {
+[dir="rtl"]
+  [data-slot="sidebar-container"][data-side="left"][data-collapsible="offcanvas"] {
+  right: calc(var(--sidebar-width) * -1) !important;
   left: auto !important;
-  right: 0 !important;
+}
+
+/* Sidebar gap */
+[dir="rtl"] [data-slot="sidebar-gap"] {
+  order: 1;
 }
 
 /* Content padding for sidebar states */
