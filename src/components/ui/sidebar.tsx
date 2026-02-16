@@ -166,9 +166,11 @@ function Sidebar({
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 
   // Auto-detect RTL and set side accordingly
+  // Use side prop if explicitly provided, otherwise auto-detect from document dir
   const isRTL =
-    typeof document !== "undefined" && document.documentElement.dir === "rtl";
-  const effectiveSide = side || (isRTL ? "right" : "left");
+    typeof document !== "undefined" &&
+    document.documentElement?.getAttribute("dir") === "rtl";
+  const effectiveSide = side !== undefined ? side : isRTL ? "right" : "left";
 
   if (collapsible === "none") {
     return (
