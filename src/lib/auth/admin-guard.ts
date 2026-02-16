@@ -17,20 +17,20 @@ export class ForbiddenError extends Error {
 
 export async function requireAuth() {
   const session = await getSession();
-  
+
   if (!session?.user) {
     throw new UnauthorizedError();
   }
-  
+
   return session;
 }
 
 export async function requireAdmin() {
   const session = await requireAuth();
-  
+
   if (session.user.role !== USER_ROLES.ADMIN) {
     throw new ForbiddenError();
   }
-  
+
   return session;
 }

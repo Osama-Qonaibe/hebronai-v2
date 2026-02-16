@@ -20,8 +20,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "HebronAI",
-  description:
-    "HebronAI is a chatbot that uses the Tools to answer questions.",
+  description: "HebronAI is a chatbot that uses the Tools to answer questions.",
 };
 
 export default async function RootLayout({

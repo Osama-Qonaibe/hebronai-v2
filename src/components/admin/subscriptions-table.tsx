@@ -36,7 +36,9 @@ export function SubscriptionsTable({ requests }: SubscriptionsTableProps) {
   const router = useRouter();
   const [selectedRequest, setSelectedRequest] =
     useState<AdminSubscriptionRequest | null>(null);
-  const [action, setAction] = useState<"approve" | "reject" | "delete" | null>(null);
+  const [action, setAction] = useState<"approve" | "reject" | "delete" | null>(
+    null,
+  );
   const [adminNotes, setAdminNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -50,7 +52,7 @@ export function SubscriptionsTable({ requests }: SubscriptionsTableProps) {
           `/api/admin/subscriptions/${selectedRequest.id}`,
           {
             method: "DELETE",
-          }
+          },
         );
 
         if (!response.ok) {
@@ -65,7 +67,7 @@ export function SubscriptionsTable({ requests }: SubscriptionsTableProps) {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action, adminNotes }),
-          }
+          },
         );
 
         if (!response.ok) {
@@ -73,15 +75,15 @@ export function SubscriptionsTable({ requests }: SubscriptionsTableProps) {
         }
 
         toast.success(
-          `Request ${action === "approve" ? "approved" : "rejected"} successfully`
+          `Request ${action === "approve" ? "approved" : "rejected"} successfully`,
         );
       }
-      
+
       setSelectedRequest(null);
       setAction(null);
       setAdminNotes("");
       router.refresh();
-    } catch (error) {
+    } catch (_error) {
       toast.error(`Failed to ${action} request`);
     } finally {
       setIsSubmitting(false);
@@ -89,7 +91,10 @@ export function SubscriptionsTable({ requests }: SubscriptionsTableProps) {
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+    const variants: Record<
+      string,
+      "default" | "secondary" | "destructive" | "outline"
+    > = {
       pending: "secondary",
       approved: "default",
       rejected: "destructive",
@@ -220,11 +225,20 @@ export function SubscriptionsTable({ requests }: SubscriptionsTableProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {action === "approve" ? "Approve" : action === "reject" ? "Reject" : "Delete"} Subscription Request
+              {action === "approve"
+                ? "Approve"
+                : action === "reject"
+                  ? "Reject"
+                  : "Delete"}{" "}
+              Subscription Request
             </DialogTitle>
             <DialogDescription>
               {selectedRequest?.userName} - {selectedRequest?.requestedPlan}
-              {action === "delete" && <div className="text-destructive mt-2">This action cannot be undone.</div>}
+              {action === "delete" && (
+                <div className="text-destructive mt-2">
+                  This action cannot be undone.
+                </div>
+              )}
             </DialogDescription>
           </DialogHeader>
           {action !== "delete" && (
@@ -255,7 +269,11 @@ export function SubscriptionsTable({ requests }: SubscriptionsTableProps) {
             <Button
               onClick={handleAction}
               disabled={isSubmitting}
-              variant={action === "reject" || action === "delete" ? "destructive" : "default"}
+              variant={
+                action === "reject" || action === "delete"
+                  ? "destructive"
+                  : "default"
+              }
             >
               {isSubmitting ? "Processing..." : `Confirm ${action}`}
             </Button>

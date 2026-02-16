@@ -78,8 +78,18 @@ export interface AdminStats {
 
 export type AdminRepository = {
   getUsers: (query?: AdminUsersQuery) => Promise<AdminUsersPaginated>;
-  getSubscriptionRequests: (status?: RequestStatus) => Promise<AdminSubscriptionRequest[]>;
-  approveSubscriptionRequest: (requestId: string, adminId: string, adminNotes?: string) => Promise<void>;
-  rejectSubscriptionRequest: (requestId: string, adminId: string, adminNotes?: string) => Promise<void>;
+  getSubscriptionRequests: (
+    status?: RequestStatus,
+  ) => Promise<AdminSubscriptionRequest[]>;
+  approveSubscriptionRequest: (
+    requestId: string,
+    adminId: string,
+    adminNotes?: string,
+  ) => Promise<void>;
+  rejectSubscriptionRequest: (
+    requestId: string,
+    adminId: string,
+    adminNotes?: string,
+  ) => Promise<void>;
   getAdminStats: () => Promise<AdminStats>;
 };

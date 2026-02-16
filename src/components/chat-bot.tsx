@@ -513,7 +513,11 @@ function DeleteThreadPopup({
   threadId,
   onClose,
   open,
-}: { threadId: string; onClose: () => void; open: boolean }) {
+}: {
+  threadId: string;
+  onClose: () => void;
+  open: boolean;
+}) {
   const t = useTranslations();
   const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();

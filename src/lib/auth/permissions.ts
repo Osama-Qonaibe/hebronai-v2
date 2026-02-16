@@ -4,7 +4,11 @@ import { getIsUserAdmin } from "lib/user/utils";
 import { admin, editor, user as userRole } from "./roles";
 import type { BetterAuthRole } from "./types";
 import { parseRoleString, isBetterAuthRole } from "./types";
-import { getUserSubscription, requireActiveSubscription, type SubscriptionPlan } from "./subscription";
+import {
+  getUserSubscription,
+  requireActiveSubscription,
+  type SubscriptionPlan,
+} from "./subscription";
 
 export async function hasAdminPermission(): Promise<boolean> {
   try {
@@ -312,6 +316,8 @@ export async function canShareMCPServer(): Promise<boolean> {
   return await hasAdminPermission();
 }
 
-export async function requireSubscription(minPlan: SubscriptionPlan = "free"): Promise<void> {
+export async function requireSubscription(
+  minPlan: SubscriptionPlan = "free",
+): Promise<void> {
   await requireActiveSubscription(minPlan);
 }

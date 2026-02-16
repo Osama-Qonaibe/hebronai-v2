@@ -43,9 +43,7 @@ import { BasicUser } from "app-types/user";
 import { getUserAvatar } from "lib/user/utils";
 import { Skeleton } from "ui/skeleton";
 
-export function AppSidebarUserInner(props: {
-  user?: BasicUser;
-}) {
+export function AppSidebarUserInner(props: { user?: BasicUser }) {
   const { data: user } = useSWR<BasicUser>(`/api/user/details`, fetcher, {
     fallbackData: props.user,
     suspense: true,
@@ -139,10 +137,7 @@ export function AppSidebarUserInner(props: {
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                window.open(
-                  "https://www.facebook.com/virallinkup",
-                  "_blank",
-                );
+                window.open("https://www.facebook.com/virallinkup", "_blank");
               }}
             >
               <Facebook className="size-4 text-foreground" />
@@ -150,7 +145,10 @@ export function AppSidebarUserInner(props: {
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                window.open("https://www.instagram.com/virallinkup_services", "_blank");
+                window.open(
+                  "https://www.instagram.com/virallinkup_services",
+                  "_blank",
+                );
               }}
             >
               <Instagram className="size-4 text-foreground" />
@@ -312,11 +310,7 @@ export function AppSidebarUserSkeleton() {
   );
 }
 
-export function AppSidebarUser({
-  user,
-}: {
-  user?: BasicUser;
-}) {
+export function AppSidebarUser({ user }: { user?: BasicUser }) {
   return (
     <Suspense fallback={<AppSidebarUserSkeleton />}>
       <AppSidebarUserInner user={user} />

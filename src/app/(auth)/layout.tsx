@@ -5,7 +5,9 @@ import { BackgroundPaths } from "ui/background-paths";
 
 export default async function AuthLayout({
   children,
-}: { children: React.ReactNode }) {
+}: {
+  children: React.ReactNode;
+}) {
   const t = await getTranslations("Auth.Intro");
   return (
     <main className="relative w-full flex flex-col h-screen">

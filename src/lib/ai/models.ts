@@ -20,7 +20,7 @@ import {
   ANTHROPIC_FILE_MIME_TYPES,
   XAI_FILE_MIME_TYPES,
 } from "./file-support";
- // Ollama configuration with Cloud support
+// Ollama configuration with Cloud support
 const ollamaConfig: Parameters<typeof createOllama>[0] = {
   baseURL: process.env.OLLAMA_BASE_URL || "http://localhost:11434/api",
 };
@@ -50,43 +50,43 @@ const staticModels = {
     "gpt-5.2-codex": openai("gpt-5.2-codex"), // Latest coding
     "gpt-5-nano": openai("gpt-5-nano"), // Fastest & cheapest GPT-5
     "gpt-5-mini": openai("gpt-5-mini"), // Fast & affordable
-    
+
     // GPT-5.1 Series
     "gpt-5.1": openai("gpt-5.1"),
     "gpt-5.1-chat": openai("gpt-5.1-chat-latest"),
     "gpt-5.1-codex": openai("gpt-5.1-codex"),
     "gpt-5.1-codex-mini": openai("gpt-5.1-codex-mini"),
-    
+
     // ============================================
     // GPT-4 Series
     // ============================================
     "gpt-4.1": openai("gpt-4.1"),
     "gpt-4.1-mini": openai("gpt-4.1-mini"),
     "gpt-4.1-nano": openai("gpt-4.1-nano"), // Cheapest GPT-4
-    
+
     // ============================================
     // Reasoning Models (o-series)
     // ============================================
     "o4-mini": openai("o4-mini"),
-    "o3": openai("o3"),
-    
+    o3: openai("o3"),
+
     // ============================================
     // Image Generation Models
     // ============================================
     "gpt-image-1.5": openai("gpt-image-1.5"), // Latest image generation
     "dall-e-3": openai("dall-e-3"), // DALL-E 3
-    
+
     // ============================================
     // Video Generation Models (Sora)
     // ============================================
     "sora-2-pro": openai("sora-2-pro"), // 4K video with audio sync
     "sora-2": openai("sora-2"), // 1080p video generation
-    
+
     // ============================================
     // Audio Models
     // ============================================
     "gpt-audio": openai("gpt-audio"), // Advanced audio I/O
-    "whisper": openai("whisper"), // Speech-to-text (best accuracy)
+    whisper: openai("whisper"), // Speech-to-text (best accuracy)
     "tts-1-hd": openai("tts-1-hd"), // Text-to-speech HD quality
     "tts-1": openai("tts-1"), // Text-to-speech standard
   },
@@ -131,29 +131,27 @@ const staticModels = {
     // ============================================
     // Routes to best model automatically based on task
     // Configure allowed models at: https://openrouter.ai/settings/preferences
-    "auto": openrouter("openrouter/auto"),
-    
+    auto: openrouter("openrouter/auto"),
+
     // ============================================
     // OpenRouter Premium Models (Verified Working)
     // Models not available via direct API keys
     // No duplicates with OpenAI/Anthropic/Google providers
     // ============================================
-    
+
     // Balanced Performance
     "claude-3.5-sonnet": openrouter("anthropic/claude-3.5-sonnet"), // $3/$15 per 1M tokens
-    
+
     // Large Scale Open Models
     "llama-3.1-405b": openrouter("meta-llama/llama-3.1-405b-instruct"), // $2.70/$2.70 per 1M tokens
     "mixtral-8x22b": openrouter("mistralai/mixtral-8x22b-instruct"), // $0.65/$0.65 per 1M tokens
-    
+
     // Most Cost-Effective
     "deepseek-chat-v3": openrouter("deepseek/deepseek-chat"), // $0.14/$0.28 per 1M tokens - Best value!
   },
 };
 
-const staticUnsupportedModels = new Set([
-  staticModels.openai["o4-mini"],
-]);
+const staticUnsupportedModels = new Set([staticModels.openai["o4-mini"]]);
 
 const staticSupportImageInputModels = {
   ...staticModels.google,
@@ -178,16 +176,28 @@ const registerFileSupport = (
 // OpenAI GPT-5 series support
 registerFileSupport(staticModels.openai["gpt-5.2-pro"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.openai["gpt-5.2"], OPENAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.openai["gpt-5.2-chat"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(
+  staticModels.openai["gpt-5.2-chat"],
+  OPENAI_FILE_MIME_TYPES,
+);
 registerFileSupport(staticModels.openai["gpt-5-mini"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.openai["gpt-5-nano"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.openai["gpt-5.1"], OPENAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.openai["gpt-5.1-chat"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(
+  staticModels.openai["gpt-5.1-chat"],
+  OPENAI_FILE_MIME_TYPES,
+);
 
 // OpenAI GPT-4 series support
 registerFileSupport(staticModels.openai["gpt-4.1"], OPENAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.openai["gpt-4.1-mini"], OPENAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.openai["gpt-4.1-nano"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(
+  staticModels.openai["gpt-4.1-mini"],
+  OPENAI_FILE_MIME_TYPES,
+);
+registerFileSupport(
+  staticModels.openai["gpt-4.1-nano"],
+  OPENAI_FILE_MIME_TYPES,
+);
 
 // Google Gemini support
 registerFileSupport(

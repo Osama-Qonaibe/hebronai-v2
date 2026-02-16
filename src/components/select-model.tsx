@@ -147,7 +147,10 @@ export const SelectModel = (props: PropsWithChildren<SelectModelProps>) => {
 const ProviderHeader = memo(function ProviderHeader({
   provider,
   hasAPIKey,
-}: { provider: string; hasAPIKey: boolean }) {
+}: {
+  provider: string;
+  hasAPIKey: boolean;
+}) {
   return (
     <div className="text-sm text-muted-foreground flex items-center gap-1.5 group-hover:text-foreground transition-colors duration-300">
       {provider === "openai" ? (

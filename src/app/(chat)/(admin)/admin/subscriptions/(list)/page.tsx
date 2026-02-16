@@ -27,9 +27,7 @@ export default async function SubscriptionsListPage({
   }
 
   const params = await searchParams;
-  const requests = await adminRepository.getSubscriptionRequests(
-    params.status
-  );
+  const requests = await adminRepository.getSubscriptionRequests(params.status);
 
   return <SubscriptionsTable requests={requests} />;
 }

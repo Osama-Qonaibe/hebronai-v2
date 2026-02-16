@@ -49,7 +49,7 @@ export async function requireActiveSubscription(
   minPlan: SubscriptionPlan = "free",
 ): Promise<void> {
   const subscription = await getUserSubscription();
-  
+
   if (!subscription) {
     throw new Error("No subscription found");
   }
@@ -58,7 +58,12 @@ export async function requireActiveSubscription(
     throw new Error("Subscription is not active");
   }
 
-  const planHierarchy: SubscriptionPlan[] = ["free", "basic", "pro", "enterprise"];
+  const planHierarchy: SubscriptionPlan[] = [
+    "free",
+    "basic",
+    "pro",
+    "enterprise",
+  ];
   const userPlanIndex = planHierarchy.indexOf(subscription.plan);
   const minPlanIndex = planHierarchy.indexOf(minPlan);
 

@@ -189,9 +189,6 @@ export const pgUserRepository: UserRepository = {
       updateData.planExpiresAt = planExpiresAt;
     }
 
-    await db
-      .update(UserTable)
-      .set(updateData)
-      .where(eq(UserTable.id, userId));
+    await db.update(UserTable).set(updateData).where(eq(UserTable.id, userId));
   },
 };

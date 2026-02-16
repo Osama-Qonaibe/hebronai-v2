@@ -2,9 +2,23 @@
 
 import { useState } from "react";
 import { Button } from "ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "ui/card";
 import { Badge } from "ui/badge";
-import { Check, Sparkles, ExternalLink, Copy, CheckCheck, MessageCircle, Send } from "lucide-react";
+import {
+  Check,
+  Sparkles,
+  ExternalLink,
+  Copy,
+  CheckCheck,
+  MessageCircle,
+  Send,
+} from "lucide-react";
 import { PLANS, type SubscriptionPlan } from "@/lib/subscription/plans";
 import { getPaymentLink, getBankTransferDetails } from "@/lib/payment/config";
 import {
@@ -46,7 +60,9 @@ export function SubscriptionCard({
   isActive,
 }: SubscriptionCardProps) {
   const [loading, setLoading] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(
+    null,
+  );
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("paypal");
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [transactionId, setTransactionId] = useState("");
@@ -63,11 +79,16 @@ export function SubscriptionCard({
   };
 
   const handlePayNowAndSubmit = async () => {
-    if (!selectedPlan || selectedPlan === "free" || selectedPlan === "enterprise") return;
+    if (
+      !selectedPlan ||
+      selectedPlan === "free" ||
+      selectedPlan === "enterprise"
+    )
+      return;
 
     const link = getPaymentLink(
       paymentMethod as "paypal" | "stripe",
-      selectedPlan as "basic" | "pro"
+      selectedPlan as "basic" | "pro",
     );
 
     if (link) {
@@ -77,7 +98,7 @@ export function SubscriptionCard({
     setLoading(true);
     try {
       const planDetails = PLANS[selectedPlan];
-      
+
       const response = await fetch("/api/user/subscription-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -131,7 +152,7 @@ export function SubscriptionCard({
     setLoading(true);
     try {
       const planDetails = PLANS[selectedPlan];
-      
+
       const response = await fetch("/api/user/subscription-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -165,7 +186,7 @@ export function SubscriptionCard({
 
   const handleEnterpriseContact = () => {
     const message = encodeURIComponent(
-      `مرحباً، أرغب في الاستفسار عن خطة Enterprise للشركات.\n\nأود معرفة المزيد عن المميزات والأسعار المخصصة.`
+      `مرحباً، أرغب في الاستفسار عن خطة Enterprise للشركات.\n\nأود معرفة المزيد عن المميزات والأسعار المخصصة.`,
     );
 
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
@@ -177,7 +198,7 @@ export function SubscriptionCard({
 
     const planDetails = PLANS[selectedPlan];
     const message = encodeURIComponent(
-      `مرحباً، أرغب في الترقية إلى خطة ${planDetails.displayName} (${planDetails.priceDisplay}/شهر).\n\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\n\nأحتاج مساعدة.`
+      `مرحباً، أرغب في الترقية إلى خطة ${planDetails.displayName} (${planDetails.priceDisplay}/شهر).\n\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\n\nأحتاج مساعدة.`,
     );
 
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
@@ -196,9 +217,12 @@ export function SubscriptionCard({
   const plans = Object.values(PLANS);
   const selectedPlanDetails = selectedPlan ? PLANS[selectedPlan] : null;
   const isEnterprisePlan = selectedPlan === "enterprise";
-  const showPayButton = selectedPlan && (selectedPlan === "basic" || selectedPlan === "pro") && 
-                        (paymentMethod === "paypal" || paymentMethod === "stripe");
-  const showBankDetails = paymentMethod === "bank_transfer" && !isEnterprisePlan;
+  const showPayButton =
+    selectedPlan &&
+    (selectedPlan === "basic" || selectedPlan === "pro") &&
+    (paymentMethod === "paypal" || paymentMethod === "stripe");
+  const showBankDetails =
+    paymentMethod === "bank_transfer" && !isEnterprisePlan;
 
   return (
     <>
@@ -207,10 +231,9 @@ export function SubscriptionCard({
           <CardHeader>
             <CardTitle>Current Plan</CardTitle>
             <CardDescription>
-              You are on the <strong>{PLANS[currentPlan].displayName}</strong> plan
-              {expiresAt && (
-                <span> - Expires {formatDate(expiresAt)}</span>
-              )}
+              You are on the <strong>{PLANS[currentPlan].displayName}</strong>{" "}
+              plan
+              {expiresAt && <span> - Expires {formatDate(expiresAt)}</span>}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -298,7 +321,11 @@ export function SubscriptionCard({
                     disabled={isCurrent || loading}
                     onClick={() => handleUpgradeClick(plan.name)}
                   >
-                    {isCurrent ? "Current Plan" : plan.name === "enterprise" ? "Contact Us" : "Upgrade"}
+                    {isCurrent
+                      ? "Current Plan"
+                      : plan.name === "enterprise"
+                        ? "Contact Us"
+                        : "Upgrade"}
                   </Button>
                 </CardContent>
               </Card>
@@ -311,18 +338,21 @@ export function SubscriptionCard({
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {isEnterprisePlan ? "Enterprise Plan" : `Upgrade to ${selectedPlanDetails?.displayName}`}
-              {selectedPlanDetails && selectedPlanDetails.price > 0 && !isEnterprisePlan && (
-                <span className="ml-2 text-primary">
-                  ${selectedPlanDetails.price}/{selectedPlanDetails.period}
-                </span>
-              )}
+              {isEnterprisePlan
+                ? "Enterprise Plan"
+                : `Upgrade to ${selectedPlanDetails?.displayName}`}
+              {selectedPlanDetails &&
+                selectedPlanDetails.price > 0 &&
+                !isEnterprisePlan && (
+                  <span className="ml-2 text-primary">
+                    ${selectedPlanDetails.price}/{selectedPlanDetails.period}
+                  </span>
+                )}
             </DialogTitle>
             <DialogDescription>
-              {isEnterprisePlan 
+              {isEnterprisePlan
                 ? "تواصل معنا للحصول على عرض مخصص يناسب احتياجات مؤسستك"
-                : "اختر طريقة الدفع وأرسل الطلب"
-              }
+                : "اختر طريقة الدفع وأرسل الطلب"}
             </DialogDescription>
           </DialogHeader>
 
@@ -334,7 +364,8 @@ export function SubscriptionCard({
                     <div className="space-y-3 text-center">
                       <h3 className="font-semibold text-lg">خطة الشركات</h3>
                       <p className="text-sm text-muted-foreground">
-                        احصل على حلول مخصصة بالكامل لاحتياجات مؤسستك مع دعم مخصص وأولوية في الخدمة
+                        احصل على حلول مخصصة بالكامل لاحتياجات مؤسستك مع دعم مخصص
+                        وأولوية في الخدمة
                       </p>
                       <div className="pt-2 space-y-2">
                         <div className="flex items-center gap-2 text-sm">
@@ -375,7 +406,10 @@ export function SubscriptionCard({
               <>
                 <div className="space-y-2">
                   <Label>طريقة الدفع</Label>
-                  <RadioGroup value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as PaymentMethod)}>
+                  <RadioGroup
+                    value={paymentMethod}
+                    onValueChange={(v) => setPaymentMethod(v as PaymentMethod)}
+                  >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="paypal" id="paypal" />
                       <Label htmlFor="paypal">PayPal</Label>
@@ -400,7 +434,9 @@ export function SubscriptionCard({
                       disabled={loading}
                     >
                       <ExternalLink className="h-4 w-4" />
-                      {loading ? "جاري الإرسال..." : `Pay ${selectedPlanDetails?.priceDisplay} & Submit Request`}
+                      {loading
+                        ? "جاري الإرسال..."
+                        : `Pay ${selectedPlanDetails?.priceDisplay} & Submit Request`}
                     </Button>
                     <Alert>
                       <AlertDescription>
@@ -414,11 +450,15 @@ export function SubscriptionCard({
                   <>
                     <Card className="bg-muted/50">
                       <CardHeader>
-                        <CardTitle className="text-base">تفاصيل التحويل البنكي</CardTitle>
+                        <CardTitle className="text-base">
+                          تفاصيل التحويل البنكي
+                        </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-3">
                         <div className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">رقم الحساب</Label>
+                          <Label className="text-xs text-muted-foreground">
+                            رقم الحساب
+                          </Label>
                           <div className="flex items-center gap-2">
                             <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
                               {bankDetails.accountNumber}
@@ -426,15 +466,23 @@ export function SubscriptionCard({
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => handleCopy(bankDetails.accountNumber, "account")}
+                              onClick={() =>
+                                handleCopy(bankDetails.accountNumber, "account")
+                              }
                             >
-                              {copiedField === "account" ? <CheckCheck className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                              {copiedField === "account" ? (
+                                <CheckCheck className="h-4 w-4" />
+                              ) : (
+                                <Copy className="h-4 w-4" />
+                              )}
                             </Button>
                           </div>
                         </div>
 
                         <div className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">دفع لصديق</Label>
+                          <Label className="text-xs text-muted-foreground">
+                            دفع لصديق
+                          </Label>
                           <div className="flex items-center gap-2">
                             <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
                               {bankDetails.friendPayNumber}
@@ -442,15 +490,26 @@ export function SubscriptionCard({
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => handleCopy(bankDetails.friendPayNumber, "friend")}
+                              onClick={() =>
+                                handleCopy(
+                                  bankDetails.friendPayNumber,
+                                  "friend",
+                                )
+                              }
                             >
-                              {copiedField === "friend" ? <CheckCheck className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                              {copiedField === "friend" ? (
+                                <CheckCheck className="h-4 w-4" />
+                              ) : (
+                                <Copy className="h-4 w-4" />
+                              )}
                             </Button>
                           </div>
                         </div>
 
                         <div className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">محفظة ريفلكت</Label>
+                          <Label className="text-xs text-muted-foreground">
+                            محفظة ريفلكت
+                          </Label>
                           <div className="flex items-center gap-2">
                             <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
                               {bankDetails.reflectWallet}
@@ -458,15 +517,23 @@ export function SubscriptionCard({
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => handleCopy(bankDetails.reflectWallet, "reflect")}
+                              onClick={() =>
+                                handleCopy(bankDetails.reflectWallet, "reflect")
+                              }
                             >
-                              {copiedField === "reflect" ? <CheckCheck className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                              {copiedField === "reflect" ? (
+                                <CheckCheck className="h-4 w-4" />
+                              ) : (
+                                <Copy className="h-4 w-4" />
+                              )}
                             </Button>
                           </div>
                         </div>
 
                         <div className="pt-2 border-t">
-                          <p className="text-sm font-medium">{bankDetails.bankName}</p>
+                          <p className="text-sm font-medium">
+                            {bankDetails.bankName}
+                          </p>
                         </div>
                       </CardContent>
                     </Card>

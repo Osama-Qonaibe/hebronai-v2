@@ -27,10 +27,9 @@ export default async function SubscriptionsLayout({
                 {t("title", { default: "Subscription Requests" })}
               </CardTitle>
               <CardDescription>
-                {t(
-                  "description",
-                  { default: "Review and manage subscription requests" }
-                )}
+                {t("description", {
+                  default: "Review and manage subscription requests",
+                })}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-2 md:p-6 w-full">{children}</CardContent>
