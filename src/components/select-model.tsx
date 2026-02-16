@@ -136,7 +136,9 @@ export const SelectModel = (props: PropsWithChildren<SelectModelProps>) => {
                       </CommandItem>
                     ))}
                   </CommandGroup>
-                  {i < providers?.length - 1 && <CommandSeparator />}
+                  {providers && i < providers.length - 1 && (
+                    <CommandSeparator />
+                  )}
                 </Fragment>
               ))}
           </CommandList>

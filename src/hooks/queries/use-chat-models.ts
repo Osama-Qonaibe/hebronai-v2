@@ -19,11 +19,14 @@ export const useChatModels = (options?: SWRConfiguration) => {
     revalidateOnFocus: false,
     fallbackData: [],
     onSuccess: (data) => {
+      if (!data || !Array.isArray(data) || data.length === 0) return;
       const status = appStore.getState();
       if (!status.chatModel) {
-        const firstProvider = data[0].provider;
-        const model = data[0].models[0].name;
-        appStore.setState({ chatModel: { provider: firstProvider, model } });
+        const firstProvider = data[0]?.provider;
+        const model = data[0]?.models?.[0]?.name;
+        if (firstProvider && model) {
+          appStore.setState({ chatModel: { provider: firstProvider, model } });
+        }
       }
     },
     ...options,

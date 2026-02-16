@@ -327,22 +327,24 @@ const GenerateExampleInputJsonDialog = ({
               <SelectValue placeholder="Select a model" />
             </SelectTrigger>
             <SelectContent>
-              {providers?.map((provider) => (
-                <SelectGroup key={provider.provider}>
-                  <SelectLabel>{provider.provider}</SelectLabel>
-                  {provider.models.map((model) => (
-                    <SelectItem
-                      key={model.name}
-                      value={JSON.stringify({
-                        provider: provider.provider,
-                        model: model.name,
-                      })}
-                    >
-                      {model.name}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              ))}
+              {providers &&
+                Array.isArray(providers) &&
+                providers.map((provider) => (
+                  <SelectGroup key={provider.provider}>
+                    <SelectLabel>{provider.provider}</SelectLabel>
+                    {provider.models.map((model) => (
+                      <SelectItem
+                        key={model.name}
+                        value={JSON.stringify({
+                          provider: provider.provider,
+                          model: model.name,
+                        })}
+                      >
+                        {model.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                ))}
             </SelectContent>
           </Select>
           <div className="my-2" />
