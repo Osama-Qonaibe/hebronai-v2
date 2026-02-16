@@ -2,7 +2,6 @@ import { getSession } from "auth/server";
 import { notFound } from "next/navigation";
 import { SubscriptionCard } from "@/components/subscription/subscription-card";
 import { getUserSubscription } from "lib/auth/subscription";
-import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
