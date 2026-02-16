@@ -743,6 +743,25 @@
       "failedToUpdateRole": "فشل في تحديث الدور",
       "cannotUpdateOwnRole": "لا يمكنك تحديث دورك الخاص",
       "roleUpdatedSuccessfullyTo": "تم تحديث دور المستخدم بنجاح إلى {role}"
+    },
+    "Subscriptions": {
+      "title": "طلبات الاشتراك",
+      "allRequests": "جميع الطلبات",
+      "viewAndManageRequests": "عرض وإدارة طلبات الاشتراك",
+      "pending": "معلق",
+      "approved": "موافق عليه",
+      "rejected": "مرفوض",
+      "requestedPlan": "الخطة المطلوبة",
+      "paymentMethod": "طريقة الدفع",
+      "amount": "المبلغ",
+      "requestedAt": "تاريخ الطلب",
+      "approve": "موافقة",
+      "reject": "رفض",
+      "adminNotes": "ملاحظات المسؤول",
+      "approveRequest": "موافقة على الطلب",
+      "rejectRequest": "رفض الطلب",
+      "requestApproved": "تمت الموافقة على الطلب",
+      "requestRejected": "تم رفض الطلب"
     }
   },
   "MCP": {
@@ -815,6 +834,8 @@
     "year": "سنة",
     "forever": "دائماً",
     "custom": "مخصص",
+    "pendingRequestMessage": "لديك طلب معلق للترقية إلى {plan}. يرجى انتظار موافقة المسؤول.",
+    "pendingRequestAlert": "لديك طلب معلق للترقية إلى {plan}. لا يمكنك إرسال طلب جديد حتى تتم الموافقة على الطلب الحالي أو رفضه.",
     "plans": {
       "free": "مجاني",
       "basic": "أساسي",
