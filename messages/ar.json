@@ -795,5 +795,47 @@
     "publicDescription": "مميز لجميع المستخدمين للاستخدام",
     "featured": "مميز",
     "featuredDescription": "مميز لجميع المستخدمين للاستخدام"
+  },
+  "Subscription": {
+    "title": "خطط الاشتراك",
+    "subtitle": "اختر الخطة التي تناسب احتياجاتك",
+    "currentPlan": "الخطة الحالية",
+    "youAreOnPlan": "أنت على خطة",
+    "expires": "تنتهي في",
+    "popular": "الأكثر شعبية",
+    "upgrade": "ترقية",
+    "contactUs": "تواصل معنا",
+    "upgradeTo": "الترقية إلى",
+    "unlimited": "غير محدود",
+    "agents": "وكلاء",
+    "workflows": "سير عمل",
+    "mcpServers": "خوادم MCP",
+    "tokensPerMonth": "رمز/شهر",
+    "month": "شهر",
+    "year": "سنة",
+    "forever": "دائماً",
+    "plans": {
+      "free": "مجاني",
+      "basic": "أساسي",
+      "pro": "احترافي",
+      "enterprise": "الشركات"
+    },
+    "features": {
+      "customAgents": "وكلاء مخصصون",
+      "communitySupport": "دعم المجتمع",
+      "emailSupport": "دعم البريد الإلكتروني",
+      "priorityQueue": "أولوية في الطابور",
+      "prioritySupport": "دعم ذو أولوية",
+      "advancedAnalytics": "تحليلات متقدمة",
+      "teamCollaboration": "تعاون الفريق",
+      "unlimitedAgents": "وكلاء غير محدودين",
+      "unlimitedWorkflows": "سير عمل غير محدود",
+      "unlimitedMcpServers": "خوادم MCP غير محدودة",
+      "unlimitedTokens": "رموز غير محدودة",
+      "dedicatedSupport": "دعم مخصص",
+      "slaGuarantee": "ضمان SLA",
+      "customIntegration": "تكامل مخصص",
+      "onPremiseOption": "خيار داخل المؤسسة"
+    }
   }
 }

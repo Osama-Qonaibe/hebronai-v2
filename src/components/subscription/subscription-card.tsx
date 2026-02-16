@@ -34,6 +34,7 @@ import { RadioGroup, RadioGroupItem } from "ui/radio-group";
 import { Alert, AlertDescription } from "ui/alert";
 import { Input } from "ui/input";
 import { Textarea } from "ui/textarea";
+import { useTranslations } from "next-intl";
 
 type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
 type PaymentMethod = "stripe" | "paypal" | "bank_transfer";
@@ -59,6 +60,7 @@ export function SubscriptionCard({
   expiresAt,
   isActive,
 }: SubscriptionCardProps) {
+  const t = useTranslations("Subscription");
   const [loading, setLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(
     null,
@@ -229,11 +231,15 @@ export function SubscriptionCard({
       <div className="space-y-6">
         <Card className="border-2">
           <CardHeader>
-            <CardTitle>Current Plan</CardTitle>
+            <CardTitle>{t("currentPlan")}</CardTitle>
             <CardDescription>
-              You are on the <strong>{PLANS[currentPlan].displayName}</strong>{" "}
-              plan
-              {expiresAt && <span> - Expires {formatDate(expiresAt)}</span>}
+              {t("youAreOnPlan")} <strong>{t(`plans.${currentPlan}`)}</strong>
+              {expiresAt && (
+                <span>
+                  {" "}
+                  - {t("expires")} {formatDate(expiresAt)}
+                </span>
+              )}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -258,18 +264,18 @@ export function SubscriptionCard({
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <Badge className="gap-1">
                       <Sparkles className="h-3 w-3" />
-                      Popular
+                      {t("popular")}
                     </Badge>
                   </div>
                 )}
 
                 <CardHeader>
-                  <CardTitle>{plan.displayName}</CardTitle>
+                  <CardTitle>{t(`plans.${plan.name}`)}</CardTitle>
                   <div className="text-3xl font-bold">
                     {plan.priceDisplay}
                     {plan.price > 0 && (
                       <span className="text-sm font-normal text-muted-foreground">
-                        /{plan.period}
+                        /{t(plan.period)}
                       </span>
                     )}
                   </div>
@@ -281,36 +287,36 @@ export function SubscriptionCard({
                       <Check className="h-4 w-4 text-primary" />
                       <span className="text-sm">
                         {plan.limits.maxAgents === -1
-                          ? "Unlimited"
+                          ? t("unlimited")
                           : plan.limits.maxAgents}{" "}
-                        Agents
+                        {t("agents")}
                       </span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-primary" />
                       <span className="text-sm">
                         {plan.limits.maxWorkflows === -1
-                          ? "Unlimited"
+                          ? t("unlimited")
                           : plan.limits.maxWorkflows}{" "}
-                        Workflows
+                        {t("workflows")}
                       </span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-primary" />
                       <span className="text-sm">
                         {plan.limits.maxMCPServers === -1
-                          ? "Unlimited"
+                          ? t("unlimited")
                           : plan.limits.maxMCPServers}{" "}
-                        MCP Servers
+                        {t("mcpServers")}
                       </span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-primary" />
                       <span className="text-sm">
                         {plan.limits.maxTokensPerMonth === -1
-                          ? "Unlimited"
+                          ? t("unlimited")
                           : `${(plan.limits.maxTokensPerMonth / 1000).toFixed(0)}K`}{" "}
-                        Tokens/mo
+                        {t("tokensPerMonth")}
                       </span>
                     </li>
                   </ul>
@@ -322,10 +328,10 @@ export function SubscriptionCard({
                     onClick={() => handleUpgradeClick(plan.name)}
                   >
                     {isCurrent
-                      ? "Current Plan"
+                      ? t("currentPlan")
                       : plan.name === "enterprise"
-                        ? "Contact Us"
-                        : "Upgrade"}
+                        ? t("contactUs")
+                        : t("upgrade")}
                   </Button>
                 </CardContent>
               </Card>
@@ -339,13 +345,13 @@ export function SubscriptionCard({
           <DialogHeader>
             <DialogTitle>
               {isEnterprisePlan
-                ? "Enterprise Plan"
-                : `Upgrade to ${selectedPlanDetails?.displayName}`}
+                ? t("plans.enterprise")
+                : `${t("upgradeTo")} ${selectedPlan ? t(`plans.${selectedPlan}`) : ""}`}
               {selectedPlanDetails &&
                 selectedPlanDetails.price > 0 &&
                 !isEnterprisePlan && (
                   <span className="ml-2 text-primary">
-                    ${selectedPlanDetails.price}/{selectedPlanDetails.period}
+                    ${selectedPlanDetails.price}/{t(selectedPlanDetails.period)}
                   </span>
                 )}
             </DialogTitle>
