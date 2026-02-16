@@ -1,5 +1,36 @@
 # Changelog
 
+## [1.13.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.12.0...hebronai-v2-v1.13.0) (2026-02-16)
+
+
+### Features
+
+* Add Arabic translations for subscription page ([96dc2db](https://github.com/Osama-Qonaibe/hebronai-v2/commit/96dc2db2187d952817ef63edfcbc78483b7221d3))
+* add full Arabic language support with RTL ([e8ac5ba](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e8ac5bafb92316f9b385ce6120cd9b447fb00138))
+* Add Full Arabic Language Support with RTL ([01d69b4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/01d69b46b9074d34e1777495566ad39dfe6b4f99))
+* Add professional RTL support with locale middleware ([52254f4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/52254f4e1c32e23f86f0c99d554ed0b317f816d7))
+* Complete Arabic translation for subscription page ([8bf3ba6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8bf3ba6b414867dd9176eafd496826be0880ee9e))
+
+
+### Bug Fixes
+
+* add Cairo font for proper Arabic text rendering ([526f4be](https://github.com/Osama-Qonaibe/hebronai-v2/commit/526f4bee670aa738d1da14b0bfa23461c1e32fc4))
+* Auto-detect RTL and position sidebar on right side ([2c4b5da](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2c4b5da72627023be5fdb6ff059e9cdc505ad10a))
+* Complete RTL overhaul - clean CSS, fix FlipWords, restore button functionality ([a11fd24](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a11fd24d9e71ba9f1b4238f55784f2c631c52227))
+* Enhance RTL Support for Arabic Interface ([dd0070d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/dd0070dfcd86d4e58c3d213fa8ec8275bfcc97b7))
+* enhance RTL support for sidebar and UI components ([eec00a1](https://github.com/Osama-Qonaibe/hebronai-v2/commit/eec00a15508c55e1f908bbec333fef8887a554b1))
+* escape CSS selectors for peer-data attributes ([8bcb0b9](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8bcb0b92b0fba0c9ce0f00686f8cfbf81844a651))
+* improve RTL positioning for absolute elements ([a769e5c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a769e5cfddd008bc2e7e549571972a6b2a539d67))
+* Improve sidebar RTL detection for E2E test stability ([a0b04d3](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a0b04d344d8c1f7df095b0bc0e9a2811a75d7acd))
+* Improve Sidebar RTL positioning with correct data-slot selectors ([312efb4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/312efb44f4c7d0711ac6e73774b43f8341b341ba))
+* Locale handling now works on all pages including sign-in ([78f5a57](https://github.com/Osama-Qonaibe/hebronai-v2/commit/78f5a57c04a3c794ad37ab77d1751b00132bf3bb))
+* Make REDIS_URL validation handle empty strings in E2E tests ([3f5dce6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/3f5dce69b0614199f0f8cf188ab91141ccd4e506))
+* phase 1 improvements - linting, security, env validation, biome v2 ([ba27d79](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ba27d7915e656cab33f3f9d8e4f41fc7eb51b255))
+* phase 1 improvements - linting, security, env validation, biome v2 ([2bd497c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2bd497c75f0a46661a317c0d118e37109890f317))
+* Properly handle Arabic text in FlipWords component - display whole words instead of splitting into letters ([d0393e7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/d0393e765c91c81a3fcb3c930fb4b4d09a9c6284))
+* remove overly broad RTL CSS rules breaking interactivity ([cde4d1d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/cde4d1d9b199cbc6a1dafcff96438710c19b8192))
+* Remove unused useTranslations import from subscription page ([32df81a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/32df81a0cb0051587900711b1ebaefe26154628f))
+
 ## [1.12.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.11.0...hebronai-v2-v1.12.0) (2026-02-11)
 
 
