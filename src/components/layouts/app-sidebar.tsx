@@ -12,11 +12,7 @@ import { isShortcutEvent, Shortcuts } from "lib/keyboard-shortcuts";
 import { AppSidebarUser } from "./app-sidebar-user";
 import { BasicUser } from "app-types/user";
 
-export function AppSidebar({
-  user,
-}: {
-  user?: BasicUser;
-}) {
+export function AppSidebar({ user }: { user?: BasicUser }) {
   const userRole = user?.role;
   const router = useRouter();
 

@@ -22,7 +22,7 @@ export const PAYMENT_CONFIG = {
 
 export function getPaymentLink(
   method: "paypal" | "stripe",
-  plan: "basic" | "pro"
+  plan: "basic" | "pro",
 ): string {
   if (method === "paypal") {
     return PAYMENT_CONFIG.paypal.links[plan];

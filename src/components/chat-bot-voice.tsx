@@ -532,7 +532,9 @@ export function ChatBotVoice() {
 
 function ConversationView({
   messages,
-}: { messages: UIMessageWithCompleted[] }) {
+}: {
+  messages: UIMessageWithCompleted[];
+}) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

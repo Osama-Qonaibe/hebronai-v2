@@ -18,10 +18,7 @@ export async function POST(req: NextRequest) {
     const session = await getSession();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
@@ -38,20 +35,20 @@ export async function POST(req: NextRequest) {
         message: "Subscription request submitted successfully",
         requestId: result.id,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Invalid request data", issues: err.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error("Error creating subscription request:", err);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -61,14 +58,11 @@ export async function GET() {
     const session = await getSession();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const requests = await subscriptionRequestRepository.getUserRequests(
-      session.user.id
+      session.user.id,
     );
 
     return NextResponse.json({ requests });
@@ -76,7 +70,7 @@ export async function GET() {
     console.error("Error fetching subscription requests:", err);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

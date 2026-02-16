@@ -16,7 +16,10 @@ import { useMemo } from "react";
 export function DefaultToolIcon({
   name,
   className,
-}: { name: DefaultToolName; className?: string }) {
+}: {
+  name: DefaultToolName;
+  className?: string;
+}) {
   return useMemo(() => {
     if (name === DefaultToolName.CreatePieChart) {
       return (

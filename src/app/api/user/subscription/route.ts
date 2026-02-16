@@ -10,7 +10,7 @@ export async function GET() {
     if (!subscription) {
       return NextResponse.json(
         { error: "User not authenticated" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -19,7 +19,7 @@ export async function GET() {
     console.error("Error fetching subscription:", error);
     return NextResponse.json(
       { error: "Failed to fetch subscription" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     if (!session?.user) {
       return NextResponse.json(
         { error: "User not authenticated" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     if (!plan || !status) {
       return NextResponse.json(
         { error: "Missing required fields: plan, status" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -48,24 +48,18 @@ export async function POST(request: NextRequest) {
     const validStatuses = ["active", "expired", "cancelled", "trial"];
 
     if (!validPlans.includes(plan)) {
-      return NextResponse.json(
-        { error: "Invalid plan" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
     }
 
     if (!validStatuses.includes(status)) {
-      return NextResponse.json(
-        { error: "Invalid status" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid status" }, { status: 400 });
     }
 
     await userRepository.updateSubscription(
       session.user.id,
       plan,
       status,
-      expiresAt ? new Date(expiresAt) : null
+      expiresAt ? new Date(expiresAt) : null,
     );
 
     return NextResponse.json({
@@ -76,7 +70,7 @@ export async function POST(request: NextRequest) {
     console.error("Error updating subscription:", error);
     return NextResponse.json(
       { error: "Failed to update subscription" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

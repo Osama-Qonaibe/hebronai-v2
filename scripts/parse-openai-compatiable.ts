@@ -15,17 +15,19 @@ const FILE_NAME = "openai-compatible.config.ts";
 function validatePath(basePath: string, targetPath: string): string {
   const normalizedBase = path.resolve(path.normalize(basePath));
   const normalizedTarget = path.resolve(path.normalize(targetPath));
-  
+
   // Ensure the resolved path starts with the base directory
   if (!normalizedTarget.startsWith(normalizedBase)) {
-    throw new Error(`Path traversal detected: ${targetPath} is outside of ${basePath}`);
+    throw new Error(
+      `Path traversal detected: ${targetPath} is outside of ${basePath}`,
+    );
   }
-  
+
   return normalizedTarget;
 }
 
 const CONFIG_PATH = pathToFileURL(
-  validatePath(ROOT, path.join(ROOT, FILE_NAME))
+  validatePath(ROOT, path.join(ROOT, FILE_NAME)),
 ).href;
 
 async function load() {
@@ -54,7 +56,7 @@ function updateEnvVariable(
   try {
     // Validate the env file path is within ROOT
     const validatedPath = validatePath(ROOT, envFilePath);
-    
+
     let envContent = "";
     if (fs.existsSync(validatedPath)) {
       envContent = fs.readFileSync(validatedPath, "utf8");

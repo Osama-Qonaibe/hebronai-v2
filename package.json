@@ -133,7 +133,7 @@
   },
   "devDependencies": {
     "@better-auth-kit/seed": "^1.0.12",
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "^2.4.0",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/json-schema": "^7.0.15",
@@ -172,6 +172,10 @@
       "esbuild",
       "sharp",
       "unrs-resolver"
-    ]
+    ],
+    "overrides": {
+      "esbuild": "^0.25.0",
+      "lodash-es": "^4.17.23"
+    }
   }
 }

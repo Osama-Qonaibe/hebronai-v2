@@ -111,19 +111,19 @@ export const UserTable = pgTable("user", {
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
   role: text("role").notNull().default("user"),
-  
+
   plan: varchar("plan", {
     enum: ["free", "basic", "premium"],
   })
     .notNull()
     .default("free"),
-  
+
   planStatus: varchar("plan_status", {
     enum: ["trial", "active", "expired"],
   })
     .notNull()
     .default("trial"),
-  
+
   planExpiresAt: timestamp("plan_expires_at")
     .notNull()
     .default(sql`CURRENT_TIMESTAMP + INTERVAL '30 days'`),

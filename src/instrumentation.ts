@@ -1,4 +1,5 @@
 import { IS_VERCEL_ENV } from "lib/const";
+import "./lib/env"; // Validate environment variables on startup
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {

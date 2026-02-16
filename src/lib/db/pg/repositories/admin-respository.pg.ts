@@ -6,7 +6,11 @@ import {
   AdminStats,
 } from "app-types/admin";
 import { pgDb as db } from "../db.pg";
-import { UserTable, SessionTable, SubscriptionRequestTable } from "../schema.pg";
+import {
+  UserTable,
+  SessionTable,
+  SubscriptionRequestTable,
+} from "../schema.pg";
 import {
   and,
   asc,
@@ -106,7 +110,9 @@ const pgAdminRepository: AdminRepository = {
     };
   },
 
-  getSubscriptionRequests: async (status?: RequestStatus): Promise<AdminSubscriptionRequest[]> => {
+  getSubscriptionRequests: async (
+    status?: RequestStatus,
+  ): Promise<AdminSubscriptionRequest[]> => {
     const baseQuery = db
       .select({
         id: SubscriptionRequestTable.id,
