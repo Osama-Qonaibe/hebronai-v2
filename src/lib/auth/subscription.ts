@@ -15,24 +15,9 @@ export interface SubscriptionInfo {
 export async function getUserSubscription(): Promise<SubscriptionInfo | null> {
   try {
     const session = await getSession();
-    if (!session?.user?.id) return null;
+    if (!session?.user) return null;
 
-    // Read directly from database to get latest data
-    const { pgDb: db } = await import("@/lib/db/pg/db.pg");
-    const { UserTable } = await import("@/lib/db/pg/schema.pg");
-    const { eq } = await import("drizzle-orm");
-
-    const [user] = await db
-      .select({
-        plan: UserTable.plan,
-        planStatus: UserTable.planStatus,
-        planExpiresAt: UserTable.planExpiresAt,
-      })
-      .from(UserTable)
-      .where(eq(UserTable.id, session.user.id));
-
-    if (!user) return null;
-
+    const user = session.user as any;
     const plan = (user.plan as SubscriptionPlan) || "free";
     const status = (user.planStatus as SubscriptionStatus) || "active";
     const expiresAt = user.planExpiresAt ? new Date(user.planExpiresAt) : null;

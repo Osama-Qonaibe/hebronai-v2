@@ -75,56 +75,17 @@ export function SubscriptionCard({
   const bankDetails = getBankTransferDetails();
   const WHATSAPP_NUMBER = "+972534414330";
 
-  const handleUpgradeClick = async (plan: SubscriptionPlan) => {
+  const handleUpgradeClick = (plan: SubscriptionPlan) => {
     if (plan === currentPlan) return;
 
-    // Prevent upgrade if there's a pending request
     if (pendingRequest) {
       alert(t("pendingRequestAlert", { plan: pendingRequest.requestedPlan }));
       return;
     }
 
-    // For enterprise, open WhatsApp
-    if (plan === "enterprise") {
-      handleEnterpriseContact();
-      return;
-    }
-
-    // Send request immediately for basic and pro
-    setLoading(true);
-    try {
-      if (!PLANS || !plan) {
-        throw new Error("Invalid plan selection");
-      }
-      const planDetails = PLANS[plan];
-
-      const response = await fetch("/api/user/subscription-request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          requestedPlan: plan,
-          paymentMethod: "pending",
-          amount: planDetails.price,
-          currency: "USD",
-          notes: "Pending payment confirmation",
-        }),
-      });
-
-      if (response.ok) {
-        alert("✅ تم إرسال طلب الترقية بنجاح! سيتم مراجعته من قبل الإدارة.");
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
-      } else {
-        const error = await response.json();
-        alert(error.error || "فشل في إرسال الطلب. حاول مرة أخرى.");
-      }
-    } catch (error) {
-      console.error("Request failed:", error);
-      alert("فشل في إرسال الطلب. حاول مرة أخرى.");
-    } finally {
-      setLoading(false);
-    }
+    setSelectedPlan(plan);
+    setTransactionId("");
+    setNotes("");
   };
 
   const handlePayNowAndSubmit = async () => {
