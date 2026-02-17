@@ -13,13 +13,6 @@ type ModelProvider = {
   }[];
 };
 
-type ApiResponse = ModelProvider[] | {
-  plan: string;
-  isActive: boolean;
-  models: ModelProvider[];
-  totalModels: number;
-};
-
 export const useChatModels = (options?: SWRConfiguration) => {
   return useSWR<ModelProvider[]>(
     "/api/chat/models",
