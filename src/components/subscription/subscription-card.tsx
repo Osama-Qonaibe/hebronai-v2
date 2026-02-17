@@ -13,7 +13,6 @@ import { Badge } from "ui/badge";
 import {
   Check,
   Sparkles,
-  ExternalLink,
   Copy,
   CheckCheck,
   MessageCircle,
