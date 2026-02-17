@@ -34,7 +34,7 @@ import { Alert, AlertDescription } from "ui/alert";
 import { Input } from "ui/input";
 import { Textarea } from "ui/textarea";
 import { useTranslations } from "next-intl";
-import { useToast } from "ui/use-toast";
+import { toast } from "sonner";
 
 type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
 type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "manual";
@@ -63,7 +63,6 @@ export function SubscriptionCard({
   pendingRequest,
 }: SubscriptionCardProps) {
   const t = useTranslations("Subscription");
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(
     null,
@@ -80,11 +79,7 @@ export function SubscriptionCard({
     if (plan === currentPlan) return;
 
     if (pendingRequest) {
-      toast({
-        title: "تنبيه",
-        description: t("pendingRequestAlert", { plan: pendingRequest.requestedPlan }),
-        variant: "destructive",
-      });
+      toast.error(t("pendingRequestAlert", { plan: pendingRequest.requestedPlan }));
       return;
     }
 
@@ -123,8 +118,7 @@ export function SubscriptionCard({
             selectedPlan as "basic" | "pro",
           );
           
-          toast({
-            title: "✅ تم إرسال الطلب",
+          toast.success("✅ تم إرسال الطلب", {
             description: "سيتم فتح بوابة الدفع الآن...",
           });
           
@@ -134,13 +128,11 @@ export function SubscriptionCard({
             }
           }, 1500);
         } else if (paymentMethod === "bank_transfer") {
-          toast({
-            title: "✅ تم إرسال الطلب",
+          toast.success("✅ تم إرسال الطلب", {
             description: "سيتم التحقق من رقم المعاملة والموافقة على الطلب قريباً.",
           });
         } else {
-          toast({
-            title: "✅ تم إرسال الطلب",
+          toast.success("✅ تم إرسال الطلب", {
             description: "سيتم التواصل معك عبر واتساب لإتمام عملية الدفع.",
           });
         }
@@ -156,18 +148,14 @@ export function SubscriptionCard({
         }
       } else {
         const error = await response.json();
-        toast({
-          title: "خطأ",
+        toast.error("خطأ", {
           description: error.error || "فشل في إرسال الطلب. حاول مرة أخرى.",
-          variant: "destructive",
         });
       }
     } catch (error) {
       console.error("Request failed:", error);
-      toast({
-        title: "خطأ",
+      toast.error("خطأ", {
         description: "فشل في إرسال الطلب. حاول مرة أخرى.",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -178,16 +166,11 @@ export function SubscriptionCard({
     try {
       await navigator.clipboard.writeText(text);
       setCopiedField(field);
-      toast({
-        description: "✅ تم النسخ",
-      });
+      toast.success("✅ تم النسخ");
       setTimeout(() => setCopiedField(null), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
-      toast({
-        description: "فشل في النسخ",
-        variant: "destructive",
-      });
+      toast.error("فشل في النسخ");
     }
   };
 
