@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.0...hebronai-v2-v2.2.1) (2026-02-17)
+
+
+### Bug Fixes
+
+* enable forgot password link for all users including first user ([dae6689](https://github.com/Osama-Qonaibe/hebronai-v2/commit/dae66890774a2db6d310ba0ee517fbe28fa2a076))
+
 ## [2.2.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.1.1...hebronai-v2-v2.2.0) (2026-02-17)
 
 
