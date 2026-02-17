@@ -227,7 +227,7 @@ export function SubscriptionCard({
           </CardContent>
         </Card>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {plans.map((plan) => {
             const isCurrent = plan.name === currentPlan;
 
@@ -321,21 +321,21 @@ export function SubscriptionCard({
       </div>
 
       <Dialog open={!!selectedPlan} onOpenChange={() => setSelectedPlan(null)}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-base sm:text-lg">
               {isEnterprisePlan
                 ? t("plans.enterprise")
                 : `${t("upgradeTo")} ${selectedPlan ? t(`plans.${selectedPlan}`) : ""}`}
               {selectedPlanDetails &&
                 selectedPlanDetails.price > 0 &&
                 !isEnterprisePlan && (
-                  <span className="ml-2 text-primary">
+                  <span className="mr-2 text-primary">
                     ${selectedPlanDetails.price}/{t(selectedPlanDetails.period)}
                   </span>
                 )}
             </DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-sm">
               {isEnterprisePlan
                 ? "تواصل معنا للحصول على عرض مخصص يناسب احتياجات مؤسستك"
                 : "اختر طريقة الدفع وأرسل الطلب"}
@@ -391,32 +391,33 @@ export function SubscriptionCard({
             ) : (
               <>
                 <div className="space-y-2">
-                  <Label>طريقة الدفع</Label>
+                  <Label className="text-sm">طريقة الدفع</Label>
                   <RadioGroup
                     value={paymentMethod}
                     onValueChange={(v) => setPaymentMethod(v as PaymentMethod)}
+                    className="space-y-3"
                   >
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                       <RadioGroupItem value="paypal" id="paypal" />
-                      <Label htmlFor="paypal">PayPal</Label>
+                      <Label htmlFor="paypal" className="cursor-pointer font-normal">PayPal</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                       <RadioGroupItem value="stripe" id="stripe" />
-                      <Label htmlFor="stripe">Stripe (Card)</Label>
+                      <Label htmlFor="stripe" className="cursor-pointer font-normal">Stripe (Card)</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                       <RadioGroupItem value="bank_transfer" id="bank" />
-                      <Label htmlFor="bank">تحويل بنكي</Label>
+                      <Label htmlFor="bank" className="cursor-pointer font-normal">تحويل بنكي</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                       <RadioGroupItem value="manual" id="manual" />
-                      <Label htmlFor="manual">دفع يدوي (عبر المشرف)</Label>
+                      <Label htmlFor="manual" className="cursor-pointer font-normal">دفع يدوي (عبر المشرف)</Label>
                     </div>
                   </RadioGroup>
                 </div>
 
                 <Alert className="bg-blue-50 border-blue-200">
-                  <AlertDescription className="text-sm">
+                  <AlertDescription className="text-sm leading-relaxed">
                     {paymentMethod === "paypal" || paymentMethod === "stripe" ? (
                       <>🌐 سيتم إرسال الطلب للمراجعة وفتح بوابة الدفع تلقائياً</>
                     ) : paymentMethod === "bank_transfer" ? (
@@ -429,7 +430,7 @@ export function SubscriptionCard({
 
                 {showBankFields && (
                   <Card className="bg-muted/50">
-                    <CardHeader>
+                    <CardHeader className="pb-3">
                       <CardTitle className="text-base">
                         تفاصيل التحويل البنكي
                       </CardTitle>
@@ -440,12 +441,13 @@ export function SubscriptionCard({
                           رقم الحساب
                         </Label>
                         <div className="flex items-center gap-2">
-                          <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
+                          <code className="flex-1 rounded bg-background px-2 sm:px-3 py-2 text-xs sm:text-sm font-mono break-all">
                             {bankDetails.accountNumber}
                           </code>
                           <Button
                             size="sm"
                             variant="ghost"
+                            className="shrink-0"
                             onClick={() =>
                               handleCopy(bankDetails.accountNumber, "account")
                             }
@@ -464,12 +466,13 @@ export function SubscriptionCard({
                           دفع لصديق
                         </Label>
                         <div className="flex items-center gap-2">
-                          <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
+                          <code className="flex-1 rounded bg-background px-2 sm:px-3 py-2 text-xs sm:text-sm font-mono break-all">
                             {bankDetails.friendPayNumber}
                           </code>
                           <Button
                             size="sm"
                             variant="ghost"
+                            className="shrink-0"
                             onClick={() =>
                               handleCopy(
                                 bankDetails.friendPayNumber,
@@ -491,12 +494,13 @@ export function SubscriptionCard({
                           محفظة ريفلكت
                         </Label>
                         <div className="flex items-center gap-2">
-                          <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
+                          <code className="flex-1 rounded bg-background px-2 sm:px-3 py-2 text-xs sm:text-sm font-mono break-all">
                             {bankDetails.reflectWallet}
                           </code>
                           <Button
                             size="sm"
                             variant="ghost"
+                            className="shrink-0"
                             onClick={() =>
                               handleCopy(bankDetails.reflectWallet, "reflect")
                             }
@@ -521,19 +525,20 @@ export function SubscriptionCard({
 
                 {showBankFields && (
                   <div className="space-y-2">
-                    <Label htmlFor="transaction">رقم المعاملة *</Label>
+                    <Label htmlFor="transaction" className="text-sm">رقم المعاملة *</Label>
                     <Input
                       id="transaction"
                       value={transactionId}
                       onChange={(e) => setTransactionId(e.target.value)}
                       placeholder="أدخل رقم المعاملة بعد التحويل"
+                      className="text-sm"
                       required
                     />
                   </div>
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="notes">
+                  <Label htmlFor="notes" className="text-sm">
                     {showManualNotes ? "ملاحظات أو طريقة دفع مفضلة" : "ملاحظات"} (اختياري)
                   </Label>
                   <Textarea
@@ -546,6 +551,7 @@ export function SubscriptionCard({
                         : "معلومات إضافية..."
                     }
                     rows={showManualNotes ? 3 : 2}
+                    className="text-sm resize-none"
                   />
                 </div>
 
