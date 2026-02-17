@@ -1,14 +1,14 @@
 {
-  "name": "HebronAI - Advanced AI Chat Assistant",
+  "name": "HebronAI - مساعد الذكاء الاصطناعي المتقدم",
   "short_name": "HebronAI",
-  "description": "Advanced AI-powered chat assistant with multi-model support and intelligent conversations",
+  "description": "مساعد ذكاء اصطناعي متقدم مع دعم نماذج متعددة ومحادثات ذكية",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",
-  "orientation": "portrait-primary",
-  "lang": "en",
-  "dir": "ltr",
+  "orientation": "any",
+  "lang": "ar",
+  "dir": "rtl",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
@@ -33,9 +33,9 @@
   "screenshots": [],
   "shortcuts": [
     {
-      "name": "New Chat",
-      "short_name": "New Chat",
-      "description": "Start a new conversation",
+      "name": "محادثة جديدة",
+      "short_name": "محادثة",
+      "description": "ابدأ محادثة جديدة",
       "url": "/",
       "icons": [
         {
