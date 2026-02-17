@@ -13,14 +13,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useObjectState } from "@/hooks/use-object-state";
-
 import { Loader } from "lucide-react";
 import { safe } from "ts-safe";
 import { authClient } from "@/lib/auth/client";
 import { toast } from "sonner";
 import { GithubIcon } from "ui/github-icon";
 import { GoogleIcon } from "ui/google-icon";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { MicrosoftIcon } from "ui/microsoft-icon";
 import { SocialAuthenticationProvider } from "app-types/authentication";
 
@@ -36,8 +35,6 @@ export default function SignIn({
   isFirstUser: boolean;
 }) {
   const t = useTranslations("Auth.SignIn");
-  const locale = useLocale();
-
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useObjectState({
@@ -70,6 +67,7 @@ export default function SignIn({
       toast.error(e.error);
     });
   };
+
   return (
     <div className="w-full h-full flex flex-col p-4 md:p-8 justify-center">
       <Card className="w-full md:max-w-md bg-background border-none mx-auto shadow-none animate-in fade-in duration-1000">
@@ -101,7 +99,7 @@ export default function SignIn({
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
                   <Link
-                    href={`/${locale}/forgot-password`}
+                    href="/forgot-password"
                     className="text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer underline-offset-4 hover:underline"
                   >
                     {t("forgotPassword")}
@@ -184,7 +182,7 @@ export default function SignIn({
           {signUpEnabled && (
             <div className="my-8 text-center text-sm text-muted-foreground">
               {t("noAccount")}
-              <Link href={`/${locale}/sign-up`} className="underline-offset-4 text-primary ml-1">
+              <Link href="/sign-up" className="underline-offset-4 text-primary ml-1">
                 {t("signUp")}
               </Link>
             </div>
