@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.3](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.2...hebronai-v2-v2.2.3) (2026-02-17)
+
+
+### Bug Fixes
+
+* use useLocale hook instead of useParams for routing ([7146ff5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7146ff5f9312d2fa91ce635365a3e13d252f2ea7))
+
 ## [2.2.2](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.1...hebronai-v2-v2.2.2) (2026-02-17)
 
 
