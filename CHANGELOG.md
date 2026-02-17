@@ -5,25 +5,25 @@
 
 ### Features
 
-* add manual payment option for direct admin approval ([028410e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/028410e52dfde7c51ad3eae5f527c56f18057fad))
-* add PWA install prompt component ([7dbd836](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7dbd836eb76aa8b7ffcc8c41f11aa0a06cbdcb62))
-* add PWA install prompt to layout ([239f36a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/239f36a48d90bcc369035daa3d86e7c7d2dd66ea))
-* add subscription system migration ([975d13a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/975d13a18168f00e14cab0c0fd97ea9df66c4e0f))
+* add manual payment option for direct admin approval ([028410e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/028410e52dfde7c51ad3eae5f527c56f18057fad)) by @Osama-Qonaibe
+* add PWA install prompt component ([7dbd836](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7dbd836eb76aa8b7ffcc8c41f11aa0a06cbdcb62)) by @Osama-Qonaibe
+* add PWA install prompt to layout ([239f36a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/239f36a48d90bcc369035daa3d86e7c7d2dd66ea)) by @Osama-Qonaibe
+* add subscription system migration ([975d13a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/975d13a18168f00e14cab0c0fd97ea9df66c4e0f)) by @Osama-Qonaibe
 
 
 ### Bug Fixes
 
-* add missing Admin.Subscriptions.description translation ([2088df8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2088df86d2b5ec9d07547dad89d2f1a8d85e3bfc))
-* grant admin full model access ([f7e6dfa](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f7e6dfa0453c03e430cf832869445baa1c99ac11))
-* handle API response format for authenticated users ([17505cb](https://github.com/Osama-Qonaibe/hebronai-v2/commit/17505cb663107a57f12fe7b5a4ffd0b96a6fde24))
-* improve mobile responsiveness for RTL ([b0e0a4f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b0e0a4f976a6280050c876a34ddc821086f2de00))
-* reload user data from DB for accurate subscription info ([f9f0ed2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f9f0ed2afc35fa65d6957ea4235938352c1774ab))
-* remove unused ApiResponse type ([cf7a60f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/cf7a60f5ccce166f9f9351ca8ad36d33f56f1944))
-* remove unused ExternalLink import ([2c158da](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2c158dab5ebf821b2125f6bb854c9cd621ca1a21))
-* replace window.open with location.href for PWA compatibility ([339aa52](https://github.com/Osama-Qonaibe/hebronai-v2/commit/339aa52115207b08df10017705ddca3cb3157245))
-* send request first, then open payment gateway ([779692f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/779692ffe8441fe6f7e2a104766a4e4d47cce0da))
-* update manifest for Arabic RTL PWA ([977c2f7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/977c2f7421bf99fbbc866f7a173d70f89e0da0a0))
-* use sonner toast instead of non-existent use-toast ([28e2753](https://github.com/Osama-Qonaibe/hebronai-v2/commit/28e27537c1c72c36921c16cb28c1d54bc75f61d5))
+* add missing Admin.Subscriptions.description translation ([2088df8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2088df86d2b5ec9d07547dad89d2f1a8d85e3bfc)) by @Osama-Qonaibe
+* grant admin full model access ([f7e6dfa](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f7e6dfa0453c03e430cf832869445baa1c99ac11)) by @Osama-Qonaibe
+* handle API response format for authenticated users ([17505cb](https://github.com/Osama-Qonaibe/hebronai-v2/commit/17505cb663107a57f12fe7b5a4ffd0b96a6fde24)) by @Osama-Qonaibe
+* improve mobile responsiveness for RTL ([b0e0a4f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b0e0a4f976a6280050c876a34ddc821086f2de00)) by @Osama-Qonaibe
+* reload user data from DB for accurate subscription info ([f9f0ed2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f9f0ed2afc35fa65d6957ea4235938352c1774ab)) by @Osama-Qonaibe
+* remove unused ApiResponse type ([cf7a60f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/cf7a60f5ccce166f9f9351ca8ad36d33f56f1944)) by @Osama-Qonaibe
+* remove unused ExternalLink import ([2c158da](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2c158dab5ebf821b2125f6bb854c9cd621ca1a21)) by @Osama-Qonaibe
+* replace window.open with location.href for PWA compatibility ([339aa52](https://github.com/Osama-Qonaibe/hebronai-v2/commit/339aa52115207b08df10017705ddca3cb3157245)) by @Osama-Qonaibe
+* send request first, then open payment gateway ([779692f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/779692ffe8441fe6f7e2a104766a4e4d47cce0da)) by @Osama-Qonaibe
+* update manifest for Arabic RTL PWA ([977c2f7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/977c2f7421bf99fbbc866f7a173d70f89e0da0a0)) by @Osama-Qonaibe
+* use sonner toast instead of non-existent use-toast ([28e2753](https://github.com/Osama-Qonaibe/hebronai-v2/commit/28e27537c1c72c36921c16cb28c1d54bc75f61d5)) by @Osama-Qonaibe
 
 ## [2.1.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.1.0...hebronai-v2-v2.1.1) (2026-02-17)
 
@@ -615,8 +615,8 @@
 
 ### Features
 
-- **workflow:** Add HTTP and Template nodes with LLM structured output supportWorkflow node ([#117](https://github.com/cgoinglove/better-chatbot/issues/117)) ([10ec438](https://github.com/cgoinglove/better-chatbot/commit/10ec438f13849f0745e7fab652cdd7cef8e97ab6)) by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @unknown by @unknown by @unknown by @unknown by @unknown by @unknown
-- **workflow:** add HTTP node configuration and execution support ([7d2f65f](https://github.com/cgoinglove/better-chatbot/commit/7d2f65fe4f0fdaae58ca2a69abb04abee3111c60)) by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @unknown by @unknown by @unknown by @unknown by @unknown by @unknown
+- **workflow:** Add HTTP and Template nodes with LLM structured output supportWorkflow node ([#117](https://github.com/cgoinglove/better-chatbot/issues/117)) ([10ec438](https://github.com/cgoinglove/better-chatbot/commit/10ec438f13849f0745e7fab652cdd7cef8e97ab6)) by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @unknown by @unknown by @unknown by @unknown by @unknown by @unknown by @unknown
+- **workflow:** add HTTP node configuration and execution support ([7d2f65f](https://github.com/cgoinglove/better-chatbot/commit/7d2f65fe4f0fdaae58ca2a69abb04abee3111c60)) by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @unknown by @unknown by @unknown by @unknown by @unknown by @unknown by @unknown
 
 ### Bug Fixes
 
@@ -628,13 +628,13 @@
 
 ### Features
 
-- **releases:** add debug logging to the add authors and update release step ([#105](https://github.com/cgoinglove/better-chatbot/issues/105)) ([c855a6a](https://github.com/cgoinglove/better-chatbot/commit/c855a6a94c49dfd93c9a8d1d0932aeda36bd6c7e)) by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @unknown by @unknown by @unknown by @unknown by @unknown by @unknown
+- **releases:** add debug logging to the add authors and update release step ([#105](https://github.com/cgoinglove/better-chatbot/issues/105)) ([c855a6a](https://github.com/cgoinglove/better-chatbot/commit/c855a6a94c49dfd93c9a8d1d0932aeda36bd6c7e)) by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @unknown by @unknown by @unknown by @unknown by @unknown by @unknown by @unknown
 - workflow beta ([#100](https://github.com/cgoinglove/better-chatbot/issues/100)) ([2f5ada2](https://github.com/cgoinglove/better-chatbot/commit/2f5ada2a66e8e3cd249094be9d28983e4331d3a1)) by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot
 
 ### Bug Fixes
 
 - update tool selection logic in McpServerSelector to maintain current selections ([4103c1b](https://github.com/cgoinglove/better-chatbot/commit/4103c1b828c3e5b513679a3fb9d72bd37301f99d)) by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove
-- **workflow:** MPC Tool Response Structure And Workflow ([#113](https://github.com/cgoinglove/better-chatbot/issues/113)) ([836ffd7](https://github.com/cgoinglove/better-chatbot/commit/836ffd7ef5858210bdce44d18ca82a1c8f0fc87f)) by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @unknown by @unknown by @unknown by @unknown by @unknown by @unknown
+- **workflow:** MPC Tool Response Structure And Workflow ([#113](https://github.com/cgoinglove/better-chatbot/issues/113)) ([836ffd7](https://github.com/cgoinglove/better-chatbot/commit/836ffd7ef5858210bdce44d18ca82a1c8f0fc87f)) by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @unknown by @unknown by @unknown by @unknown by @unknown by @unknown by @unknown
 
 ## [1.9.0](https://github.com/cgoinglove/better-chatbot/compare/v1.8.0...v1.9.0) (2025-06-16)
 
