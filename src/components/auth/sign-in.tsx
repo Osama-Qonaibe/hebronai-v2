@@ -16,13 +16,14 @@ import { useObjectState } from "@/hooks/use-object-state";
 
 import { Loader } from "lucide-react";
 import { safe } from "ts-safe";
-import { authClient } from "auth/client";
+import { authClient } from "@/lib/auth/client";
 import { toast } from "sonner";
 import { GithubIcon } from "ui/github-icon";
 import { GoogleIcon } from "ui/google-icon";
 import { useTranslations } from "next-intl";
 import { MicrosoftIcon } from "ui/microsoft-icon";
 import { SocialAuthenticationProvider } from "app-types/authentication";
+import { useParams } from "next/navigation";
 
 export default function SignIn({
   emailAndPasswordEnabled,
@@ -36,6 +37,8 @@ export default function SignIn({
   isFirstUser: boolean;
 }) {
   const t = useTranslations("Auth.SignIn");
+  const params = useParams();
+  const locale = params.locale as string;
 
   const [loading, setLoading] = useState(false);
 
@@ -100,7 +103,7 @@ export default function SignIn({
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
                   <Link
-                    href="/forgot-password"
+                    href={`/${locale}/forgot-password`}
                     className="text-xs text-muted-foreground hover:text-primary transition-colors cursor-pointer underline-offset-4 hover:underline"
                   >
                     {t("forgotPassword")}
@@ -183,7 +186,7 @@ export default function SignIn({
           {signUpEnabled && (
             <div className="my-8 text-center text-sm text-muted-foreground">
               {t("noAccount")}
-              <Link href="/sign-up" className="underline-offset-4 text-primary">
+              <Link href={`/${locale}/sign-up`} className="underline-offset-4 text-primary">
                 {t("signUp")}
               </Link>
             </div>
