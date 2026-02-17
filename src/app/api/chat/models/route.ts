@@ -7,7 +7,6 @@ export const GET = async () => {
   try {
     const session = await getSession();
 
-    // If not logged in, return all models (for public view)
     if (!session?.user?.id) {
       return Response.json(
         customModelProvider.modelsInfo.sort((a, b) => {
@@ -18,17 +17,30 @@ export const GET = async () => {
       );
     }
 
-    // Get user subscription
+    if (session.user.role === "admin") {
+      return Response.json({
+        plan: "enterprise",
+        isActive: true,
+        models: customModelProvider.modelsInfo.sort((a, b) => {
+          if (a.hasAPIKey && !b.hasAPIKey) return -1;
+          if (!a.hasAPIKey && b.hasAPIKey) return 1;
+          return 0;
+        }),
+        totalModels: customModelProvider.modelsInfo.reduce(
+          (sum, p) => sum + p.models.length,
+          0,
+        ),
+      });
+    }
+
     const subscription = await getUserSubscription();
 
     if (!subscription) {
       return Response.json({ error: "No subscription found" }, { status: 404 });
     }
 
-    // Get accessible models for user's plan
     const accessibleModels = getAccessibleModels(subscription.plan);
 
-    // Create a set of accessible model keys for quick lookup
     const accessibleModelKeys = new Set<string>();
     accessibleModels.forEach((rule) => {
       rule.models.forEach((model) => {
@@ -36,7 +48,6 @@ export const GET = async () => {
       });
     });
 
-    // Filter models based on user's plan
     const filteredModels = customModelProvider.modelsInfo
       .map((provider) => ({
         ...provider,
