@@ -19,7 +19,7 @@ import { ArrowLeft, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export default function ForgotPasswordPage() {
-  const t = useTranslations("auth");
+  const t = useTranslations("Auth");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);

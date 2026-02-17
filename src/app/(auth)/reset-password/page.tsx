@@ -20,7 +20,7 @@ import { AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 export default function ResetPasswordPage() {
-  const t = useTranslations("auth");
+  const t = useTranslations("Auth");
   const searchParams = useSearchParams();
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);

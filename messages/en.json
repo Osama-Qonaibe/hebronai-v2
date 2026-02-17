@@ -190,6 +190,41 @@
     },
     "Intro": {
       "description": "Welcome to HebronAI. Sign in to experience our AI-powered conversational tools."
+    },
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "description": "Enter your email to receive a password reset link",
+      "sendResetLink": "Send Reset Link",
+      "sending": "Sending...",
+      "success": "Reset link sent! Check your email.",
+      "error": "Failed to send reset link. Please try again.",
+      "checkEmail": "Check Your Email",
+      "checkEmailDescription": "We've sent a password reset link to your email address.",
+      "backToSignIn": "Back to Sign In"
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "description": "Enter your new password",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "resetButton": "Reset Password",
+      "resetting": "Resetting...",
+      "success": "Password reset successfully!",
+      "error": "Failed to reset password. Please try again.",
+      "successTitle": "Password Reset Successfully",
+      "successDescription": "You can now sign in with your new password.",
+      "goToSignIn": "Go to Sign In",
+      "errorTitle": "Invalid or Expired Link",
+      "invalidToken": "This password reset link is invalid or has expired.",
+      "noToken": "No reset token provided.",
+      "requestNewLink": "Request New Reset Link",
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "passwordRequirements": "Password must be at least 8 characters long"
     }
   },
   "Chat": {
