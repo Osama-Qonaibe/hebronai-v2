@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.4](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.3...hebronai-v2-v2.2.4) (2026-02-17)
+
+
+### Bug Fixes
+
+* use correct relative paths without locale prefix ([d49d226](https://github.com/Osama-Qonaibe/hebronai-v2/commit/d49d226557f6424345edd21a01d6862351bffcb2))
+
 ## [2.2.3](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.2...hebronai-v2-v2.2.3) (2026-02-17)
 
 
