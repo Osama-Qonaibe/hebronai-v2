@@ -34,6 +34,7 @@ import { Alert, AlertDescription } from "ui/alert";
 import { Input } from "ui/input";
 import { Textarea } from "ui/textarea";
 import { useTranslations } from "next-intl";
+import { useToast } from "ui/use-toast";
 
 type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
 type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "manual";
@@ -62,6 +63,7 @@ export function SubscriptionCard({
   pendingRequest,
 }: SubscriptionCardProps) {
   const t = useTranslations("Subscription");
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(
     null,
@@ -78,7 +80,11 @@ export function SubscriptionCard({
     if (plan === currentPlan) return;
 
     if (pendingRequest) {
-      alert(t("pendingRequestAlert", { plan: pendingRequest.requestedPlan }));
+      toast({
+        title: "تنبيه",
+        description: t("pendingRequestAlert", { plan: pendingRequest.requestedPlan }),
+        variant: "destructive",
+      });
       return;
     }
 
@@ -116,38 +122,53 @@ export function SubscriptionCard({
             paymentMethod as "paypal" | "stripe",
             selectedPlan as "basic" | "pro",
           );
-          if (link) {
-            window.open(link, "_blank");
-          }
-          alert(
-            "✅ تم إرسال الطلب للمراجعة!\n\n" +
-            "تم فتح بوابة الدفع في نافذة جديدة.\n" +
-            "إذا لم تفتح، يمكنك التواصل مع المشرف للدفع يدوياً."
-          );
+          
+          toast({
+            title: "✅ تم إرسال الطلب",
+            description: "سيتم فتح بوابة الدفع الآن...",
+          });
+          
+          setTimeout(() => {
+            if (link) {
+              window.location.href = link;
+            }
+          }, 1500);
         } else if (paymentMethod === "bank_transfer") {
-          alert(
-            "✅ تم إرسال الطلب للمراجعة!\n\n" +
-            "سيتم التحقق من رقم المعاملة والموافقة على الطلب قريباً."
-          );
+          toast({
+            title: "✅ تم إرسال الطلب",
+            description: "سيتم التحقق من رقم المعاملة والموافقة على الطلب قريباً.",
+          });
         } else {
-          alert(
-            "✅ تم إرسال الطلب للمراجعة!\n\n" +
-            "سيتم التواصل معك عبر واتساب لإتمام عملية الدفع."
-          );
+          toast({
+            title: "✅ تم إرسال الطلب",
+            description: "سيتم التواصل معك عبر واتساب لإتمام عملية الدفع.",
+          });
         }
+        
         setSelectedPlan(null);
         setTransactionId("");
         setNotes("");
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
+        
+        if (paymentMethod !== "paypal" && paymentMethod !== "stripe") {
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        }
       } else {
         const error = await response.json();
-        alert(error.error || "فشل في إرسال الطلب. حاول مرة أخرى.");
+        toast({
+          title: "خطأ",
+          description: error.error || "فشل في إرسال الطلب. حاول مرة أخرى.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Request failed:", error);
-      alert("فشل في إرسال الطلب. حاول مرة أخرى.");
+      toast({
+        title: "خطأ",
+        description: "فشل في إرسال الطلب. حاول مرة أخرى.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -157,9 +178,16 @@ export function SubscriptionCard({
     try {
       await navigator.clipboard.writeText(text);
       setCopiedField(field);
+      toast({
+        description: "✅ تم النسخ",
+      });
       setTimeout(() => setCopiedField(null), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
+      toast({
+        description: "فشل في النسخ",
+        variant: "destructive",
+      });
     }
   };
 
@@ -167,9 +195,8 @@ export function SubscriptionCard({
     const message = encodeURIComponent(
       `مرحباً، أرغب في الاستفسار عن خطة Enterprise للشركات.\n\nأود معرفة المزيد عن المميزات والأسعار المخصصة.`,
     );
-
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
-    window.open(whatsappUrl, "_blank");
+    window.location.href = whatsappUrl;
   };
 
   const handleWhatsAppContact = () => {
@@ -179,9 +206,8 @@ export function SubscriptionCard({
     const message = encodeURIComponent(
       `مرحباً، أرغب في الترقية إلى خطة ${planDetails.displayName} (${planDetails.priceDisplay}/شهر).\n\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\n\nأحتاج مساعدة.`,
     );
-
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
-    window.open(whatsappUrl, "_blank");
+    window.location.href = whatsappUrl;
   };
 
   function getPaymentMethodArabic(method: PaymentMethod): string {
