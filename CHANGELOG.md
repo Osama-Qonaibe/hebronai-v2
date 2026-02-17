@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.2](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.1...hebronai-v2-v2.2.2) (2026-02-17)
+
+
+### Bug Fixes
+
+* make forgot password link clickable outside label ([5a45d6d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5a45d6d38d15a9300ec18b6d0a4096b7315fad6d))
+* use locale-aware routing for forgot password link ([c7ef982](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c7ef9827800dceb5aaa5b7c9f2f4bd38bf43e04e))
+
 ## [2.2.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.0...hebronai-v2-v2.2.1) (2026-02-17)
 
 
