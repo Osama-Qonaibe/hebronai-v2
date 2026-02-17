@@ -88,22 +88,8 @@ export function SubscriptionCard({
     setNotes("");
   };
 
-  const handlePayNowAndSubmit = async () => {
-    if (
-      !selectedPlan ||
-      selectedPlan === "free" ||
-      selectedPlan === "enterprise"
-    )
-      return;
-
-    const link = getPaymentLink(
-      paymentMethod as "paypal" | "stripe",
-      selectedPlan as "basic" | "pro",
-    );
-
-    if (link) {
-      window.open(link, "_blank");
-    }
+  const handleSubmitRequest = async () => {
+    if (!selectedPlan) return;
 
     setLoading(true);
     try {
@@ -120,18 +106,42 @@ export function SubscriptionCard({
           paymentMethod,
           amount: planDetails.price,
           currency: "USD",
-          notes: `Payment initiated via ${paymentMethod}`,
+          transactionId: transactionId || undefined,
+          notes: notes || `Payment method: ${getPaymentMethodArabic(paymentMethod)}`,
         }),
       });
 
       if (response.ok) {
-        alert("✅ تم إرسال الطلب للمراجعة! أكمل الدفع في النافذة المفتوحة.");
+        if (paymentMethod === "paypal" || paymentMethod === "stripe") {
+          const link = getPaymentLink(
+            paymentMethod as "paypal" | "stripe",
+            selectedPlan as "basic" | "pro",
+          );
+          if (link) {
+            window.open(link, "_blank");
+          }
+          alert(
+            "✅ تم إرسال الطلب للمراجعة!\n\n" +
+            "تم فتح بوابة الدفع في نافذة جديدة.\n" +
+            "إذا لم تفتح، يمكنك التواصل مع المشرف للدفع يدوياً."
+          );
+        } else if (paymentMethod === "bank_transfer") {
+          alert(
+            "✅ تم إرسال الطلب للمراجعة!\n\n" +
+            "سيتم التحقق من رقم المعاملة والموافقة على الطلب قريباً."
+          );
+        } else {
+          alert(
+            "✅ تم إرسال الطلب للمراجعة!\n\n" +
+            "سيتم التواصل معك عبر واتساب لإتمام عملية الدفع."
+          );
+        }
         setSelectedPlan(null);
         setTransactionId("");
         setNotes("");
         setTimeout(() => {
           window.location.reload();
-        }, 1500);
+        }, 2000);
       } else {
         const error = await response.json();
         alert(error.error || "فشل في إرسال الطلب. حاول مرة أخرى.");
@@ -151,52 +161,6 @@ export function SubscriptionCard({
       setTimeout(() => setCopiedField(null), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
-    }
-  };
-
-  const handleSubmitRequest = async () => {
-    if (!selectedPlan) return;
-
-    if (paymentMethod === "bank_transfer" && !transactionId) {
-      alert("يجب إدخال رقم المعاملة بعد التحويل");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      if (!PLANS || !selectedPlan) {
-        throw new Error("Invalid plan selection");
-      }
-      const planDetails = PLANS[selectedPlan];
-
-      const response = await fetch("/api/user/subscription-request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          requestedPlan: selectedPlan,
-          paymentMethod,
-          amount: planDetails.price,
-          currency: "USD",
-          transactionId: transactionId || undefined,
-          notes: notes || undefined,
-        }),
-      });
-
-      if (response.ok) {
-        alert("تم إرسال طلب الاشتراك بنجاح! سيتم مراجعته قريباً.");
-        setSelectedPlan(null);
-        setTransactionId("");
-        setNotes("");
-        window.location.reload();
-      } else {
-        const error = await response.json();
-        alert(error.error || "فشل في إرسال الطلب. حاول مرة أخرى.");
-      }
-    } catch (error) {
-      console.error("Request failed:", error);
-      alert("فشل في إرسال الطلب. حاول مرة أخرى.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -224,7 +188,7 @@ export function SubscriptionCard({
   function getPaymentMethodArabic(method: PaymentMethod): string {
     const methods = {
       paypal: "PayPal",
-      stripe: "Stripe",
+      stripe: "Stripe (Card)",
       bank_transfer: "تحويل بنكي",
       manual: "دفع يدوي عبر المشرف",
     };
@@ -235,13 +199,11 @@ export function SubscriptionCard({
   const selectedPlanDetails =
     selectedPlan && PLANS ? PLANS[selectedPlan] : null;
   const isEnterprisePlan = selectedPlan === "enterprise";
-  const showPayButton =
-    selectedPlan &&
-    (selectedPlan === "basic" || selectedPlan === "pro") &&
-    (paymentMethod === "paypal" || paymentMethod === "stripe");
-  const showBankDetails =
-    paymentMethod === "bank_transfer" && !isEnterprisePlan;
-  const showManualPayment = paymentMethod === "manual" && !isEnterprisePlan;
+  const showBankFields = paymentMethod === "bank_transfer" && !isEnterprisePlan;
+  const showManualNotes = paymentMethod === "manual" && !isEnterprisePlan;
+  const canSubmit = 
+    !loading && 
+    (!showBankFields || transactionId.trim().length > 0);
 
   return (
     <>
@@ -454,193 +416,149 @@ export function SubscriptionCard({
                   </RadioGroup>
                 </div>
 
-                {showPayButton && (
-                  <>
-                    <Button
-                      onClick={handlePayNowAndSubmit}
-                      className="w-full gap-2"
-                      size="lg"
-                      disabled={loading}
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                      {loading
-                        ? "جاري الإرسال..."
-                        : `Pay ${selectedPlanDetails?.priceDisplay} & Submit Request`}
-                    </Button>
-                    <Alert>
-                      <AlertDescription>
-                        ✅ سيتم فتح بوابة الدفع وإرسال الطلب للمراجعة تلقائياً
-                      </AlertDescription>
-                    </Alert>
-                  </>
+                <Alert className="bg-blue-50 border-blue-200">
+                  <AlertDescription className="text-sm">
+                    {paymentMethod === "paypal" || paymentMethod === "stripe" ? (
+                      <>🌐 سيتم إرسال الطلب للمراجعة وفتح بوابة الدفع تلقائياً</>
+                    ) : paymentMethod === "bank_transfer" ? (
+                      <>🏦 أدخل تفاصيل التحويل البنكي أدناه</>
+                    ) : (
+                      <>📋 سيتم إرسال الطلب للمشرف للتواصل معك وترتيب الدفع</>
+                    )}
+                  </AlertDescription>
+                </Alert>
+
+                {showBankFields && (
+                  <Card className="bg-muted/50">
+                    <CardHeader>
+                      <CardTitle className="text-base">
+                        تفاصيل التحويل البنكي
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground">
+                          رقم الحساب
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
+                            {bankDetails.accountNumber}
+                          </code>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() =>
+                              handleCopy(bankDetails.accountNumber, "account")
+                            }
+                          >
+                            {copiedField === "account" ? (
+                              <CheckCheck className="h-4 w-4" />
+                            ) : (
+                              <Copy className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground">
+                          دفع لصديق
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
+                            {bankDetails.friendPayNumber}
+                          </code>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() =>
+                              handleCopy(
+                                bankDetails.friendPayNumber,
+                                "friend",
+                              )
+                            }
+                          >
+                            {copiedField === "friend" ? (
+                              <CheckCheck className="h-4 w-4" />
+                            ) : (
+                              <Copy className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground">
+                          محفظة ريفلكت
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
+                            {bankDetails.reflectWallet}
+                          </code>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() =>
+                              handleCopy(bankDetails.reflectWallet, "reflect")
+                            }
+                          >
+                            {copiedField === "reflect" ? (
+                              <CheckCheck className="h-4 w-4" />
+                            ) : (
+                              <Copy className="h-4 w-4" />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 border-t">
+                        <p className="text-sm font-medium">
+                          {bankDetails.bankName}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
                 )}
 
-                {showBankDetails && (
-                  <>
-                    <Card className="bg-muted/50">
-                      <CardHeader>
-                        <CardTitle className="text-base">
-                          تفاصيل التحويل البنكي
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">
-                            رقم الحساب
-                          </Label>
-                          <div className="flex items-center gap-2">
-                            <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
-                              {bankDetails.accountNumber}
-                            </code>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() =>
-                                handleCopy(bankDetails.accountNumber, "account")
-                              }
-                            >
-                              {copiedField === "account" ? (
-                                <CheckCheck className="h-4 w-4" />
-                              ) : (
-                                <Copy className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
-                        </div>
-
-                        <div className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">
-                            دفع لصديق
-                          </Label>
-                          <div className="flex items-center gap-2">
-                            <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
-                              {bankDetails.friendPayNumber}
-                            </code>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() =>
-                                handleCopy(
-                                  bankDetails.friendPayNumber,
-                                  "friend",
-                                )
-                              }
-                            >
-                              {copiedField === "friend" ? (
-                                <CheckCheck className="h-4 w-4" />
-                              ) : (
-                                <Copy className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
-                        </div>
-
-                        <div className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">
-                            محفظة ريفلكت
-                          </Label>
-                          <div className="flex items-center gap-2">
-                            <code className="flex-1 rounded bg-background px-3 py-2 text-sm font-mono">
-                              {bankDetails.reflectWallet}
-                            </code>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() =>
-                                handleCopy(bankDetails.reflectWallet, "reflect")
-                              }
-                            >
-                              {copiedField === "reflect" ? (
-                                <CheckCheck className="h-4 w-4" />
-                              ) : (
-                                <Copy className="h-4 w-4" />
-                              )}
-                            </Button>
-                          </div>
-                        </div>
-
-                        <div className="pt-2 border-t">
-                          <p className="text-sm font-medium">
-                            {bankDetails.bankName}
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="transaction">رقم المعاملة *</Label>
-                      <Input
-                        id="transaction"
-                        value={transactionId}
-                        onChange={(e) => setTransactionId(e.target.value)}
-                        placeholder="أدخل رقم المعاملة"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="notes">ملاحظات (اختياري)</Label>
-                      <Textarea
-                        id="notes"
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        placeholder="معلومات إضافية..."
-                        rows={2}
-                      />
-                    </div>
-
-                    <Button
-                      onClick={handleSubmitRequest}
-                      className="w-full gap-2"
-                      size="lg"
-                      disabled={loading || !transactionId}
-                    >
-                      <Send className="h-5 w-5" />
-                      {loading ? "جاري الإرسال..." : "إرسال الطلب"}
-                    </Button>
-                  </>
+                {showBankFields && (
+                  <div className="space-y-2">
+                    <Label htmlFor="transaction">رقم المعاملة *</Label>
+                    <Input
+                      id="transaction"
+                      value={transactionId}
+                      onChange={(e) => setTransactionId(e.target.value)}
+                      placeholder="أدخل رقم المعاملة بعد التحويل"
+                      required
+                    />
+                  </div>
                 )}
 
-                {showManualPayment && (
-                  <>
-                    <Alert className="bg-blue-50 border-blue-200">
-                      <AlertDescription className="text-sm">
-                        📋 سيتم إرسال طلبك للمشرف مباشرة. سيتم التواصل معك عبر
-                        واتساب لإتمام عملية الدفع يدوياً.
-                      </AlertDescription>
-                    </Alert>
+                <div className="space-y-2">
+                  <Label htmlFor="notes">
+                    {showManualNotes ? "ملاحظات أو طريقة دفع مفضلة" : "ملاحظات"} (اختياري)
+                  </Label>
+                  <Textarea
+                    id="notes"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder={
+                      showManualNotes
+                        ? "مثال: أفضل الدفع عن طريق التحويل المباشر / ريفلكت / صديق لصديق..."
+                        : "معلومات إضافية..."
+                    }
+                    rows={showManualNotes ? 3 : 2}
+                  />
+                </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="manual-notes">
-                        ملاحظات أو طريقة دفع مفضلة (اختياري)
-                      </Label>
-                      <Textarea
-                        id="manual-notes"
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        placeholder="مثال: أفضل الدفع عن طريق التحويل المباشر / ريفلكت / صديق لصديق..."
-                        rows={3}
-                      />
-                    </div>
-
-                    <Button
-                      onClick={handleSubmitRequest}
-                      className="w-full gap-2"
-                      size="lg"
-                      disabled={loading}
-                    >
-                      <Send className="h-5 w-5" />
-                      {loading ? "جاري الإرسال..." : "إرسال الطلب للمشرف"}
-                    </Button>
-
-                    <Alert>
-                      <AlertDescription className="text-xs text-muted-foreground">
-                        💡 بعد إرسال الطلب، سيقوم المشرف بالتواصل معك عبر واتساب
-                        لترتيب عملية الدفع.
-                      </AlertDescription>
-                    </Alert>
-                  </>
-                )}
+                <Button
+                  onClick={handleSubmitRequest}
+                  className="w-full gap-2"
+                  size="lg"
+                  disabled={!canSubmit}
+                >
+                  <Send className="h-5 w-5" />
+                  {loading ? "جاري الإرسال..." : "إرسال الطلب"}
+                </Button>
 
                 <Button
                   onClick={handleWhatsAppContact}
