@@ -1,6 +1,9 @@
 import "server-only";
 import { getSession } from "./auth-instance";
 import { getPlanLimits, type SubscriptionPlan } from "../subscription/plans";
+import { pgDb as db } from "../db/pg/db.pg";
+import { UserTable } from "../db/pg/schema.pg";
+import { eq } from "drizzle-orm";
 
 export type { SubscriptionPlan } from "../subscription/plans";
 export type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
@@ -15,9 +18,19 @@ export interface SubscriptionInfo {
 export async function getUserSubscription(): Promise<SubscriptionInfo | null> {
   try {
     const session = await getSession();
-    if (!session?.user) return null;
+    if (!session?.user?.id) return null;
 
-    const user = session.user as any;
+    const [user] = await db
+      .select({
+        plan: UserTable.plan,
+        planStatus: UserTable.planStatus,
+        planExpiresAt: UserTable.planExpiresAt,
+      })
+      .from(UserTable)
+      .where(eq(UserTable.id, session.user.id));
+
+    if (!user) return null;
+
     const plan = (user.plan as SubscriptionPlan) || "free";
     const status = (user.planStatus as SubscriptionStatus) || "active";
     const expiresAt = user.planExpiresAt ? new Date(user.planExpiresAt) : null;
