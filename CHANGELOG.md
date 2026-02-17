@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.2.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.1.1...hebronai-v2-v2.2.0) (2026-02-17)
+
+
+### Features
+
+* add manual payment option for direct admin approval ([028410e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/028410e52dfde7c51ad3eae5f527c56f18057fad))
+* add PWA install prompt component ([7dbd836](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7dbd836eb76aa8b7ffcc8c41f11aa0a06cbdcb62))
+* add PWA install prompt to layout ([239f36a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/239f36a48d90bcc369035daa3d86e7c7d2dd66ea))
+* add subscription system migration ([975d13a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/975d13a18168f00e14cab0c0fd97ea9df66c4e0f))
+
+
+### Bug Fixes
+
+* add missing Admin.Subscriptions.description translation ([2088df8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2088df86d2b5ec9d07547dad89d2f1a8d85e3bfc))
+* grant admin full model access ([f7e6dfa](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f7e6dfa0453c03e430cf832869445baa1c99ac11))
+* handle API response format for authenticated users ([17505cb](https://github.com/Osama-Qonaibe/hebronai-v2/commit/17505cb663107a57f12fe7b5a4ffd0b96a6fde24))
+* improve mobile responsiveness for RTL ([b0e0a4f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b0e0a4f976a6280050c876a34ddc821086f2de00))
+* reload user data from DB for accurate subscription info ([f9f0ed2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f9f0ed2afc35fa65d6957ea4235938352c1774ab))
+* remove unused ApiResponse type ([cf7a60f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/cf7a60f5ccce166f9f9351ca8ad36d33f56f1944))
+* remove unused ExternalLink import ([2c158da](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2c158dab5ebf821b2125f6bb854c9cd621ca1a21))
+* replace window.open with location.href for PWA compatibility ([339aa52](https://github.com/Osama-Qonaibe/hebronai-v2/commit/339aa52115207b08df10017705ddca3cb3157245))
+* send request first, then open payment gateway ([779692f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/779692ffe8441fe6f7e2a104766a4e4d47cce0da))
+* update manifest for Arabic RTL PWA ([977c2f7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/977c2f7421bf99fbbc866f7a173d70f89e0da0a0))
+* use sonner toast instead of non-existent use-toast ([28e2753](https://github.com/Osama-Qonaibe/hebronai-v2/commit/28e27537c1c72c36921c16cb28c1d54bc75f61d5))
+
 ## [2.1.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.1.0...hebronai-v2-v2.1.1) (2026-02-17)
 
 
