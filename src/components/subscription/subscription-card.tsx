@@ -37,7 +37,7 @@ import { Textarea } from "ui/textarea";
 import { useTranslations } from "next-intl";
 
 type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
-type PaymentMethod = "stripe" | "paypal" | "bank_transfer";
+type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "manual";
 
 interface SubscriptionCardProps {
   currentPlan: SubscriptionPlan;
@@ -226,6 +226,7 @@ export function SubscriptionCard({
       paypal: "PayPal",
       stripe: "Stripe",
       bank_transfer: "تحويل بنكي",
+      manual: "دفع يدوي عبر المشرف",
     };
     return methods[method] || method;
   }
@@ -240,6 +241,7 @@ export function SubscriptionCard({
     (paymentMethod === "paypal" || paymentMethod === "stripe");
   const showBankDetails =
     paymentMethod === "bank_transfer" && !isEnterprisePlan;
+  const showManualPayment = paymentMethod === "manual" && !isEnterprisePlan;
 
   return (
     <>
@@ -445,6 +447,10 @@ export function SubscriptionCard({
                       <RadioGroupItem value="bank_transfer" id="bank" />
                       <Label htmlFor="bank">تحويل بنكي</Label>
                     </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="manual" id="manual" />
+                      <Label htmlFor="manual">دفع يدوي (عبر المشرف)</Label>
+                    </div>
                   </RadioGroup>
                 </div>
 
@@ -592,6 +598,47 @@ export function SubscriptionCard({
                       <Send className="h-5 w-5" />
                       {loading ? "جاري الإرسال..." : "إرسال الطلب"}
                     </Button>
+                  </>
+                )}
+
+                {showManualPayment && (
+                  <>
+                    <Alert className="bg-blue-50 border-blue-200">
+                      <AlertDescription className="text-sm">
+                        📋 سيتم إرسال طلبك للمشرف مباشرة. سيتم التواصل معك عبر
+                        واتساب لإتمام عملية الدفع يدوياً.
+                      </AlertDescription>
+                    </Alert>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="manual-notes">
+                        ملاحظات أو طريقة دفع مفضلة (اختياري)
+                      </Label>
+                      <Textarea
+                        id="manual-notes"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        placeholder="مثال: أفضل الدفع عن طريق التحويل المباشر / ريفلكت / صديق لصديق..."
+                        rows={3}
+                      />
+                    </div>
+
+                    <Button
+                      onClick={handleSubmitRequest}
+                      className="w-full gap-2"
+                      size="lg"
+                      disabled={loading}
+                    >
+                      <Send className="h-5 w-5" />
+                      {loading ? "جاري الإرسال..." : "إرسال الطلب للمشرف"}
+                    </Button>
+
+                    <Alert>
+                      <AlertDescription className="text-xs text-muted-foreground">
+                        💡 بعد إرسال الطلب، سيقوم المشرف بالتواصل معك عبر واتساب
+                        لترتيب عملية الدفع.
+                      </AlertDescription>
+                    </Alert>
                   </>
                 )}
 
