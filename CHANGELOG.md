@@ -5,22 +5,22 @@
 
 ### Features
 
-* prevent duplicate subscription requests and disable upgrade buttons ([be5728f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/be5728fdbb5fe56d4575f246aed72789fe1c4e40))
+* prevent duplicate subscription requests and disable upgrade buttons ([be5728f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/be5728fdbb5fe56d4575f246aed72789fe1c4e40)) by @CJWTRUST
 
 
 ### Bug Fixes
 
-* add array validation for providers in useMemo to prevent crash ([eaf91f6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/eaf91f62ccd696797b9893c8a5712bc77e008c3b))
-* add array validation for providers.map in select-model ([9b5acd6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9b5acd681e6c744b1f22d348827ac268c2f595f1))
-* add missing Arabic translations for Admin.Subscriptions and pending request messages ([17b20b1](https://github.com/Osama-Qonaibe/hebronai-v2/commit/17b20b1ee8f149b97c30b23a6f0c458a130bf413))
-* add null checks for PLANS to prevent TypeError crash ([bf34bac](https://github.com/Osama-Qonaibe/hebronai-v2/commit/bf34bac35a2d8dfc365326e2dcada394493fbc4e))
-* comprehensive providers validation - prevent all array crashes ([864f393](https://github.com/Osama-Qonaibe/hebronai-v2/commit/864f393be283f45f746e036110aef0e0957d2fa4))
-* critical subscription workflow fixes ([ec318ca](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ec318caa147eb3537d88ac7c5ef0346fbfec614e))
+* add array validation for providers in useMemo to prevent crash ([eaf91f6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/eaf91f62ccd696797b9893c8a5712bc77e008c3b)) by @CJWTRUST
+* add array validation for providers.map in select-model ([9b5acd6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9b5acd681e6c744b1f22d348827ac268c2f595f1)) by @CJWTRUST
+* add missing Arabic translations for Admin.Subscriptions and pending request messages ([17b20b1](https://github.com/Osama-Qonaibe/hebronai-v2/commit/17b20b1ee8f149b97c30b23a6f0c458a130bf413)) by @CJWTRUST
+* add null checks for PLANS to prevent TypeError crash ([bf34bac](https://github.com/Osama-Qonaibe/hebronai-v2/commit/bf34bac35a2d8dfc365326e2dcada394493fbc4e)) by @CJWTRUST
+* comprehensive providers validation - prevent all array crashes ([864f393](https://github.com/Osama-Qonaibe/hebronai-v2/commit/864f393be283f45f746e036110aef0e0957d2fa4)) by @CJWTRUST
+* critical subscription workflow fixes ([ec318ca](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ec318caa147eb3537d88ac7c5ef0346fbfec614e)) by @CJWTRUST
 
 
 ### Reverts
 
-* restore subscription workflow - fix payment dialog and database caching ([87f303c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/87f303c645ab2b57dc294f903140ed3281edf43d))
+* restore subscription workflow - fix payment dialog and database caching ([87f303c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/87f303c645ab2b57dc294f903140ed3281edf43d)) by @Osama-Qonaibe
 
 ## [2.0.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.14.0...hebronai-v2-v2.0.0) (2026-02-16)
 
@@ -583,8 +583,8 @@
 
 ### Features
 
-- **workflow:** Add HTTP and Template nodes with LLM structured output supportWorkflow node ([#117](https://github.com/cgoinglove/better-chatbot/issues/117)) ([10ec438](https://github.com/cgoinglove/better-chatbot/commit/10ec438f13849f0745e7fab652cdd7cef8e97ab6)) by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @unknown by @unknown by @unknown by @unknown
-- **workflow:** add HTTP node configuration and execution support ([7d2f65f](https://github.com/cgoinglove/better-chatbot/commit/7d2f65fe4f0fdaae58ca2a69abb04abee3111c60)) by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @unknown by @unknown by @unknown by @unknown
+- **workflow:** Add HTTP and Template nodes with LLM structured output supportWorkflow node ([#117](https://github.com/cgoinglove/better-chatbot/issues/117)) ([10ec438](https://github.com/cgoinglove/better-chatbot/commit/10ec438f13849f0745e7fab652cdd7cef8e97ab6)) by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @unknown by @unknown by @unknown by @unknown by @unknown
+- **workflow:** add HTTP node configuration and execution support ([7d2f65f](https://github.com/cgoinglove/better-chatbot/commit/7d2f65fe4f0fdaae58ca2a69abb04abee3111c60)) by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @unknown by @unknown by @unknown by @unknown by @unknown
 
 ### Bug Fixes
 
@@ -596,13 +596,13 @@
 
 ### Features
 
-- **releases:** add debug logging to the add authors and update release step ([#105](https://github.com/cgoinglove/better-chatbot/issues/105)) ([c855a6a](https://github.com/cgoinglove/better-chatbot/commit/c855a6a94c49dfd93c9a8d1d0932aeda36bd6c7e)) by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @unknown by @unknown by @unknown by @unknown
+- **releases:** add debug logging to the add authors and update release step ([#105](https://github.com/cgoinglove/better-chatbot/issues/105)) ([c855a6a](https://github.com/cgoinglove/better-chatbot/commit/c855a6a94c49dfd93c9a8d1d0932aeda36bd6c7e)) by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @brrock by @unknown by @unknown by @unknown by @unknown by @unknown
 - workflow beta ([#100](https://github.com/cgoinglove/better-chatbot/issues/100)) ([2f5ada2](https://github.com/cgoinglove/better-chatbot/commit/2f5ada2a66e8e3cd249094be9d28983e4331d3a1)) by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot
 
 ### Bug Fixes
 
 - update tool selection logic in McpServerSelector to maintain current selections ([4103c1b](https://github.com/cgoinglove/better-chatbot/commit/4103c1b828c3e5b513679a3fb9d72bd37301f99d)) by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove by @cgoinglove
-- **workflow:** MPC Tool Response Structure And Workflow ([#113](https://github.com/cgoinglove/better-chatbot/issues/113)) ([836ffd7](https://github.com/cgoinglove/better-chatbot/commit/836ffd7ef5858210bdce44d18ca82a1c8f0fc87f)) by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @unknown by @unknown by @unknown by @unknown
+- **workflow:** MPC Tool Response Structure And Workflow ([#113](https://github.com/cgoinglove/better-chatbot/issues/113)) ([836ffd7](https://github.com/cgoinglove/better-chatbot/commit/836ffd7ef5858210bdce44d18ca82a1c8f0fc87f)) by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @cgoing-bot by @unknown by @unknown by @unknown by @unknown by @unknown
 
 ## [1.9.0](https://github.com/cgoinglove/better-chatbot/compare/v1.8.0...v1.9.0) (2025-06-16)
 
