@@ -189,6 +189,32 @@ const pgAdminRepository: AdminRepository = {
           updatedAt: new Date(),
         })
         .where(eq(UserTable.id, request.userId));
+
+      // Get user details to send email
+      const [user] = await tx
+        .select()
+        .from(UserTable)
+        .where(eq(UserTable.id, request.userId));
+
+      // Send subscription activated email
+      if (user) {
+        const { sendSubscriptionActivatedEmail } = await import(
+          "@/lib/email/notifications"
+        );
+
+        void sendSubscriptionActivatedEmail(
+          {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            locale: (user as any).locale,
+          },
+          {
+            plan: request.requestedPlan,
+            expiresAt: expirationDate,
+          },
+        );
+      }
     });
   },
 

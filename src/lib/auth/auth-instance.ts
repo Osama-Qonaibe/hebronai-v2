@@ -78,12 +78,49 @@ const options = {
             },
           };
         },
+        after: async (user) => {
+          // Send welcome email after user creation
+          const { sendWelcomeEmail } = await import("lib/email/notifications");
+
+          void sendWelcomeEmail({
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            locale: (user as any).locale,
+          });
+
+          logger.info(`Welcome email queued for ${user.email}`);
+        },
       },
     },
   },
   emailAndPassword: {
     enabled: emailAndPasswordEnabled,
     disableSignUp: !signUpEnabled,
+    sendResetPassword: async ({ user, url, token }, request) => {
+      // Import email service dynamically to avoid circular dependencies
+      const { sendEmail, getEmailSubject } = await import(
+        "lib/email/email-service"
+      );
+      const { PasswordResetEmail } = await import("lib/email/templates");
+
+      // Detect user's preferred locale (default to 'en')
+      const locale = (user as any).locale || "en";
+
+      // Send password reset email
+      void sendEmail({
+        to: user.email,
+        subject: getEmailSubject("passwordReset", locale),
+        template: PasswordResetEmail({
+          userName: user.name || user.email.split("@")[0],
+          resetUrl: url,
+          locale,
+        }),
+        locale,
+      });
+
+      logger.info(`Password reset email sent to ${user.email}`);
+    },
   },
   session: {
     cookieCache: {
