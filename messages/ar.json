@@ -164,7 +164,8 @@
       "noAccount": "ليس لديك حساب؟ ",
       "signUp": "سجّل",
       "signIn": "تسجيل الدخول",
-      "orContinueWith": "أو المتابعة باستخدام"
+      "orContinueWith": "أو المتابعة باستخدام",
+      "forgotPassword": "نسيت كلمة المرور؟"
     },
     "SignUp": {
       "title": "إنشاء حساب",

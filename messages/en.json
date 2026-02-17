@@ -164,7 +164,8 @@
       "noAccount": "Don't have an account? ",
       "signUp": "Sign up",
       "signIn": "Sign in",
-      "orContinueWith": "OR CONTINUE WITH"
+      "orContinueWith": "OR CONTINUE WITH",
+      "forgotPassword": "Forgot password?"
     },
     "SignUp": {
       "title": "Create an account",

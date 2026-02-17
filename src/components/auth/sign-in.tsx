@@ -101,7 +101,7 @@ export default function SignIn({
                   <Label htmlFor="password">Password</Label>
                   <Link
                     href="/forgot-password"
-                    className="text-sm text-primary hover:underline"
+                    className="text-xs text-muted-foreground hover:text-primary transition-colors"
                   >
                     {t("forgotPassword")}
                   </Link>
