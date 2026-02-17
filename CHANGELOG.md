@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.1.0...hebronai-v2-v2.1.1) (2026-02-17)
+
+
+### Bug Fixes
+
+* change app name from 'Chat Bot' to 'HebronAI' ([474162d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/474162dc7ea5dfc4f321f17161102664e035d279))
+
 ## [2.1.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.0.0...hebronai-v2-v2.1.0) (2026-02-17)
 
 
