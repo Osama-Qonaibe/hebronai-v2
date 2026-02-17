@@ -746,6 +746,7 @@
     },
     "Subscriptions": {
       "title": "طلبات الاشتراك",
+      "description": "إدارة طلبات الاشتراك والموافقة عليها أو رفضها",
       "allRequests": "جميع الطلبات",
       "viewAndManageRequests": "عرض وإدارة طلبات الاشتراك",
       "pending": "معلق",
