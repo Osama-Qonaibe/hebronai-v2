@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.1.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.0.0...hebronai-v2-v2.1.0) (2026-02-17)
+
+
+### Features
+
+* prevent duplicate subscription requests and disable upgrade buttons ([be5728f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/be5728fdbb5fe56d4575f246aed72789fe1c4e40))
+
+
+### Bug Fixes
+
+* add array validation for providers in useMemo to prevent crash ([eaf91f6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/eaf91f62ccd696797b9893c8a5712bc77e008c3b))
+* add array validation for providers.map in select-model ([9b5acd6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9b5acd681e6c744b1f22d348827ac268c2f595f1))
+* add missing Arabic translations for Admin.Subscriptions and pending request messages ([17b20b1](https://github.com/Osama-Qonaibe/hebronai-v2/commit/17b20b1ee8f149b97c30b23a6f0c458a130bf413))
+* add null checks for PLANS to prevent TypeError crash ([bf34bac](https://github.com/Osama-Qonaibe/hebronai-v2/commit/bf34bac35a2d8dfc365326e2dcada394493fbc4e))
+* comprehensive providers validation - prevent all array crashes ([864f393](https://github.com/Osama-Qonaibe/hebronai-v2/commit/864f393be283f45f746e036110aef0e0957d2fa4))
+* critical subscription workflow fixes ([ec318ca](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ec318caa147eb3537d88ac7c5ef0346fbfec614e))
+
+
+### Reverts
+
+* restore subscription workflow - fix payment dialog and database caching ([87f303c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/87f303c645ab2b57dc294f903140ed3281edf43d))
+
 ## [2.0.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v1.14.0...hebronai-v2-v2.0.0) (2026-02-16)
 
 
