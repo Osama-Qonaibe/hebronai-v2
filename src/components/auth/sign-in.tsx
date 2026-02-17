@@ -20,10 +20,9 @@ import { authClient } from "@/lib/auth/client";
 import { toast } from "sonner";
 import { GithubIcon } from "ui/github-icon";
 import { GoogleIcon } from "ui/google-icon";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { MicrosoftIcon } from "ui/microsoft-icon";
 import { SocialAuthenticationProvider } from "app-types/authentication";
-import { useParams } from "next/navigation";
 
 export default function SignIn({
   emailAndPasswordEnabled,
@@ -37,8 +36,7 @@ export default function SignIn({
   isFirstUser: boolean;
 }) {
   const t = useTranslations("Auth.SignIn");
-  const params = useParams();
-  const locale = params.locale as string;
+  const locale = useLocale();
 
   const [loading, setLoading] = useState(false);
 
@@ -186,7 +184,7 @@ export default function SignIn({
           {signUpEnabled && (
             <div className="my-8 text-center text-sm text-muted-foreground">
               {t("noAccount")}
-              <Link href={`/${locale}/sign-up`} className="underline-offset-4 text-primary">
+              <Link href={`/${locale}/sign-up`} className="underline-offset-4 text-primary ml-1">
                 {t("signUp")}
               </Link>
             </div>
