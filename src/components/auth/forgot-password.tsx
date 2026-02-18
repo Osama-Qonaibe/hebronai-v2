@@ -13,7 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Loader, CheckCircle2, ArrowLeft } from "lucide-react";
-import { authClient } from "@/lib/auth/client";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
@@ -32,13 +31,24 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      await authClient.forgetPassword({
-        email,
-        redirectTo: "/reset-password",
+      const response = await fetch("/api/auth/forget-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          redirectTo: "/reset-password",
+        }),
       });
 
-      setSent(true);
-      toast.success(t("success"));
+      if (response.ok) {
+        setSent(true);
+        toast.success(t("success"));
+      } else {
+        const data = await response.json();
+        toast.error(data.message || t("error"));
+      }
     } catch (error: any) {
       toast.error(error?.message || t("error"));
     } finally {
