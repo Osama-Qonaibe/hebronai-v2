@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.2.5](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.4...hebronai-v2-v2.2.5) (2026-02-18)
+
+
+### Bug Fixes
+
+* Use correct better-auth method name forgetPassword ([6939b09](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6939b092b6eab5183bc6c4f50046db355d328076))
+* Use direct API call for reset password ([61da202](https://github.com/Osama-Qonaibe/hebronai-v2/commit/61da202c932a602d50abd4112797a67d5b5b7496))
+* Use direct API call instead of authClient ([9bb0515](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9bb05152f40c421957cb8503712e989547a48993))
+
 ## [2.2.4](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.3...hebronai-v2-v2.2.4) (2026-02-17)
 
 
