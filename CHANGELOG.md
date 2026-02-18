@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.2.8](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.7...hebronai-v2-v2.2.8) (2026-02-18)
+
+
+### Reverts
+
+* Remove API route ([4352456](https://github.com/Osama-Qonaibe/hebronai-v2/commit/435245639c4f8bb6af24848d67726e7ea783b1f5))
+* Remove documentation ([7608ae5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7608ae5ab4946e89e890a309a47d4797ff803932))
+* Remove migration files ([9570749](https://github.com/Osama-Qonaibe/hebronai-v2/commit/95707498ed58e4578087754c1dd023d2460512c6))
+* Remove migration files (2) ([d94be85](https://github.com/Osama-Qonaibe/hebronai-v2/commit/d94be85d8a006249cc809e6a57a284dd5072545b))
+* Remove PostgreSQL storage implementation ([a80e8da](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a80e8daf4adb4500a46acfee13b17a9d7e870b81))
+* Restore original files and remove all PostgreSQL storage changes ([dd96003](https://github.com/Osama-Qonaibe/hebronai-v2/commit/dd9600357bbed1b2d2f9c0fcc5ba6fa9e6890eb8))
+* Restore original schema.pg.ts ([a4b1812](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a4b18125c6f3ae3844b2f5d773948cbd5f70a904))
+
 ## [2.2.7](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.6...hebronai-v2-v2.2.7) (2026-02-18)
 
 
