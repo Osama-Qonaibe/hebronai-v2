@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.7](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.6...hebronai-v2-v2.2.7) (2026-02-18)
+
+
+### Bug Fixes
+
+* Simplify fetch and add console logging ([793bcf9](https://github.com/Osama-Qonaibe/hebronai-v2/commit/793bcf9993f83b4647ed06e7422f38e12c8d3aca))
+* Simplify fetch and add console logging for reset ([434e842](https://github.com/Osama-Qonaibe/hebronai-v2/commit/434e8428ca571d1f37fbdd097de332faffe12260))
+
 ## [2.2.6](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.5...hebronai-v2-v2.2.6) (2026-02-18)
 
 
