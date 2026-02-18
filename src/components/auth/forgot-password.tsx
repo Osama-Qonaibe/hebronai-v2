@@ -31,26 +31,28 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth/forget-password", {
+      const baseUrl = window.location.origin;
+      const response = await fetch(`${baseUrl}/api/auth/forget-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email,
-          redirectTo: "/reset-password",
+          redirectTo: `${baseUrl}/reset-password`,
         }),
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         setSent(true);
         toast.success(t("success"));
       } else {
-        const data = await response.json();
-        toast.error(data.message || t("error"));
+        toast.error(data?.error?.message || t("error"));
       }
     } catch (error: any) {
-      toast.error(error?.message || t("error"));
+      toast.error(t("error"));
     } finally {
       setLoading(false);
     }
