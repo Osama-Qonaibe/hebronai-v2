@@ -62,8 +62,7 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
-      const baseUrl = window.location.origin;
-      const response = await fetch(`${baseUrl}/api/auth/reset-password`, {
+      const response = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,8 +73,6 @@ export default function ResetPassword() {
         }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
         setSuccess(true);
         toast.success(t("success"));
@@ -83,9 +80,12 @@ export default function ResetPassword() {
           router.push("/sign-in");
         }, 2000);
       } else {
-        toast.error(data?.error?.message || t("error"));
+        const data = await response.json().catch(() => ({}));
+        console.error("Reset password error:", data);
+        toast.error(data?.error?.message || data?.message || t("error"));
       }
     } catch (error: any) {
+      console.error("Reset password error:", error);
       toast.error(t("error"));
     } finally {
       setLoading(false);
