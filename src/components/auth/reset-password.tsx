@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/card";
 import { useObjectState } from "@/hooks/use-object-state";
 import { Loader, CheckCircle2, AlertCircle } from "lucide-react";
-import { authClient } from "@/lib/auth/client";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
@@ -63,17 +62,27 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
-      await authClient.resetPassword({
-        newPassword: formData.password,
-        token,
+      const response = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          newPassword: formData.password,
+          token,
+        }),
       });
 
-      setSuccess(true);
-      toast.success(t("success"));
-
-      setTimeout(() => {
-        router.push("/sign-in");
-      }, 2000);
+      if (response.ok) {
+        setSuccess(true);
+        toast.success(t("success"));
+        setTimeout(() => {
+          router.push("/sign-in");
+        }, 2000);
+      } else {
+        const data = await response.json();
+        toast.error(data.message || t("error"));
+      }
     } catch (error: any) {
       toast.error(error?.message || t("error"));
     } finally {
