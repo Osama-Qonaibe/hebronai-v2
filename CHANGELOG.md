@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.6](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.5...hebronai-v2-v2.2.6) (2026-02-18)
+
+
+### Bug Fixes
+
+* Add full URL and improve error handling for reset ([d0c75a4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/d0c75a4800c0dedf28f605d73f66ac37a0da2e4b))
+* Add full URL for redirectTo and improve error handling ([8b01378](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8b01378b1846be45b9e4cba6725f13999d89deb7))
+
 ## [2.2.5](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.4...hebronai-v2-v2.2.5) (2026-02-18)
 
 
