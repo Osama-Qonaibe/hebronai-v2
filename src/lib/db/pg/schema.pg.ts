@@ -13,7 +13,6 @@ import {
   varchar,
   index,
   numeric,
-  integer,
 } from "drizzle-orm/pg-core";
 import { isNotNull } from "drizzle-orm";
 import { DBWorkflow, DBEdge, DBNode } from "app-types/workflow";
@@ -373,21 +372,6 @@ export const McpOAuthSessionTable = pgTable(
   ],
 );
 
-export const FileStorageTable = pgTable(
-  "file_storage",
-  {
-    key: text("key").primaryKey().notNull(),
-    filename: text("filename").notNull(),
-    contentType: text("content_type").notNull(),
-    size: integer("size").notNull(),
-    data: text("data", { mode: "text" }).notNull(),
-    uploadedAt: timestamp("uploaded_at")
-      .notNull()
-      .default(sql`CURRENT_TIMESTAMP`),
-  },
-  (t) => [index("idx_file_storage_uploaded_at").on(t.uploadedAt)],
-);
-
 export type McpServerEntity = typeof McpServerTable.$inferSelect;
 export type ChatThreadEntity = typeof ChatThreadTable.$inferSelect;
 export type ChatMessageEntity = typeof ChatMessageTable.$inferSelect;
@@ -403,8 +387,6 @@ export type McpServerCustomizationEntity =
 
 export type SubscriptionRequestEntity =
   typeof SubscriptionRequestTable.$inferSelect;
-
-export type FileStorageEntity = typeof FileStorageTable.$inferSelect;
 
 export const ChatExportTable = pgTable("chat_export", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
