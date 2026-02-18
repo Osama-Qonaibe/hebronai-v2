@@ -3,20 +3,20 @@ import { IS_DEV } from "lib/const";
 import type { FileStorage } from "./file-storage.interface";
 import { createS3FileStorage } from "./s3-file-storage";
 import { createVercelBlobStorage } from "./vercel-blob-storage";
+import { createPostgresFileStorage } from "./postgres-file-storage";
 import logger from "logger";
 
-export type FileStorageDriver = "vercel-blob" | "s3";
+export type FileStorageDriver = "vercel-blob" | "s3" | "postgres";
 
 const resolveDriver = (): FileStorageDriver => {
   const candidate = process.env.FILE_STORAGE_TYPE;
 
   const normalized = candidate?.trim().toLowerCase();
-  if (normalized === "vercel-blob" || normalized === "s3") {
+  if (normalized === "vercel-blob" || normalized === "s3" || normalized === "postgres") {
     return normalized;
   }
 
-  // Default to Vercel Blob
-  return "vercel-blob";
+  return "postgres";
 };
 
 declare global {
@@ -33,6 +33,8 @@ const createFileStorage = (): FileStorage => {
       return createVercelBlobStorage();
     case "s3":
       return createS3FileStorage();
+    case "postgres":
+      return createPostgresFileStorage();
     default: {
       const exhaustiveCheck: never = storageDriver;
       throw new Error(`Unsupported file storage driver: ${exhaustiveCheck}`);
