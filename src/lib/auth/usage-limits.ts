@@ -2,8 +2,14 @@ import "server-only";
 import { getUserSubscription } from "./subscription";
 import { getPlanLimits } from "../subscription/plans";
 import { pgDb as db } from "lib/db/pg/db.pg";
-import { AgentTable, WorkflowTable, McpServerTable } from "lib/db/pg/schema.pg";
-import { eq, count } from "drizzle-orm";
+import {
+  AgentTable,
+  WorkflowTable,
+  McpServerTable,
+  ImageGenerationTable,
+  UsageTable,
+} from "lib/db/pg/schema.pg";
+import { eq, count, and, gte, lt, sql } from "drizzle-orm";
 
 export interface LimitCheckResult {
   allowed: boolean;
@@ -12,9 +18,6 @@ export interface LimitCheckResult {
   max?: number;
 }
 
-/**
- * Check if user can create a new agent
- */
 export async function checkAgentCreationLimit(
   userId: string,
 ): Promise<LimitCheckResult> {
@@ -29,12 +32,10 @@ export async function checkAgentCreationLimit(
 
   const limits = getPlanLimits(subscription.plan);
 
-  // -1 means unlimited (enterprise plan)
   if (limits.maxAgents === -1) {
     return { allowed: true };
   }
 
-  // Count current agents
   const [result] = await db
     .select({ count: count() })
     .from(AgentTable)
@@ -58,9 +59,6 @@ export async function checkAgentCreationLimit(
   };
 }
 
-/**
- * Check if user can create a new workflow
- */
 export async function checkWorkflowCreationLimit(
   userId: string,
 ): Promise<LimitCheckResult> {
@@ -102,9 +100,6 @@ export async function checkWorkflowCreationLimit(
   };
 }
 
-/**
- * Check if user can create a new MCP server
- */
 export async function checkMCPServerCreationLimit(
   userId: string,
 ): Promise<LimitCheckResult> {
@@ -146,9 +141,170 @@ export async function checkMCPServerCreationLimit(
   };
 }
 
-/**
- * Get all usage limits and current usage for a user
- */
+export async function checkImageGenerationLimit(
+  userId: string,
+): Promise<LimitCheckResult> {
+  const subscription = await getUserSubscription();
+
+  if (!subscription?.isActive) {
+    return {
+      allowed: false,
+      reason: "Your subscription is not active",
+    };
+  }
+
+  const limits = getPlanLimits(subscription.plan);
+
+  if (limits.maxImagesPerDay === -1) {
+    return { allowed: true };
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(ImageGenerationTable)
+    .where(
+      and(
+        eq(ImageGenerationTable.userId, userId),
+        gte(ImageGenerationTable.createdAt, today),
+        lt(ImageGenerationTable.createdAt, tomorrow),
+        eq(ImageGenerationTable.status, "completed"),
+      ),
+    );
+
+  const currentCount = result?.count || 0;
+
+  if (currentCount >= limits.maxImagesPerDay) {
+    return {
+      allowed: false,
+      reason: `You have reached the daily image generation limit (${limits.maxImagesPerDay}) for your ${subscription.plan} plan. Limit resets tomorrow.`,
+      current: currentCount,
+      max: limits.maxImagesPerDay,
+    };
+  }
+
+  return {
+    allowed: true,
+    current: currentCount,
+    max: limits.maxImagesPerDay,
+  };
+}
+
+export async function checkMonthlyImageLimit(
+  userId: string,
+): Promise<LimitCheckResult> {
+  const subscription = await getUserSubscription();
+
+  if (!subscription?.isActive) {
+    return {
+      allowed: false,
+      reason: "Your subscription is not active",
+    };
+  }
+
+  const limits = getPlanLimits(subscription.plan);
+
+  if (limits.maxImagesPerMonth === -1) {
+    return { allowed: true };
+  }
+
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(ImageGenerationTable)
+    .where(
+      and(
+        eq(ImageGenerationTable.userId, userId),
+        gte(ImageGenerationTable.createdAt, startOfMonth),
+        eq(ImageGenerationTable.status, "completed"),
+      ),
+    );
+
+  const currentCount = result?.count || 0;
+
+  if (currentCount >= limits.maxImagesPerMonth) {
+    return {
+      allowed: false,
+      reason: `You have reached the monthly image generation limit (${limits.maxImagesPerMonth}) for your ${subscription.plan} plan. Please upgrade.`,
+      current: currentCount,
+      max: limits.maxImagesPerMonth,
+    };
+  }
+
+  return {
+    allowed: true,
+    current: currentCount,
+    max: limits.maxImagesPerMonth,
+  };
+}
+
+export async function checkTokenLimit(
+  userId: string,
+  tokensToUse: number,
+): Promise<LimitCheckResult> {
+  const subscription = await getUserSubscription();
+
+  if (!subscription?.isActive) {
+    return {
+      allowed: false,
+      reason: "Your subscription is not active",
+    };
+  }
+
+  const limits = getPlanLimits(subscription.plan);
+
+  if (limits.maxTokensPerMonth === -1) {
+    return { allowed: true };
+  }
+
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const endOfMonth = new Date(startOfMonth);
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+
+  const [result] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(CAST(${UsageTable.amount} AS NUMERIC)), 0)`,
+    })
+    .from(UsageTable)
+    .where(
+      and(
+        eq(UsageTable.userId, userId),
+        eq(UsageTable.resourceType, "tokens"),
+        gte(UsageTable.periodStart, startOfMonth),
+        lt(UsageTable.periodEnd, endOfMonth),
+      ),
+    );
+
+  const currentUsage = Number(result?.total || 0);
+  const afterUsage = currentUsage + tokensToUse;
+
+  if (afterUsage > limits.maxTokensPerMonth) {
+    return {
+      allowed: false,
+      reason: `This request would exceed your monthly token limit (${limits.maxTokensPerMonth.toLocaleString()}) for your ${subscription.plan} plan.`,
+      current: currentUsage,
+      max: limits.maxTokensPerMonth,
+    };
+  }
+
+  return {
+    allowed: true,
+    current: currentUsage,
+    max: limits.maxTokensPerMonth,
+  };
+}
+
 export async function getUserUsageLimits(userId: string) {
   const subscription = await getUserSubscription();
 
@@ -172,6 +328,55 @@ export async function getUserUsageLimits(userId: string) {
     .select({ count: count() })
     .from(McpServerTable)
     .where(eq(McpServerTable.userId, userId));
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const [dailyImagesCount] = await db
+    .select({ count: count() })
+    .from(ImageGenerationTable)
+    .where(
+      and(
+        eq(ImageGenerationTable.userId, userId),
+        gte(ImageGenerationTable.createdAt, today),
+        lt(ImageGenerationTable.createdAt, tomorrow),
+        eq(ImageGenerationTable.status, "completed"),
+      ),
+    );
+
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const [monthlyImagesCount] = await db
+    .select({ count: count() })
+    .from(ImageGenerationTable)
+    .where(
+      and(
+        eq(ImageGenerationTable.userId, userId),
+        gte(ImageGenerationTable.createdAt, startOfMonth),
+        eq(ImageGenerationTable.status, "completed"),
+      ),
+    );
+
+  const endOfMonth = new Date(startOfMonth);
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+
+  const [tokensResult] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(CAST(${UsageTable.amount} AS NUMERIC)), 0)`,
+    })
+    .from(UsageTable)
+    .where(
+      and(
+        eq(UsageTable.userId, userId),
+        eq(UsageTable.resourceType, "tokens"),
+        gte(UsageTable.periodStart, startOfMonth),
+        lt(UsageTable.periodEnd, endOfMonth),
+      ),
+    );
 
   return {
     plan: subscription.plan,
@@ -202,10 +407,31 @@ export async function getUserUsageLimits(userId: string) {
             ? 0
             : ((mcpServersCount?.count || 0) / limits.maxMCPServers) * 100,
       },
+      imagesDaily: {
+        current: dailyImagesCount?.count || 0,
+        max: limits.maxImagesPerDay,
+        percentage:
+          limits.maxImagesPerDay === -1
+            ? 0
+            : ((dailyImagesCount?.count || 0) / limits.maxImagesPerDay) * 100,
+      },
+      imagesMonthly: {
+        current: monthlyImagesCount?.count || 0,
+        max: limits.maxImagesPerMonth,
+        percentage:
+          limits.maxImagesPerMonth === -1
+            ? 0
+            : ((monthlyImagesCount?.count || 0) / limits.maxImagesPerMonth) *
+              100,
+      },
       tokens: {
-        current: 0, // TODO: implement token tracking
+        current: Number(tokensResult?.total || 0),
         max: limits.maxTokensPerMonth,
-        percentage: 0,
+        percentage:
+          limits.maxTokensPerMonth === -1
+            ? 0
+            : (Number(tokensResult?.total || 0) / limits.maxTokensPerMonth) *
+              100,
       },
     },
   };
