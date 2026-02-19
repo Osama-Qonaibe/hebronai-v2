@@ -73,6 +73,8 @@ export async function proxy(request: NextRequest) {
   if (
     pathname.startsWith("/sign-in") ||
     pathname.startsWith("/sign-up") ||
+    pathname.startsWith("/forgot-password") ||
+    pathname.startsWith("/reset-password") ||
     pathname.startsWith("/export")
   ) {
     return NextResponse.next();
