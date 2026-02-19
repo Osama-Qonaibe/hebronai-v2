@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.12](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.11...hebronai-v2-v2.2.12) (2026-02-19)
+
+
+### Features
+
+* Auto-detect user locale from Accept-Language header ([a580b5d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a580b5dc2fbd1cee120f91106bbec031452ece3a))
+
 ## [2.2.11](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.10...hebronai-v2-v2.2.11) (2026-02-19)
 
 
