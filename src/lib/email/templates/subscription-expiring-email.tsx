@@ -165,7 +165,6 @@ export const SubscriptionExpiringEmail = ({
 
 export default SubscriptionExpiringEmail;
 
-// Styles
 const main = {
   backgroundColor: "#f6f9fc",
   fontFamily:
@@ -183,6 +182,7 @@ const container = {
 const header = {
   padding: "32px 20px",
   textAlign: "center" as const,
+  background: "linear-gradient(135deg, #f59e0b 0%, #f97316 50%, #ef4444 100%)",
   backgroundColor: "#f59e0b",
 };
 
@@ -234,6 +234,7 @@ const warningText = {
 };
 
 const button = {
+  background: "linear-gradient(135deg, #00d4ff 0%, #4169e1 25%, #8b5cf6 60%, #d946ef 100%)",
   backgroundColor: "#f59e0b",
   borderRadius: "5px",
   color: "#fff",
