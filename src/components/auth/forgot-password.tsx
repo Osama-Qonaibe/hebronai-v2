@@ -15,57 +15,43 @@ import {
 import { Loader, CheckCircle2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { authClient } from "@/lib/auth/client";
 
 export default function ForgotPassword() {
-  console.log("[ForgotPassword] Component loaded");
-  
   const t = useTranslations("Auth.forgotPassword");
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
 
   const handleSubmit = async () => {
-    console.log("[ForgotPassword] Button clicked, email:", email);
-    
     if (!email) {
       toast.error(t("error"));
       return;
     }
 
     setLoading(true);
-    console.log("[ForgotPassword] Sending request...");
 
-    try {
-      const response = await fetch("/api/auth/forget-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+    await authClient.forgetPassword(
+      {
+        email,
+        redirectTo: `${window.location.origin}/reset-password`,
+      },
+      {
+        onRequest: () => {
+          setLoading(true);
         },
-        body: JSON.stringify({
-          email,
-          redirectTo: `${window.location.origin}/reset-password`,
-        }),
-      });
+        onSuccess: () => {
+          setSent(true);
+          toast.success(t("success"));
+        },
+        onError: (ctx) => {
+          toast.error(ctx.error.message || t("error"));
+        },
+      },
+    );
 
-      console.log("[ForgotPassword] Response status:", response.status);
-
-      if (response.ok) {
-        setSent(true);
-        toast.success(t("success"));
-      } else {
-        const data = await response.json().catch(() => ({}));
-        console.error("[ForgotPassword] Error response:", data);
-        toast.error(data?.error?.message || data?.message || t("error"));
-      }
-    } catch (error: any) {
-      console.error("[ForgotPassword] Exception:", error);
-      toast.error(t("error"));
-    } finally {
-      setLoading(false);
-    }
+    setLoading(false);
   };
-
-  console.log("[ForgotPassword] Rendering, sent=", sent);
 
   if (sent) {
     return (
@@ -114,16 +100,12 @@ export default function ForgotPassword() {
               autoFocus
               disabled={loading}
               value={email}
-              onChange={(e) => {
-                console.log("[ForgotPassword] Email changed:", e.target.value);
-                setEmail(e.target.value);
-              }}
+              onChange={(e) => setEmail(e.target.value)}
               type="email"
               placeholder="user@example.com"
               required
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  console.log("[ForgotPassword] Enter pressed");
                   handleSubmit();
                 }
               }}
@@ -131,10 +113,7 @@ export default function ForgotPassword() {
           </div>
           <Button
             className="w-full"
-            onClick={() => {
-              console.log("[ForgotPassword] Button onClick triggered");
-              handleSubmit();
-            }}
+            onClick={handleSubmit}
             disabled={loading}
           >
             {loading ? (
