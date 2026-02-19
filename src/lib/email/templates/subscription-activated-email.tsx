@@ -167,7 +167,6 @@ export const SubscriptionActivatedEmail = ({
 
 export default SubscriptionActivatedEmail;
 
-// Styles
 const main = {
   backgroundColor: "#f6f9fc",
   fontFamily:
@@ -185,6 +184,7 @@ const container = {
 const header = {
   padding: "32px 20px",
   textAlign: "center" as const,
+  background: "linear-gradient(135deg, #00d4ff 0%, #4169e1 25%, #8b5cf6 60%, #d946ef 100%)",
   backgroundColor: "#10b981",
 };
 
@@ -220,8 +220,10 @@ const listItem = {
 };
 
 const highlightBox = {
+  background: "linear-gradient(135deg, #e0f8ff 0%, #f3e8ff 50%, #fce7f3 100%)",
   backgroundColor: "#f0fdf4",
-  border: "2px solid #10b981",
+  border: "2px solid transparent",
+  borderImage: "linear-gradient(135deg, #00d4ff, #8b5cf6, #d946ef) 1",
   borderRadius: "8px",
   padding: "16px",
   margin: "24px 0",
@@ -236,6 +238,7 @@ const highlightText = {
 };
 
 const button = {
+  background: "linear-gradient(135deg, #00d4ff 0%, #4169e1 25%, #8b5cf6 60%, #d946ef 100%)",
   backgroundColor: "#10b981",
   borderRadius: "5px",
   color: "#fff",
