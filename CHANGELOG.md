@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.2.11](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.10...hebronai-v2-v2.2.11) (2026-02-19)
+
+
+### Features
+
+* Add locale to UserPreferences type ([78e0f1d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/78e0f1dc524af5b6b8c7ec4bd9fb73a5114fe41f))
+
+
+### Bug Fixes
+
+* Get locale from user preferences for email templates ([b82592f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b82592fdd305893f86f9a5a889ca3849553ab80d))
+* TypeScript error - allow null for preferences ([c26837f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c26837f33e7b2f51fab172894717f193719444c2))
+* Use any type for preferences to avoid TypeScript errors ([32b2d89](https://github.com/Osama-Qonaibe/hebronai-v2/commit/32b2d8994558147b56442157ef8bc7f9011850c7))
+* Use proper UserPreferences type for notifications ([07b690a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/07b690a61e0e4e97355e55a58a292b68d69ab171))
+* Use user.preferences.locale for all email notifications ([1d419ea](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1d419ead74e42af83961b39ee04337a119de4dc0))
+
 ## [2.2.10](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.9...hebronai-v2-v2.2.10) (2026-02-19)
 
 
