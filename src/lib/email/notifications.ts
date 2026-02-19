@@ -5,13 +5,14 @@ import {
   SubscriptionExpiringEmail,
 } from "./templates";
 import logger from "logger";
+import type { UserPreferences } from "app-types/user";
 
 interface User {
   id: string;
   email: string;
   name?: string | null;
   locale?: string;
-  preferences?: any;
+  preferences?: UserPreferences | null;
 }
 
 interface Subscription {
