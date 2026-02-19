@@ -23,6 +23,25 @@ const {
   socialAuthenticationProviders,
 } = getAuthConfig();
 
+const detectLocaleFromHeaders = async (): Promise<string> => {
+  try {
+    const headersList = await headers();
+    const acceptLanguage = headersList.get('accept-language');
+    
+    if (acceptLanguage) {
+      const languages = acceptLanguage.split(',').map(lang => lang.split(';')[0].trim().toLowerCase());
+      
+      for (const lang of languages) {
+        if (lang.startsWith('ar')) return 'ar';
+      }
+    }
+  } catch (error) {
+    logger.error('Error detecting locale from headers:', error);
+  }
+  
+  return 'en';
+};
+
 const options = {
   secret: process.env.BETTER_AUTH_SECRET!,
   plugins: [
@@ -60,26 +79,25 @@ const options = {
     user: {
       create: {
         before: async (user) => {
-          // This hook ONLY runs during user creation (sign-up), not on sign-in
-          // Use our optimized getIsFirstUser function with caching
           const isFirstUser = await getIsFirstUser();
-
-          // Set role based on whether this is the first user
           const role = isFirstUser ? USER_ROLES.ADMIN : DEFAULT_USER_ROLE;
+          const detectedLocale = await detectLocaleFromHeaders();
 
           logger.info(
-            `User creation hook: ${user.email} will get role: ${role} (isFirstUser: ${isFirstUser})`,
+            `User creation hook: ${user.email} will get role: ${role} (isFirstUser: ${isFirstUser}), detected locale: ${detectedLocale}`,
           );
 
           return {
             data: {
               ...user,
               role,
+              preferences: {
+                locale: detectedLocale,
+              },
             },
           };
         },
         after: async (user) => {
-          // Send welcome email after user creation
           const { sendWelcomeEmail } = await import("lib/email/notifications");
 
           const userPreferences = (user as any).preferences || {};
@@ -89,10 +107,10 @@ const options = {
             id: user.id,
             email: user.email,
             name: user.name,
-            locale,
+            preferences: userPreferences,
           });
 
-          logger.info(`Welcome email queued for ${user.email}`);
+          logger.info(`Welcome email queued for ${user.email} with locale: ${locale}`);
         },
       },
     },
@@ -101,17 +119,14 @@ const options = {
     enabled: emailAndPasswordEnabled,
     disableSignUp: !signUpEnabled,
     sendResetPassword: async ({ user, url, token }, request) => {
-      // Import email service dynamically to avoid circular dependencies
       const { sendEmail, getEmailSubject } = await import(
         "lib/email/email-service"
       );
       const { PasswordResetEmail } = await import("lib/email/templates");
 
-      // Get user's preferred locale from preferences (default to 'en')
       const userPreferences = (user as any).preferences || {};
       const locale = userPreferences.locale || "en";
 
-      // Send password reset email
       void sendEmail({
         to: user.email,
         subject: getEmailSubject("passwordReset", locale),
@@ -131,8 +146,8 @@ const options = {
       enabled: true,
       maxAge: 60 * 60,
     },
-    expiresIn: 60 * 60 * 24 * 7, // 7 days
-    updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)
+    expiresIn: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
   },
   advanced: {
     useSecureCookies:
@@ -176,22 +191,17 @@ export const getSession = async () => {
   }
 };
 
-// Cache the first user check to avoid repeated DB queries
 let isFirstUserCache: boolean | null = null;
 
 export const getIsFirstUser = async () => {
-  // If we already know there's at least one user, return false immediately
-  // This in-memory cache prevents any DB calls once we know users exist
   if (isFirstUserCache === false) {
     return false;
   }
 
   try {
-    // Direct database query - simple and reliable
     const userCount = await userRepository.getUserCount();
     const isFirstUser = userCount === 0;
 
-    // Once we have at least one user, cache it permanently in memory
     if (!isFirstUser) {
       isFirstUserCache = false;
     }
@@ -199,7 +209,6 @@ export const getIsFirstUser = async () => {
     return isFirstUser;
   } catch (error) {
     logger.error("Error checking if first user:", error);
-    // Cache as false on error to prevent repeated attempts
     isFirstUserCache = false;
     return false;
   }
