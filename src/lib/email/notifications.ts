@@ -11,6 +11,9 @@ interface User {
   email: string;
   name?: string | null;
   locale?: string;
+  preferences?: {
+    locale?: string;
+  };
 }
 
 interface Subscription {
@@ -18,12 +21,10 @@ interface Subscription {
   expiresAt: Date;
 }
 
-/**
- * Send welcome email to new user
- */
 export async function sendWelcomeEmail(user: User): Promise<boolean> {
   try {
-    const locale = (user.locale as "en" | "ar") || "en";
+    const userLocale = user.preferences?.locale || user.locale || "en";
+    const locale = (userLocale as "en" | "ar") || "en";
     const userName = user.name || user.email.split("@")[0];
 
     const success = await sendEmail({
@@ -39,7 +40,7 @@ export async function sendWelcomeEmail(user: User): Promise<boolean> {
     });
 
     if (success) {
-      logger.info(`Welcome email sent to ${user.email}`);
+      logger.info(`Welcome email sent to ${user.email} (locale: ${locale})`);
     } else {
       logger.error(`Failed to send welcome email to ${user.email}`);
     }
@@ -51,18 +52,15 @@ export async function sendWelcomeEmail(user: User): Promise<boolean> {
   }
 }
 
-/**
- * Send subscription activated email
- */
 export async function sendSubscriptionActivatedEmail(
   user: User,
   subscription: Subscription,
 ): Promise<boolean> {
   try {
-    const locale = (user.locale as "en" | "ar") || "en";
+    const userLocale = user.preferences?.locale || user.locale || "en";
+    const locale = (userLocale as "en" | "ar") || "en";
     const userName = user.name || user.email.split("@")[0];
 
-    // Format expiration date based on locale
     const expiresAt = subscription.expiresAt.toLocaleDateString(
       locale === "ar" ? "ar-SA" : "en-US",
       {
@@ -87,7 +85,7 @@ export async function sendSubscriptionActivatedEmail(
 
     if (success) {
       logger.info(
-        `Subscription activated email sent to ${user.email} for plan ${subscription.plan}`,
+        `Subscription activated email sent to ${user.email} for plan ${subscription.plan} (locale: ${locale})`,
       );
     } else {
       logger.error(
@@ -105,19 +103,16 @@ export async function sendSubscriptionActivatedEmail(
   }
 }
 
-/**
- * Send subscription expiring warning email
- */
 export async function sendSubscriptionExpiringEmail(
   user: User,
   subscription: Subscription,
   daysLeft: number,
 ): Promise<boolean> {
   try {
-    const locale = (user.locale as "en" | "ar") || "en";
+    const userLocale = user.preferences?.locale || user.locale || "en";
+    const locale = (userLocale as "en" | "ar") || "en";
     const userName = user.name || user.email.split("@")[0];
 
-    // Format expiration date based on locale
     const expiresAt = subscription.expiresAt.toLocaleDateString(
       locale === "ar" ? "ar-SA" : "en-US",
       {
@@ -143,7 +138,7 @@ export async function sendSubscriptionExpiringEmail(
 
     if (success) {
       logger.info(
-        `Subscription expiring email sent to ${user.email} (${daysLeft} days left)`,
+        `Subscription expiring email sent to ${user.email} (${daysLeft} days left, locale: ${locale})`,
       );
     } else {
       logger.error(
@@ -161,10 +156,6 @@ export async function sendSubscriptionExpiringEmail(
   }
 }
 
-/**
- * Check and send expiration warnings for all active subscriptions
- * This should be called by a cron job daily
- */
 export async function checkAndSendExpirationWarnings(): Promise<void> {
   try {
     const { pgDb } = await import("lib/db/pg/db.pg");
@@ -172,31 +163,28 @@ export async function checkAndSendExpirationWarnings(): Promise<void> {
     const { getDaysRemaining } = await import("lib/subscription/expiration");
     const { eq } = await import("drizzle-orm");
 
-    // Get all users with active paid subscriptions
     const users = await pgDb
       .select()
       .from(UserTable)
       .where(eq(UserTable.planStatus, "active"));
 
-    const warningThresholds = [7, 3, 1]; // Send warnings at 7, 3, and 1 days before expiration
+    const warningThresholds = [7, 3, 1];
     let emailsSent = 0;
 
     for (const user of users) {
-      // Skip users without active paid subscriptions
       if (!user.plan || user.plan === "free" || !user.planExpiresAt) {
         continue;
       }
 
       const daysLeft = getDaysRemaining(user.planExpiresAt);
 
-      // Send warning if subscription is expiring within threshold days
       if (warningThresholds.includes(daysLeft)) {
         await sendSubscriptionExpiringEmail(
           {
             id: user.id,
             email: user.email,
             name: user.name,
-            locale: (user as any).locale,
+            preferences: user.preferences,
           },
           {
             plan: user.plan,
