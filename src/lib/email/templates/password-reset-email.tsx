@@ -105,7 +105,6 @@ export const PasswordResetEmail = ({
 
 export default PasswordResetEmail;
 
-// Styles
 const main = {
   backgroundColor: "#f6f9fc",
   fontFamily:
@@ -123,7 +122,8 @@ const container = {
 const header = {
   padding: "32px 20px",
   textAlign: "center" as const,
-  backgroundColor: "#3b82f6",
+  background: "linear-gradient(135deg, #00d4ff 0%, #4169e1 25%, #8b5cf6 60%, #d946ef 100%)",
+  backgroundColor: "#4169e1",
 };
 
 const h1 = {
@@ -146,7 +146,8 @@ const text = {
 };
 
 const button = {
-  backgroundColor: "#3b82f6",
+  background: "linear-gradient(135deg, #00d4ff 0%, #4169e1 25%, #8b5cf6 60%, #d946ef 100%)",
+  backgroundColor: "#4169e1",
   borderRadius: "5px",
   color: "#fff",
   fontSize: "16px",
