@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.2.9](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.8...hebronai-v2-v2.2.9) (2026-02-19)
+
+
+### Bug Fixes
+
+* Use Better Auth client for forgot password ([fb98e07](https://github.com/Osama-Qonaibe/hebronai-v2/commit/fb98e0763a0a6a1d6b5a06392b1725875dee0ff4))
+* Use correct Better Auth API method name ([5481e4b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5481e4b9f1b3bf4a98b52f9200a17cf8a0eaeb7a))
+* Use correct Better Auth client method - forgetPassword ([f16058e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f16058e5adf1c483715718686740c69a3b1eeff4))
+* Use requestPasswordReset from Better Auth ([a7821a2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a7821a2382e4556fbeb8c7c4a84501f95504834f))
+* Use requestPasswordReset from Better Auth client ([b06efec](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b06efecfc96cbf956bd1db1c039c90530c2570cf))
+
 ## [2.2.8](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.7...hebronai-v2-v2.2.8) (2026-02-18)
 
 
