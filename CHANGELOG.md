@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.10](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.9...hebronai-v2-v2.2.10) (2026-02-19)
+
+
+### Bug Fixes
+
+* Add forgot-password and reset-password to public routes ([568f373](https://github.com/Osama-Qonaibe/hebronai-v2/commit/568f3733ae9a6a90484a3874445c7896049f761c))
+
 ## [2.2.9](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.8...hebronai-v2-v2.2.9) (2026-02-19)
 
 
