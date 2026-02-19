@@ -13,6 +13,7 @@ import {
   varchar,
   index,
   numeric,
+  integer,
 } from "drizzle-orm/pg-core";
 import { isNotNull } from "drizzle-orm";
 import { DBWorkflow, DBEdge, DBNode } from "app-types/workflow";
@@ -206,12 +207,8 @@ export const VerificationTable = pgTable("verification", {
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date(),
-  ),
-  updatedAt: timestamp("updated_at").$defaultFn(
-    () => /* @__PURE__ */ new Date(),
-  ),
+  createdAt: timestamp("created_at").$defaultFn(() => new Date()),
+  updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
 });
 
 export const McpToolCustomizationTable = pgTable(
@@ -372,22 +369,6 @@ export const McpOAuthSessionTable = pgTable(
   ],
 );
 
-export type McpServerEntity = typeof McpServerTable.$inferSelect;
-export type ChatThreadEntity = typeof ChatThreadTable.$inferSelect;
-export type ChatMessageEntity = typeof ChatMessageTable.$inferSelect;
-
-export type AgentEntity = typeof AgentTable.$inferSelect;
-export type UserEntity = typeof UserTable.$inferSelect;
-export type SessionEntity = typeof SessionTable.$inferSelect;
-
-export type ToolCustomizationEntity =
-  typeof McpToolCustomizationTable.$inferSelect;
-export type McpServerCustomizationEntity =
-  typeof McpServerCustomizationTable.$inferSelect;
-
-export type SubscriptionRequestEntity =
-  typeof SubscriptionRequestTable.$inferSelect;
-
 export const ChatExportTable = pgTable("chat_export", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   title: text("title").notNull(),
@@ -433,7 +414,7 @@ export const UsageTable = pgTable(
       .notNull()
       .references(() => UserTable.id, { onDelete: "cascade" }),
     resourceType: varchar("resource_type", {
-      enum: ["tokens", "api_calls", "storage"],
+      enum: ["tokens", "api_calls", "storage", "images"],
     }).notNull(),
     amount: numeric("amount", { precision: 15, scale: 2 }).notNull(),
     metadata: json("metadata").$type<{
@@ -456,7 +437,83 @@ export const UsageTable = pgTable(
   ],
 );
 
+export const ImageGenerationTable = pgTable(
+  "image_generation",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => UserTable.id, { onDelete: "cascade" }),
+    prompt: text("prompt").notNull(),
+    model: text("model").notNull(),
+    imageUrl: text("image_url"),
+    cost: numeric("cost", { precision: 10, scale: 4 }),
+    status: varchar("status", {
+      enum: ["pending", "completed", "failed"],
+    })
+      .notNull()
+      .default("pending"),
+    metadata: json("metadata").$type<{
+      width?: number;
+      height?: number;
+      style?: string;
+      [key: string]: any;
+    }>(),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    index("image_generation_user_id_idx").on(t.userId),
+    index("image_generation_created_at_idx").on(t.createdAt),
+    index("image_generation_status_idx").on(t.status),
+  ],
+);
+
+export const DailyUsageSummaryTable = pgTable(
+  "daily_usage_summary",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => UserTable.id, { onDelete: "cascade" }),
+    date: timestamp("date").notNull(),
+    tokensUsed: integer("tokens_used").notNull().default(0),
+    imagesGenerated: integer("images_generated").notNull().default(0),
+    storageUsedGB: numeric("storage_used_gb", { precision: 10, scale: 2 })
+      .notNull()
+      .default("0"),
+    apiCalls: integer("api_calls").notNull().default(0),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    unique().on(t.userId, t.date),
+    index("daily_usage_user_id_idx").on(t.userId),
+    index("daily_usage_date_idx").on(t.date),
+  ],
+);
+
+export type McpServerEntity = typeof McpServerTable.$inferSelect;
+export type ChatThreadEntity = typeof ChatThreadTable.$inferSelect;
+export type ChatMessageEntity = typeof ChatMessageTable.$inferSelect;
+export type AgentEntity = typeof AgentTable.$inferSelect;
+export type UserEntity = typeof UserTable.$inferSelect;
+export type SessionEntity = typeof SessionTable.$inferSelect;
+export type ToolCustomizationEntity =
+  typeof McpToolCustomizationTable.$inferSelect;
+export type McpServerCustomizationEntity =
+  typeof McpServerCustomizationTable.$inferSelect;
+export type SubscriptionRequestEntity =
+  typeof SubscriptionRequestTable.$inferSelect;
 export type ArchiveEntity = typeof ArchiveTable.$inferSelect;
 export type ArchiveItemEntity = typeof ArchiveItemTable.$inferSelect;
 export type BookmarkEntity = typeof BookmarkTable.$inferSelect;
 export type UsageEntity = typeof UsageTable.$inferSelect;
+export type ImageGenerationEntity = typeof ImageGenerationTable.$inferSelect;
+export type DailyUsageSummaryEntity =
+  typeof DailyUsageSummaryTable.$inferSelect;
