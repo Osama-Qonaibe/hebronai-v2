@@ -13,7 +13,7 @@ interface User {
   locale?: string;
   preferences?: {
     locale?: string;
-  };
+  } | null;
 }
 
 interface Subscription {
@@ -184,7 +184,7 @@ export async function checkAndSendExpirationWarnings(): Promise<void> {
             id: user.id,
             email: user.email,
             name: user.name,
-            preferences: user.preferences,
+            preferences: user.preferences || undefined,
           },
           {
             plan: user.plan,
