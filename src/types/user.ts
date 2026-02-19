@@ -9,6 +9,7 @@ export type UserPreferences = {
   profession?: string;
   responseStyleExample?: string;
   botName?: string;
+  locale?: string;
 };
 
 export interface User extends Omit<UserEntity, "password"> {
@@ -94,4 +95,5 @@ export const UserPreferencesZodSchema = z.object({
   profession: z.string().optional(),
   responseStyleExample: z.string().optional(),
   botName: z.string().optional(),
+  locale: z.string().optional(),
 });
