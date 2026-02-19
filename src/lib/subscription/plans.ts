@@ -5,6 +5,9 @@ export interface PlanLimits {
   maxWorkflows: number;
   maxMCPServers: number;
   maxTokensPerMonth: number;
+  maxImagesPerDay: number;
+  maxImagesPerMonth: number;
+  maxStorageGB: number;
 }
 
 export interface PlanDetails {
@@ -24,24 +27,36 @@ export const PLAN_LIMITS: Record<SubscriptionPlan, PlanLimits> = {
     maxWorkflows: 2,
     maxMCPServers: 1,
     maxTokensPerMonth: 100_000,
+    maxImagesPerDay: 5,
+    maxImagesPerMonth: 50,
+    maxStorageGB: 1,
   },
   basic: {
     maxAgents: 10,
     maxWorkflows: 5,
     maxMCPServers: 3,
     maxTokensPerMonth: 500_000,
+    maxImagesPerDay: 15,
+    maxImagesPerMonth: 200,
+    maxStorageGB: 5,
   },
   pro: {
     maxAgents: 50,
     maxWorkflows: 20,
     maxMCPServers: 10,
     maxTokensPerMonth: 2_000_000,
+    maxImagesPerDay: 40,
+    maxImagesPerMonth: 800,
+    maxStorageGB: 20,
   },
   enterprise: {
     maxAgents: -1,
     maxWorkflows: -1,
     maxMCPServers: -1,
     maxTokensPerMonth: -1,
+    maxImagesPerDay: -1,
+    maxImagesPerMonth: -1,
+    maxStorageGB: -1,
   },
 };
 
@@ -58,6 +73,8 @@ export const PLANS: Record<SubscriptionPlan, PlanDetails> = {
       "features.2Workflows",
       "features.1McpServer",
       "features.100kTokensMonth",
+      "features.5ImagesDay",
+      "features.1GBStorage",
       "features.communitySupport",
     ],
   },
@@ -73,6 +90,8 @@ export const PLANS: Record<SubscriptionPlan, PlanDetails> = {
       "features.5Workflows",
       "features.3McpServers",
       "features.500kTokensMonth",
+      "features.15ImagesDay",
+      "features.5GBStorage",
       "features.emailSupport",
       "features.priorityQueue",
     ],
@@ -89,6 +108,8 @@ export const PLANS: Record<SubscriptionPlan, PlanDetails> = {
       "features.20Workflows",
       "features.10McpServers",
       "features.2mTokensMonth",
+      "features.40ImagesDay",
+      "features.20GBStorage",
       "features.prioritySupport",
       "features.advancedAnalytics",
       "features.teamCollaboration",
@@ -107,6 +128,8 @@ export const PLANS: Record<SubscriptionPlan, PlanDetails> = {
       "features.unlimitedWorkflows",
       "features.unlimitedMcpServers",
       "features.unlimitedTokens",
+      "features.unlimitedImages",
+      "features.unlimitedStorage",
       "features.dedicatedSupport",
       "features.slaGuarantee",
       "features.customIntegration",
