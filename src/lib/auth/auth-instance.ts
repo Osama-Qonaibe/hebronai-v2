@@ -82,11 +82,14 @@ const options = {
           // Send welcome email after user creation
           const { sendWelcomeEmail } = await import("lib/email/notifications");
 
+          const userPreferences = (user as any).preferences || {};
+          const locale = userPreferences.locale || "en";
+
           void sendWelcomeEmail({
             id: user.id,
             email: user.email,
             name: user.name,
-            locale: (user as any).locale,
+            locale,
           });
 
           logger.info(`Welcome email queued for ${user.email}`);
@@ -104,8 +107,9 @@ const options = {
       );
       const { PasswordResetEmail } = await import("lib/email/templates");
 
-      // Detect user's preferred locale (default to 'en')
-      const locale = (user as any).locale || "en";
+      // Get user's preferred locale from preferences (default to 'en')
+      const userPreferences = (user as any).preferences || {};
+      const locale = userPreferences.locale || "en";
 
       // Send password reset email
       void sendEmail({
@@ -119,7 +123,7 @@ const options = {
         locale,
       });
 
-      logger.info(`Password reset email sent to ${user.email}`);
+      logger.info(`Password reset email sent to ${user.email} (locale: ${locale})`);
     },
   },
   session: {
