@@ -130,6 +130,120 @@ export const UserTable = pgTable("user", {
     .default(sql`CURRENT_TIMESTAMP + INTERVAL '30 days'`),
 });
 
+export const SubscriptionPlanTable = pgTable(
+  "subscription_plan",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    name: text("name").notNull().unique(),
+    slug: text("slug").notNull().unique(),
+    displayName: json("display_name").notNull().$type<{
+      en: string;
+      ar: string;
+    }>(),
+    description: json("description").notNull().$type<{
+      en: string;
+      ar: string;
+    }>(),
+    pricing: json("pricing").notNull().$type<{
+      monthly: number;
+      yearly: number;
+      currency: string;
+      discount?: { yearly: number };
+    }>(),
+    models: json("models").notNull().$type<{
+      allowed: string[];
+      default: string;
+      limits: {
+        [key: string]: {
+          maxTokensPerRequest: number;
+          maxRequestsPerDay: number;
+          maxTokensPerMonth: number;
+        };
+      };
+    }>(),
+    limits: json("limits").notNull().$type<{
+      chats: { maxActive: number; maxHistory: number };
+      messages: {
+        maxPerChat: number;
+        maxPerDay: number;
+        maxPerMonth: number;
+      };
+      files: { maxSize: number; maxCount: number; allowedTypes: string[] };
+      api: { rateLimit: number; burstLimit: number };
+    }>(),
+    features: json("features").notNull().$type<{
+      mcpServers: {
+        enabled: boolean;
+        maxServers: number;
+        customServers: boolean;
+      };
+      workflows: { enabled: boolean; maxWorkflows: number };
+      agents: {
+        enabled: boolean;
+        maxCustomAgents: number;
+        shareAgents: boolean;
+      };
+      advanced: {
+        codeInterpreter: boolean;
+        imageGeneration: boolean;
+        voiceChat: boolean;
+        documentAnalysis: boolean;
+        apiAccess: boolean;
+        prioritySupport: boolean;
+        teamWorkspace: boolean;
+        exportData: boolean;
+      };
+    }>(),
+    adminSettings: json("admin_settings").notNull().$type<{
+      isActive: boolean;
+      isVisible: boolean;
+      isFeatured: boolean;
+      allowSignup: boolean;
+      maxUsers: number | null;
+      trialDays: number;
+    }>(),
+    metadata: json("metadata").notNull().$type<{
+      order: number;
+      badge?: string;
+      color: string;
+      icon: string;
+    }>(),
+    createdBy: uuid("created_by")
+      .notNull()
+      .references(() => UserTable.id),
+    createdAt: timestamp("created_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    index("subscription_plan_slug_idx").on(t.slug),
+    index("subscription_plan_active_idx").on(
+      sql`((admin_settings->>'isActive')::boolean)`,
+    ),
+  ],
+);
+
+export const PaymentGatewayTable = pgTable("payment_gateway", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  name: text("name").notNull().unique(),
+  provider: text("provider").notNull(),
+  isActive: boolean("is_active").default(false).notNull(),
+  isTestMode: boolean("is_test_mode").default(true).notNull(),
+  config: json("config").notNull().$type<{
+    publicKey: string;
+    secretKey: string;
+    webhookSecret?: string;
+    webhookUrl?: string;
+    supportedCurrencies: string[];
+    metadata?: Record<string, any>;
+  }>(),
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const SubscriptionRequestTable = pgTable(
   "subscription_request",
   {
@@ -510,6 +624,8 @@ export type McpServerCustomizationEntity =
   typeof McpServerCustomizationTable.$inferSelect;
 export type SubscriptionRequestEntity =
   typeof SubscriptionRequestTable.$inferSelect;
+export type SubscriptionPlanEntity = typeof SubscriptionPlanTable.$inferSelect;
+export type PaymentGatewayEntity = typeof PaymentGatewayTable.$inferSelect;
 export type ArchiveEntity = typeof ArchiveTable.$inferSelect;
 export type ArchiveItemEntity = typeof ArchiveItemTable.$inferSelect;
 export type BookmarkEntity = typeof BookmarkTable.$inferSelect;
