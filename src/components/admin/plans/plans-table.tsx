@@ -39,7 +39,8 @@ import {
 import { SubscriptionPlan } from "@/types/subscription";
 
 export function PlansTable() {
-  const t = useTranslations("AdminPlans");
+  const t = useTranslations("Admin.Plans");
+  const tCommon = useTranslations("Common");
   const { plans, loading } = usePlans();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(
     null,
@@ -130,29 +131,29 @@ export function PlansTable() {
     <>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>{t("allPlans")}</CardTitle>
+          <CardTitle>{t("title")}</CardTitle>
           <Button onClick={handleAdd} className="gap-2">
             <Plus className="h-4 w-4" />
-            {t("addPlan")}
+            {t("createPlan")}
           </Button>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t("name")}</TableHead>
-                <TableHead>{t("price")}</TableHead>
+                <TableHead>{t("planName")}</TableHead>
+                <TableHead>{t("planPrice")}</TableHead>
                 <TableHead>{t("status")}</TableHead>
                 <TableHead>{t("visibility")}</TableHead>
-                <TableHead>{t("order")}</TableHead>
-                <TableHead className="text-right">{t("actions")}</TableHead>
+                <TableHead>{t("planDuration")}</TableHead>
+                <TableHead className="text-right">{tCommon("actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {plans.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8">
-                    {t("noPlans")}
+                    {t("noPlanstYet")}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -171,7 +172,7 @@ export function PlansTable() {
                     <TableCell>
                       {plan.pricing.monthly === 0
                         ? t("free")
-                        : `$${plan.pricing.monthly}/${t("month")}`}
+                        : `$${plan.pricing.monthly}/${t("monthly")}`}
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -182,7 +183,7 @@ export function PlansTable() {
                         ) : (
                           <XCircle className="h-3 w-3 mr-1" />
                         )}
-                        {plan.adminSettings.isActive ? t("active") : t("inactive")}
+                        {plan.adminSettings.isActive ? tCommon("active") : t("inactive")}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -194,7 +195,7 @@ export function PlansTable() {
                         ) : (
                           <EyeOff className="h-3 w-3 mr-1" />
                         )}
-                        {plan.adminSettings.isVisible ? t("visible") : t("hidden")}
+                        {plan.adminSettings.isVisible ? tCommon("visible") : t("hidden")}
                       </Badge>
                     </TableCell>
                     <TableCell>{plan.metadata.order}</TableCell>
@@ -251,14 +252,14 @@ export function PlansTable() {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("confirmDelete")}</AlertDialogTitle>
+            <AlertDialogTitle>{t("confirmDeletePlan")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t("deleteWarning")}
+              {t("deletePlanWarning")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={actionLoading}>
-              {t("cancel")}
+              {tCommon("cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
@@ -268,7 +269,7 @@ export function PlansTable() {
               {actionLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                t("delete")
+                tCommon("delete")
               )}
             </AlertDialogAction>
           </AlertDialogFooter>

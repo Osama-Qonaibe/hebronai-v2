@@ -27,7 +27,8 @@ interface PlanDialogProps {
 }
 
 export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
-  const t = useTranslations("AdminPlans");
+  const t = useTranslations("Admin.Plans");
+  const tCommon = useTranslations("Common");
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -181,15 +182,15 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
           <div className="space-y-6 py-4">
             <Tabs defaultValue="basic" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="basic">{t("basic")}</TabsTrigger>
+                <TabsTrigger value="basic">{t("planSettings")}</TabsTrigger>
                 <TabsTrigger value="pricing">{t("pricing")}</TabsTrigger>
-                <TabsTrigger value="settings">{t("settings")}</TabsTrigger>
+                <TabsTrigger value="settings">{t("visibility")}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="basic" className="space-y-4 mt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">{t("internalName")} *</Label>
+                    <Label htmlFor="name">{t("planName")} *</Label>
                     <Input
                       id="name"
                       value={formData.name}
@@ -202,7 +203,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="slug">{t("slug")} *</Label>
+                    <Label htmlFor="slug">Slug *</Label>
                     <Input
                       id="slug"
                       value={formData.slug}
@@ -219,7 +220,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="displayNameEn">
-                      {t("displayName")} (EN) *
+                      {t("planName")} (EN) *
                     </Label>
                     <Input
                       id="displayNameEn"
@@ -239,7 +240,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
 
                   <div className="space-y-2">
                     <Label htmlFor="displayNameAr">
-                      {t("displayName")} (AR) *
+                      {t("planName")} (AR) *
                     </Label>
                     <Input
                       id="displayNameAr"
@@ -261,7 +262,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="descriptionEn">
-                      {t("description")} (EN)
+                      {t("planDescription")} (EN)
                     </Label>
                     <Textarea
                       id="descriptionEn"
@@ -281,7 +282,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
 
                   <div className="space-y-2">
                     <Label htmlFor="descriptionAr">
-                      {t("description")} (AR)
+                      {t("planDescription")} (AR)
                     </Label>
                     <Textarea
                       id="descriptionAr"
@@ -304,7 +305,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
               <TabsContent value="pricing" className="space-y-4 mt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="monthly">{t("monthlyPrice")} *</Label>
+                    <Label htmlFor="monthly">{t("planPrice")} ({t("monthly")}) *</Label>
                     <Input
                       id="monthly"
                       type="number"
@@ -325,7 +326,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="yearly">{t("yearlyPrice")}</Label>
+                    <Label htmlFor="yearly">{t("planPrice")} ({t("yearly")})</Label>
                     <Input
                       id="yearly"
                       type="number"
@@ -346,7 +347,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="currency">{t("currency")} *</Label>
+                  <Label htmlFor="currency">Currency *</Label>
                   <Input
                     id="currency"
                     value={formData.pricing.currency}
@@ -367,7 +368,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
 
               <TabsContent value="settings" className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="order">{t("displayOrder")} *</Label>
+                  <Label htmlFor="order">{t("planDuration")} *</Label>
                   <Input
                     id="order"
                     type="number"
@@ -386,9 +387,9 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>{t("active")}</Label>
+                      <Label>{tCommon("active")}</Label>
                       <p className="text-sm text-muted-foreground">
-                        {t("activeDescription")}
+                        Make plan available for selection
                       </p>
                     </div>
                     <Switch
@@ -401,9 +402,9 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
 
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>{t("visible")}</Label>
+                      <Label>Visible</Label>
                       <p className="text-sm text-muted-foreground">
-                        {t("visibleDescription")}
+                        Show this plan on pricing page
                       </p>
                     </div>
                     <Switch
@@ -416,9 +417,9 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
 
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>{t("featured")}</Label>
+                      <Label>Featured</Label>
                       <p className="text-sm text-muted-foreground">
-                        {t("featuredDescription")}
+                        Mark as popular/recommended
                       </p>
                     </div>
                     <Switch
@@ -440,18 +441,18 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
               onClick={() => onOpenChange(false)}
               disabled={loading}
             >
-              {t("cancel")}
+              {tCommon("cancel")}
             </Button>
             <Button type="submit" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t("saving")}
+                  {tCommon("saving")}
                 </>
               ) : plan ? (
-                t("update")
+                tCommon("update")
               ) : (
-                t("create")
+                tCommon("create")
               )}
             </Button>
           </DialogFooter>
