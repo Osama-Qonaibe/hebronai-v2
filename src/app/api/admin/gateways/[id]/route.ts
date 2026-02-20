@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const hasPermission = await hasAdminPermission();
@@ -17,6 +17,7 @@ export async function PATCH(
       );
     }
 
+    const { id } = await params;
     const body = await request.json();
 
     const [updatedGateway] = await pgDb
@@ -25,7 +26,7 @@ export async function PATCH(
         ...body,
         updatedAt: new Date(),
       })
-      .where(eq(PaymentGatewayTable.id, params.id))
+      .where(eq(PaymentGatewayTable.id, id))
       .returning();
 
     if (!updatedGateway) {
@@ -47,7 +48,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const hasPermission = await hasAdminPermission();
@@ -58,9 +59,11 @@ export async function DELETE(
       );
     }
 
+    const { id } = await params;
+
     await pgDb
       .delete(PaymentGatewayTable)
-      .where(eq(PaymentGatewayTable.id, params.id));
+      .where(eq(PaymentGatewayTable.id, id));
 
     return NextResponse.json({ success: true });
   } catch (error) {
