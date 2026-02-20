@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.6.0...hebronai-v2-v2.7.0) (2026-02-20)
+
+
+### Features
+
+* Add Plans management link to admin sidebar ([1718e1f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1718e1f23cdca4023452ec033fcc11c1cd6b9479))
+
 ## [2.6.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.5.0...hebronai-v2-v2.6.0) (2026-02-20)
 
 
