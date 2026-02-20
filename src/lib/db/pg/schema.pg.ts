@@ -98,38 +98,6 @@ export const McpServerTable = pgTable("mcp_server", {
   updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
-export const UserTable = pgTable("user", {
-  id: uuid("id").primaryKey().notNull().defaultRandom(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").default(false).notNull(),
-  password: text("password"),
-  image: text("image"),
-  preferences: json("preferences").default({}).$type<UserPreferences>(),
-  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  banned: boolean("banned"),
-  banReason: text("ban_reason"),
-  banExpires: timestamp("ban_expires"),
-  role: text("role").notNull().default("user"),
-
-  plan: varchar("plan", {
-    enum: ["free", "basic", "pro", "enterprise"],
-  })
-    .notNull()
-    .default("free"),
-
-  planStatus: varchar("plan_status", {
-    enum: ["trial", "active", "expired"],
-  })
-    .notNull()
-    .default("trial"),
-
-  planExpiresAt: timestamp("plan_expires_at")
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP + INTERVAL '30 days'`),
-});
-
 export const SubscriptionPlanTable = pgTable(
   "subscription_plan",
   {
@@ -226,6 +194,40 @@ export const SubscriptionPlanTable = pgTable(
   ],
 );
 
+export const UserTable = pgTable("user", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").default(false).notNull(),
+  password: text("password"),
+  image: text("image"),
+  preferences: json("preferences").default({}).$type<UserPreferences>(),
+  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  banned: boolean("banned"),
+  banReason: text("ban_reason"),
+  banExpires: timestamp("ban_expires"),
+  role: text("role").notNull().default("user"),
+
+  planId: uuid("plan_id").references(() => SubscriptionPlanTable.id),
+
+  plan: varchar("plan", {
+    enum: ["free", "basic", "pro", "enterprise"],
+  })
+    .notNull()
+    .default("free"),
+
+  planStatus: varchar("plan_status", {
+    enum: ["trial", "active", "expired"],
+  })
+    .notNull()
+    .default("trial"),
+
+  planExpiresAt: timestamp("plan_expires_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP + INTERVAL '30 days'`),
+});
+
 export const PaymentGatewayTable = pgTable("payment_gateway", {
   id: uuid("id").primaryKey().notNull().defaultRandom(),
   name: text("name").notNull().unique(),
@@ -251,6 +253,9 @@ export const SubscriptionRequestTable = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => UserTable.id, { onDelete: "cascade" }),
+    requestedPlanId: uuid("requested_plan_id").references(
+      () => SubscriptionPlanTable.id,
+    ),
     requestedPlan: varchar("requested_plan", {
       enum: ["free", "basic", "pro", "enterprise"],
     }).notNull(),
