@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.1.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.1.0...hebronai-v2-v3.1.1) (2026-02-20)
+
+
+### Bug Fixes
+
+* remove unused Badge import ([a4cb352](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a4cb352042f8881c6e4d9931c7ea9ec5a600a5c7))
+* remove unused code (AVAILABLE_MODELS, toggleModel) ([a8a1247](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a8a12475d34107fcc5a1920434ececc0f5e89ea1))
+
 ## [3.1.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.0.2...hebronai-v2-v3.1.0) (2026-02-20)
 
 
