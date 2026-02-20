@@ -4,12 +4,6 @@ import { AIModelsTable, ModelSyncLogTable } from '@/lib/db/pg/schema.pg';
 import { eq } from 'drizzle-orm';
 import { ModelSyncRequest, ModelSyncResponse } from '@/types/ai-models';
 
-const PROVIDER_ENDPOINTS = {
-  openai: 'https://api.openai.com/v1/models',
-  anthropic: null,
-  google: null,
-};
-
 interface ProviderModel {
   id: string;
   provider: string;
