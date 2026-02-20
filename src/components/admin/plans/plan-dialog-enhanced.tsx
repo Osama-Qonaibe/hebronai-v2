@@ -14,7 +14,7 @@ import { Input } from "ui/input";
 import { Label } from "ui/label";
 import { Textarea } from "ui/textarea";
 import { Switch } from "ui/switch";
-import { Loader2, Info, Zap, Users, Bot, Crown, Image as ImageIcon } from "lucide-react";
+import { Loader2, Info, Zap, Users, Bot, Crown, Image as ImageIcon, Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { SubscriptionPlan } from "@/types/subscription";
@@ -28,12 +28,24 @@ import {
   SelectValue,
 } from "ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "ui/card";
+import { Checkbox } from "ui/checkbox";
 
 interface PlanDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   plan: SubscriptionPlan | null;
 }
+
+const AVAILABLE_MODELS = [
+  { value: "gpt-4o", label: "GPT-4o", tier: "premium" },
+  { value: "gpt-4o-mini", label: "GPT-4o Mini", tier: "standard" },
+  { value: "gpt-4-turbo", label: "GPT-4 Turbo", tier: "premium" },
+  { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo", tier: "basic" },
+  { value: "claude-3-5-sonnet", label: "Claude 3.5 Sonnet", tier: "premium" },
+  { value: "claude-3-opus", label: "Claude 3 Opus", tier: "premium" },
+  { value: "claude-3-haiku", label: "Claude 3 Haiku", tier: "basic" },
+  { value: "gemini-2.0-flash-exp", label: "Gemini 2.0 Flash", tier: "standard" },
+];
 
 const IMAGE_RESOLUTIONS = [
   { value: "256x256", label: "256×256 (Low)" },
@@ -154,6 +166,16 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleModel = (model: string) => {
+    const allowed = formData.models.allowed.includes(model)
+      ? formData.models.allowed.filter((m) => m !== model)
+      : [...formData.models.allowed, model];
+    setFormData({
+      ...formData,
+      models: { ...formData.models, allowed },
+    });
   };
 
   return (
@@ -368,6 +390,483 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                     />
                   </div>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="pricing" className="space-y-4 mt-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>التسعير الشهري والسنوي</CardTitle>
+                    <CardDescription>
+                      حدد الأسعار بالدولار الأمريكي - السعر السنوي يُطبق كخصم تلقائي
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>السعر الشهري (USD) *</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={formData.pricing.monthly}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              pricing: { ...formData.pricing, monthly: parseFloat(e.target.value) || 0 },
+                            })
+                          }
+                          required
+                          placeholder="9.99"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>السعر السنوي (USD) *</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={formData.pricing.yearly}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              pricing: { ...formData.pricing, yearly: parseFloat(e.target.value) || 0 },
+                            })
+                          }
+                          required
+                          placeholder="99.99"
+                        />
+                      </div>
+                    </div>
+                    {formData.pricing.monthly > 0 && formData.pricing.yearly > 0 && (
+                      <div className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
+                        💡 الخصم السنوي: {((1 - formData.pricing.yearly / (formData.pricing.monthly * 12)) * 100).toFixed(0)}%
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>إعدادات الفترة التجريبية</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>أيام التجربة المجانية</Label>
+                      <Input
+                        type="number"
+                        min="0"
+                        max="90"
+                        value={formData.adminSettings.trialDays}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            adminSettings: {
+                              ...formData.adminSettings,
+                              trialDays: parseInt(e.target.value) || 0,
+                            },
+                          })
+                        }
+                        placeholder="0"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        0 = بدون تجربة مجانية | الحد الأقصى: 90 يوم
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>حد المستخدمين</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>الحد الأقصى للمستخدمين (اختياري)</Label>
+                      <Input
+                        type="number"
+                        min="0"
+                        value={formData.adminSettings.maxUsers || ""}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            adminSettings: {
+                              ...formData.adminSettings,
+                              maxUsers: e.target.value ? parseInt(e.target.value) : null,
+                            },
+                          })
+                        }
+                        placeholder="غير محدود"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        اتركه فارغاً لعدد غير محدود من المستخدمين
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="models" className="space-y-4 mt-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>النماذج المتاحة</CardTitle>
+                    <CardDescription>
+                      اختر النماذج التي يمكن للمستخدمين الوصول إليها في هذه الخطة
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {AVAILABLE_MODELS.map((model) => (
+                      <div
+                        key={model.value}
+                        className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+                      >
+                        <div className="flex items-center space-x-3 space-x-reverse">
+                          <Checkbox
+                            checked={formData.models.allowed.includes(model.value)}
+                            onCheckedChange={() => toggleModel(model.value)}
+                          />
+                          <div>
+                            <div className="font-medium">{model.label}</div>
+                            <div className="text-xs text-muted-foreground capitalize">
+                              {model.tier === "premium" && "⭐ Premium"}
+                              {model.tier === "standard" && "🔷 Standard"}
+                              {model.tier === "basic" && "🔹 Basic"}
+                            </div>
+                          </div>
+                        </div>
+                        {formData.models.default === model.value && (
+                          <div className="flex items-center gap-1 text-xs text-primary">
+                            <Check className="h-3 w-3" />
+                            افتراضي
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>النموذج الافتراضي</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Select
+                      value={formData.models.default}
+                      onValueChange={(value) =>
+                        setFormData({
+                          ...formData,
+                          models: { ...formData.models, default: value },
+                        })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {formData.models.allowed.map((modelValue) => {
+                          const model = AVAILABLE_MODELS.find((m) => m.value === modelValue);
+                          return (
+                            <SelectItem key={modelValue} value={modelValue}>
+                              {model?.label || modelValue}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="features" className="space-y-4 mt-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>MCP Servers</CardTitle>
+                    <CardDescription>
+                      التحكم بخوادم Model Context Protocol
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label>تفعيل MCP Servers</Label>
+                      <Switch
+                        checked={formData.features.mcpServers.enabled}
+                        onCheckedChange={(checked) =>
+                          setFormData({
+                            ...formData,
+                            features: {
+                              ...formData.features,
+                              mcpServers: { ...formData.features.mcpServers, enabled: checked },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                    {formData.features.mcpServers.enabled && (
+                      <>
+                        <div className="space-y-2">
+                          <Label>عدد الخوادم: {formData.features.mcpServers.maxServers}</Label>
+                          <Slider
+                            value={[formData.features.mcpServers.maxServers]}
+                            onValueChange={([value]) =>
+                              setFormData({
+                                ...formData,
+                                features: {
+                                  ...formData.features,
+                                  mcpServers: { ...formData.features.mcpServers, maxServers: value },
+                                },
+                              })
+                            }
+                            max={20}
+                            step={1}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label>السماح بخوادم مخصصة</Label>
+                          <Switch
+                            checked={formData.features.mcpServers.customServers}
+                            onCheckedChange={(checked) =>
+                              setFormData({
+                                ...formData,
+                                features: {
+                                  ...formData.features,
+                                  mcpServers: { ...formData.features.mcpServers, customServers: checked },
+                                },
+                              })
+                            }
+                          />
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Workflows</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label>تفعيل Workflows</Label>
+                      <Switch
+                        checked={formData.features.workflows.enabled}
+                        onCheckedChange={(checked) =>
+                          setFormData({
+                            ...formData,
+                            features: {
+                              ...formData.features,
+                              workflows: { ...formData.features.workflows, enabled: checked },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                    {formData.features.workflows.enabled && (
+                      <div className="space-y-2">
+                        <Label>عدد Workflows: {formData.features.workflows.maxWorkflows}</Label>
+                        <Slider
+                          value={[formData.features.workflows.maxWorkflows]}
+                          onValueChange={([value]) =>
+                            setFormData({
+                              ...formData,
+                              features: {
+                                ...formData.features,
+                                workflows: { ...formData.features.workflows, maxWorkflows: value },
+                              },
+                            })
+                          }
+                          max={50}
+                          step={5}
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Agents</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label>تفعيل Agents</Label>
+                      <Switch
+                        checked={formData.features.agents.enabled}
+                        onCheckedChange={(checked) =>
+                          setFormData({
+                            ...formData,
+                            features: {
+                              ...formData.features,
+                              agents: { ...formData.features.agents, enabled: checked },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                    {formData.features.agents.enabled && (
+                      <>
+                        <div className="space-y-2">
+                          <Label>عدد Agents مخصصة: {formData.features.agents.maxCustomAgents}</Label>
+                          <Slider
+                            value={[formData.features.agents.maxCustomAgents]}
+                            onValueChange={([value]) =>
+                              setFormData({
+                                ...formData,
+                                features: {
+                                  ...formData.features,
+                                  agents: { ...formData.features.agents, maxCustomAgents: value },
+                                },
+                              })
+                            }
+                            max={20}
+                            step={1}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <Label>مشاركة Agents</Label>
+                          <Switch
+                            checked={formData.features.agents.shareAgents}
+                            onCheckedChange={(checked) =>
+                              setFormData({
+                                ...formData,
+                                features: {
+                                  ...formData.features,
+                                  agents: { ...formData.features.agents, shareAgents: checked },
+                                },
+                              })
+                            }
+                          />
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>الميزات المتقدمة</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label>Code Interpreter</Label>
+                      <Switch
+                        checked={formData.features.advanced.codeInterpreter}
+                        onCheckedChange={(checked) =>
+                          setFormData({
+                            ...formData,
+                            features: {
+                              ...formData.features,
+                              advanced: { ...formData.features.advanced, codeInterpreter: checked },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label>Image Generation</Label>
+                      <Switch
+                        checked={formData.features.advanced.imageGeneration}
+                        onCheckedChange={(checked) =>
+                          setFormData({
+                            ...formData,
+                            features: {
+                              ...formData.features,
+                              advanced: { ...formData.features.advanced, imageGeneration: checked },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label>Voice Chat</Label>
+                      <Switch
+                        checked={formData.features.advanced.voiceChat}
+                        onCheckedChange={(checked) =>
+                          setFormData({
+                            ...formData,
+                            features: {
+                              ...formData.features,
+                              advanced: { ...formData.features.advanced, voiceChat: checked },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label>Document Analysis</Label>
+                      <Switch
+                        checked={formData.features.advanced.documentAnalysis}
+                        onCheckedChange={(checked) =>
+                          setFormData({
+                            ...formData,
+                            features: {
+                              ...formData.features,
+                              advanced: { ...formData.features.advanced, documentAnalysis: checked },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label>API Access</Label>
+                      <Switch
+                        checked={formData.features.advanced.apiAccess}
+                        onCheckedChange={(checked) =>
+                          setFormData({
+                            ...formData,
+                            features: {
+                              ...formData.features,
+                              advanced: { ...formData.features.advanced, apiAccess: checked },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label>Priority Support</Label>
+                      <Switch
+                        checked={formData.features.advanced.prioritySupport}
+                        onCheckedChange={(checked) =>
+                          setFormData({
+                            ...formData,
+                            features: {
+                              ...formData.features,
+                              advanced: { ...formData.features.advanced, prioritySupport: checked },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label>Team Workspace</Label>
+                      <Switch
+                        checked={formData.features.advanced.teamWorkspace}
+                        onCheckedChange={(checked) =>
+                          setFormData({
+                            ...formData,
+                            features: {
+                              ...formData.features,
+                              advanced: { ...formData.features.advanced, teamWorkspace: checked },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label>Export Data</Label>
+                      <Switch
+                        checked={formData.features.advanced.exportData}
+                        onCheckedChange={(checked) =>
+                          setFormData({
+                            ...formData,
+                            features: {
+                              ...formData.features,
+                              advanced: { ...formData.features.advanced, exportData: checked },
+                            },
+                          })
+                        }
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               <TabsContent value="limits" className="space-y-4 mt-4">
