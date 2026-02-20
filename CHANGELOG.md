@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.1.1...hebronai-v2-v3.2.0) (2026-02-20)
+
+
+### Features
+
+* complete pricing, models, and features tabs with full functionality ([1ada41a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1ada41a71c62b827695ec40345ffa00cfd2c239e))
+
 ## [3.1.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.1.0...hebronai-v2-v3.1.1) (2026-02-20)
 
 
