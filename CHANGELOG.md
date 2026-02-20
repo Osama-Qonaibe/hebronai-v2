@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.0.0...hebronai-v2-v3.0.1) (2026-02-20)
+
+
+### Bug Fixes
+
+* add missing AdminPlans translation keys (basic, pricing, settings, etc) ([fc981de](https://github.com/Osama-Qonaibe/hebronai-v2/commit/fc981de784240cc7554f5875e8ee1313d0305e9a))
+* restore complete en.json file ([5310c48](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5310c48dea8dd04fe1b0f701dc8b4c96c10baadb))
+
 ## [3.0.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.7.0...hebronai-v2-v3.0.0) (2026-02-20)
 
 
