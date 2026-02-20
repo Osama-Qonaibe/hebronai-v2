@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.3.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.2.0...hebronai-v2-v3.3.0) (2026-02-20)
+
+
+### Features
+
+* add API endpoint to fetch available AI models dynamically ([a156f81](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a156f814f67a09bae912711d8f6992b0a07aeaa4))
+* load AI models dynamically from API with provider grouping ([22e240b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/22e240b473050ca14a0c919c1a1ae7791e2934e4))
+
+
+### Bug Fixes
+
+* use correct auth import for models API route ([df5b866](https://github.com/Osama-Qonaibe/hebronai-v2/commit/df5b866fc6cc92d3c872f7244a928e5c84c194bc))
+
 ## [3.2.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.1.1...hebronai-v2-v3.2.0) (2026-02-20)
 
 
