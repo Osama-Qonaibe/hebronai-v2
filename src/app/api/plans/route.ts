@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db } from "@/lib/db/pg/db.pg";
 import { SubscriptionPlanTable } from "@/lib/db/pg/schema.pg";
 import { sql } from "drizzle-orm";
 
