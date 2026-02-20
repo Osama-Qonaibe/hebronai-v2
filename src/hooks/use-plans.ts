@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SubscriptionPlanWithCreator } from "@/types/subscription";
+import { SubscriptionPlan } from "@/types/subscription";
 
 export function usePlans() {
-  const [plans, setPlans] = useState<SubscriptionPlanWithCreator[]>([]);
+  const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
