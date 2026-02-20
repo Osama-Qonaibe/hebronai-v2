@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.5.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.4.0...hebronai-v2-v2.5.0) (2026-02-20)
+
+
+### Features
+
+* Add usePlans hook to fetch plans from API ([31bf465](https://github.com/Osama-Qonaibe/hebronai-v2/commit/31bf465238925cf2281ff6d00ca296e20dd2ecc7))
+* Update SubscriptionCard to use dynamic plans from API ([e765423](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e765423474fa7876f2b8e7246b9f0adb883fd813))
+
+
+### Bug Fixes
+
+* Use correct SubscriptionPlan type in usePlans hook ([ce75417](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ce7541782a78208a77bde6f03e513c7f3be661d0))
+
 ## [2.4.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.3.0...hebronai-v2-v2.4.0) (2026-02-20)
 
 
