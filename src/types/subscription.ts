@@ -35,6 +35,11 @@ export interface SubscriptionPlan {
       maxPerMonth: number;
     };
     files: { maxSize: number; maxCount: number; allowedTypes: string[] };
+    images: {
+      maxPerDay: number;
+      maxPerMonth: number;
+      maxResolution: string;
+    };
     api: { rateLimit: number; burstLimit: number };
   };
   features: {
