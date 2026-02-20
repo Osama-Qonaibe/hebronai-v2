@@ -253,7 +253,7 @@ export async function POST() {
       await pgDb.insert(SubscriptionPlanTable).values({
         ...plan,
         createdBy: systemAdminId,
-      });
+      } as any);
       results.push({ plan: plan.name, status: "created" });
     }
 
