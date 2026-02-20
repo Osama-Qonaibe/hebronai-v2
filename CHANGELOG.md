@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.4.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.3.0...hebronai-v2-v2.4.0) (2026-02-20)
+
+
+### Features
+
+* Add migration script to link users to subscription plans ([8809541](https://github.com/Osama-Qonaibe/hebronai-v2/commit/88095417ca1aa16b2f2901bc630b9e85e31aca69))
+* Add planId foreign key to UserTable and update SubscriptionRequestTable ([b2fcbc8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b2fcbc88a911bda454bdf187d484992292b9b735))
+* Add SQL migration for planId foreign keys ([6db16fd](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6db16fdd90705a5ce8e188522e32596db568182c))
+
+
+### Bug Fixes
+
+* Add explicit type annotation for plan insert destructuring ([7e9b2ee](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7e9b2ee0666807fbaae3558bac15bb506dabfa78))
+* Add explicit type assertion for getUserById return ([6312867](https://github.com/Osama-Qonaibe/hebronai-v2/commit/63128679e8c9fe1989b73fca29356ef5493c9d6f))
+* Pass correct user props to UserRoleSelector ([e658c37](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e658c3764941d0de9c54fa0952f24bb42feb7a53))
+
 ## [2.3.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.12...hebronai-v2-v2.3.0) (2026-02-20)
 
 
