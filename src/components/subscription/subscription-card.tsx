@@ -17,8 +17,8 @@ import {
   CheckCheck,
   MessageCircle,
   Send,
+  Loader2,
 } from "lucide-react";
-import { PLANS, type SubscriptionPlan } from "@/lib/subscription/plans";
 import { getPaymentLink, getBankTransferDetails } from "@/lib/payment/config";
 import {
   Dialog,
@@ -35,12 +35,13 @@ import { Input } from "ui/input";
 import { Textarea } from "ui/textarea";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { usePlans } from "@/hooks/use-plans";
 
 type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
 type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "manual";
 
 interface SubscriptionCardProps {
-  currentPlan: SubscriptionPlan;
+  currentPlan: string;
   currentStatus: SubscriptionStatus;
   expiresAt: Date | null;
   isActive: boolean;
@@ -63,10 +64,9 @@ export function SubscriptionCard({
   pendingRequest,
 }: SubscriptionCardProps) {
   const t = useTranslations("Subscription");
+  const { plans, loading: plansLoading } = usePlans();
   const [loading, setLoading] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(
-    null,
-  );
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("paypal");
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [transactionId, setTransactionId] = useState("");
@@ -75,15 +75,17 @@ export function SubscriptionCard({
   const bankDetails = getBankTransferDetails();
   const WHATSAPP_NUMBER = "+972534414330";
 
-  const handleUpgradeClick = (plan: SubscriptionPlan) => {
-    if (plan === currentPlan) return;
+  const handleUpgradeClick = (planSlug: string) => {
+    if (planSlug === currentPlan) return;
 
     if (pendingRequest) {
-      toast.error(t("pendingRequestAlert", { plan: pendingRequest.requestedPlan }));
+      toast.error(
+        t("pendingRequestAlert", { plan: pendingRequest.requestedPlan }),
+      );
       return;
     }
 
-    setSelectedPlan(plan);
+    setSelectedPlan(planSlug);
     setTransactionId("");
     setNotes("");
   };
@@ -93,10 +95,10 @@ export function SubscriptionCard({
 
     setLoading(true);
     try {
-      if (!PLANS || !selectedPlan) {
+      const planDetails = plans.find((p) => p.slug === selectedPlan);
+      if (!planDetails) {
         throw new Error("Invalid plan selection");
       }
-      const planDetails = PLANS[selectedPlan];
 
       const response = await fetch("/api/user/subscription-request", {
         method: "POST",
@@ -104,10 +106,12 @@ export function SubscriptionCard({
         body: JSON.stringify({
           requestedPlan: selectedPlan,
           paymentMethod,
-          amount: planDetails.price,
-          currency: "USD",
+          amount: planDetails.pricing.monthly,
+          currency: planDetails.pricing.currency,
           transactionId: transactionId || undefined,
-          notes: notes || `Payment method: ${getPaymentMethodArabic(paymentMethod)}`,
+          notes:
+            notes ||
+            `Payment method: ${getPaymentMethodArabic(paymentMethod)}`,
         }),
       });
 
@@ -117,11 +121,11 @@ export function SubscriptionCard({
             paymentMethod as "paypal" | "stripe",
             selectedPlan as "basic" | "pro",
           );
-          
+
           toast.success("✅ تم إرسال الطلب", {
             description: "سيتم فتح بوابة الدفع الآن...",
           });
-          
+
           setTimeout(() => {
             if (link) {
               window.location.href = link;
@@ -129,18 +133,19 @@ export function SubscriptionCard({
           }, 1500);
         } else if (paymentMethod === "bank_transfer") {
           toast.success("✅ تم إرسال الطلب", {
-            description: "سيتم التحقق من رقم المعاملة والموافقة على الطلب قريباً.",
+            description:
+              "سيتم التحقق من رقم المعاملة والموافقة على الطلب قريباً.",
           });
         } else {
           toast.success("✅ تم إرسال الطلب", {
             description: "سيتم التواصل معك عبر واتساب لإتمام عملية الدفع.",
           });
         }
-        
+
         setSelectedPlan(null);
         setTransactionId("");
         setNotes("");
-        
+
         if (paymentMethod !== "paypal" && paymentMethod !== "stripe") {
           setTimeout(() => {
             window.location.reload();
@@ -183,11 +188,15 @@ export function SubscriptionCard({
   };
 
   const handleWhatsAppContact = () => {
-    if (!selectedPlan || !PLANS) return;
+    if (!selectedPlan) return;
 
-    const planDetails = PLANS[selectedPlan];
+    const planDetails = plans.find((p) => p.slug === selectedPlan);
+    if (!planDetails) return;
+
+    const planName =
+      planDetails.displayName.ar || planDetails.displayName.en;
     const message = encodeURIComponent(
-      `مرحباً، أرغب في الترقية إلى خطة ${planDetails.displayName} (${planDetails.priceDisplay}/شهر).\n\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\n\nأحتاج مساعدة.`,
+      `مرحباً، أرغب في الترقية إلى خطة ${planName} ($${planDetails.pricing.monthly}/شهر).\n\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\n\nأحتاج مساعدة.`,
     );
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
     window.location.href = whatsappUrl;
@@ -203,15 +212,22 @@ export function SubscriptionCard({
     return methods[method] || method;
   }
 
-  const plans = PLANS ? Object.values(PLANS) : [];
-  const selectedPlanDetails =
-    selectedPlan && PLANS ? PLANS[selectedPlan] : null;
+  const activePlans = plans.filter(
+    (p) => p.adminSettings.isActive && p.adminSettings.isVisible,
+  );
+  const selectedPlanDetails = plans.find((p) => p.slug === selectedPlan);
   const isEnterprisePlan = selectedPlan === "enterprise";
   const showBankFields = paymentMethod === "bank_transfer" && !isEnterprisePlan;
   const showManualNotes = paymentMethod === "manual" && !isEnterprisePlan;
-  const canSubmit = 
-    !loading && 
-    (!showBankFields || transactionId.trim().length > 0);
+  const canSubmit = !loading && (!showBankFields || transactionId.trim().length > 0);
+
+  if (plansLoading) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -237,17 +253,25 @@ export function SubscriptionCard({
         </Card>
 
         <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          {plans.map((plan) => {
-            const isCurrent = plan.name === currentPlan;
+          {activePlans.map((plan) => {
+            const isCurrent = plan.slug === currentPlan;
+            const isFeatured = plan.metadata?.badge === "Popular";
+            const displayName = plan.displayName.ar || plan.displayName.en;
+            const priceDisplay =
+              plan.pricing.monthly === 0
+                ? "$0"
+                : plan.pricing.monthly > 0
+                  ? `$${plan.pricing.monthly}`
+                  : t("custom");
 
             return (
               <Card
-                key={plan.name}
+                key={plan.id}
                 className={`relative ${
-                  plan.popular ? "border-primary shadow-lg" : ""
+                  isFeatured ? "border-primary shadow-lg" : ""
                 }`}
               >
-                {plan.popular && (
+                {isFeatured && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <Badge className="gap-1">
                       <Sparkles className="h-3 w-3" />
@@ -257,14 +281,12 @@ export function SubscriptionCard({
                 )}
 
                 <CardHeader>
-                  <CardTitle>{t(`plans.${plan.name}`)}</CardTitle>
+                  <CardTitle>{displayName}</CardTitle>
                   <div className="text-3xl font-bold">
-                    {plan.priceDisplay === "Custom"
-                      ? t("custom")
-                      : plan.priceDisplay}
-                    {plan.price > 0 && (
+                    {priceDisplay}
+                    {plan.pricing.monthly > 0 && (
                       <span className="text-sm font-normal text-muted-foreground">
-                        /{t(plan.period)}
+                        /{t("month")}
                       </span>
                     )}
                   </div>
@@ -275,37 +297,35 @@ export function SubscriptionCard({
                     <li className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-primary" />
                       <span className="text-sm">
-                        {plan.limits.maxAgents === -1
+                        {plan.limits.chats?.maxActive === -1
                           ? t("unlimited")
-                          : plan.limits.maxAgents}{" "}
-                        {t("agents")}
+                          : plan.limits.chats?.maxActive || 0}{" "}
+                        {t("chats")}
                       </span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-primary" />
                       <span className="text-sm">
-                        {plan.limits.maxWorkflows === -1
+                        {plan.limits.messages?.maxPerMonth === -1
                           ? t("unlimited")
-                          : plan.limits.maxWorkflows}{" "}
-                        {t("workflows")}
+                          : plan.limits.messages?.maxPerMonth || 0}{" "}
+                        {t("messages")}
                       </span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-primary" />
                       <span className="text-sm">
-                        {plan.limits.maxMCPServers === -1
-                          ? t("unlimited")
-                          : plan.limits.maxMCPServers}{" "}
-                        {t("mcpServers")}
+                        {plan.features.mcpServers?.enabled
+                          ? `${plan.features.mcpServers.maxServers === -1 ? t("unlimited") : plan.features.mcpServers.maxServers} ${t("mcpServers")}`
+                          : t("noMcpServers")}
                       </span>
                     </li>
                     <li className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-primary" />
                       <span className="text-sm">
-                        {plan.limits.maxTokensPerMonth === -1
-                          ? t("unlimited")
-                          : `${(plan.limits.maxTokensPerMonth / 1000).toFixed(0)}K`}{" "}
-                        {t("tokensPerMonth")}
+                        {plan.features.workflows?.enabled
+                          ? `${plan.features.workflows.maxWorkflows === -1 ? t("unlimited") : plan.features.workflows.maxWorkflows} ${t("workflows")}`
+                          : t("noWorkflows")}
                       </span>
                     </li>
                   </ul>
@@ -314,11 +334,11 @@ export function SubscriptionCard({
                     className="w-full"
                     variant={isCurrent ? "outline" : "default"}
                     disabled={isCurrent || loading || pendingRequest !== null}
-                    onClick={() => handleUpgradeClick(plan.name)}
+                    onClick={() => handleUpgradeClick(plan.slug)}
                   >
                     {isCurrent
                       ? t("currentPlan")
-                      : plan.name === "enterprise"
+                      : plan.slug === "enterprise"
                         ? t("contactUs")
                         : t("upgrade")}
                   </Button>
@@ -335,12 +355,12 @@ export function SubscriptionCard({
             <DialogTitle className="text-base sm:text-lg">
               {isEnterprisePlan
                 ? t("plans.enterprise")
-                : `${t("upgradeTo")} ${selectedPlan ? t(`plans.${selectedPlan}`) : ""}`}
+                : `${t("upgradeTo")} ${selectedPlanDetails ? selectedPlanDetails.displayName.ar || selectedPlanDetails.displayName.en : ""}`}
               {selectedPlanDetails &&
-                selectedPlanDetails.price > 0 &&
+                selectedPlanDetails.pricing.monthly > 0 &&
                 !isEnterprisePlan && (
                   <span className="mr-2 text-primary">
-                    ${selectedPlanDetails.price}/{t(selectedPlanDetails.period)}
+                    ${selectedPlanDetails.pricing.monthly}/{t("month")}
                   </span>
                 )}
             </DialogTitle>
@@ -408,19 +428,39 @@ export function SubscriptionCard({
                   >
                     <div className="flex items-center gap-2">
                       <RadioGroupItem value="paypal" id="paypal" />
-                      <Label htmlFor="paypal" className="cursor-pointer font-normal">PayPal</Label>
+                      <Label
+                        htmlFor="paypal"
+                        className="cursor-pointer font-normal"
+                      >
+                        PayPal
+                      </Label>
                     </div>
                     <div className="flex items-center gap-2">
                       <RadioGroupItem value="stripe" id="stripe" />
-                      <Label htmlFor="stripe" className="cursor-pointer font-normal">Stripe (Card)</Label>
+                      <Label
+                        htmlFor="stripe"
+                        className="cursor-pointer font-normal"
+                      >
+                        Stripe (Card)
+                      </Label>
                     </div>
                     <div className="flex items-center gap-2">
                       <RadioGroupItem value="bank_transfer" id="bank" />
-                      <Label htmlFor="bank" className="cursor-pointer font-normal">تحويل بنكي</Label>
+                      <Label
+                        htmlFor="bank"
+                        className="cursor-pointer font-normal"
+                      >
+                        تحويل بنكي
+                      </Label>
                     </div>
                     <div className="flex items-center gap-2">
                       <RadioGroupItem value="manual" id="manual" />
-                      <Label htmlFor="manual" className="cursor-pointer font-normal">دفع يدوي (عبر المشرف)</Label>
+                      <Label
+                        htmlFor="manual"
+                        className="cursor-pointer font-normal"
+                      >
+                        دفع يدوي (عبر المشرف)
+                      </Label>
                     </div>
                   </RadioGroup>
                 </div>
@@ -483,10 +523,7 @@ export function SubscriptionCard({
                             variant="ghost"
                             className="shrink-0"
                             onClick={() =>
-                              handleCopy(
-                                bankDetails.friendPayNumber,
-                                "friend",
-                              )
+                              handleCopy(bankDetails.friendPayNumber, "friend")
                             }
                           >
                             {copiedField === "friend" ? (
@@ -534,7 +571,9 @@ export function SubscriptionCard({
 
                 {showBankFields && (
                   <div className="space-y-2">
-                    <Label htmlFor="transaction" className="text-sm">رقم المعاملة *</Label>
+                    <Label htmlFor="transaction" className="text-sm">
+                      رقم المعاملة *
+                    </Label>
                     <Input
                       id="transaction"
                       value={transactionId}
@@ -548,7 +587,10 @@ export function SubscriptionCard({
 
                 <div className="space-y-2">
                   <Label htmlFor="notes" className="text-sm">
-                    {showManualNotes ? "ملاحظات أو طريقة دفع مفضلة" : "ملاحظات"} (اختياري)
+                    {showManualNotes
+                      ? "ملاحظات أو طريقة دفع مفضلة"
+                      : "ملاحظات"}{" "}
+                    (اختياري)
                   </Label>
                   <Textarea
                     id="notes"
