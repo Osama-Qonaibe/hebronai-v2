@@ -98,6 +98,88 @@ export const McpServerTable = pgTable("mcp_server", {
   updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+export const AIModelsTable = pgTable(
+  "ai_models",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    name: text("name").notNull().unique(),
+    provider: text("provider").notNull(),
+    displayName: json("display_name").notNull().$type<{
+      en: string;
+      ar: string;
+    }>(),
+    description: json("description").$type<{
+      en: string;
+      ar: string;
+    }>(),
+    isActive: boolean("is_active").default(true),
+    isVisible: boolean("is_visible").default(true),
+    pricing: json("pricing").$type<{
+      input: number;
+      output: number;
+      currency: string;
+    }>(),
+    capabilities: text("capabilities").array(),
+    maxTokens: integer("max_tokens"),
+    contextWindow: integer("context_window"),
+    supportsVision: boolean("supports_vision").default(false),
+    supportsFunctionCalling: boolean("supports_function_calling").default(false),
+    supportsStreaming: boolean("supports_streaming").default(true),
+    metadata: json("metadata").default({}).$type<Record<string, any>>(),
+    lastSyncedAt: timestamp("last_synced_at"),
+    createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    index("idx_ai_models_provider").on(t.provider),
+    index("idx_ai_models_active").on(t.isActive),
+    index("idx_ai_models_name").on(t.name),
+  ],
+);
+
+export const PlanModelAccessTable = pgTable(
+  "plan_model_access",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    planId: uuid("plan_id")
+      .notNull()
+      .references(() => SubscriptionPlanTable.id, { onDelete: "cascade" }),
+    modelId: uuid("model_id")
+      .notNull()
+      .references(() => AIModelsTable.id, { onDelete: "cascade" }),
+    isDefault: boolean("is_default").default(false),
+    customLimits: json("custom_limits").$type<{
+      maxTokensPerRequest: number | null;
+      maxRequestsPerDay: number | null;
+      maxTokensPerMonth: number | null;
+    }>(),
+    createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    unique().on(t.planId, t.modelId),
+    index("idx_plan_model_access_plan").on(t.planId),
+    index("idx_plan_model_access_model").on(t.modelId),
+  ],
+);
+
+export const ModelSyncLogTable = pgTable(
+  "model_sync_log",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    provider: text("provider").notNull(),
+    modelsSynced: integer("models_synced").default(0),
+    modelsAdded: integer("models_added").default(0),
+    modelsUpdated: integer("models_updated").default(0),
+    status: text("status").notNull(),
+    errorMessage: text("error_message"),
+    syncedAt: timestamp("synced_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    index("idx_model_sync_log_provider").on(t.provider),
+    index("idx_model_sync_log_synced_at").on(t.syncedAt),
+  ],
+);
+
 export const SubscriptionPlanTable = pgTable(
   "subscription_plan",
   {
@@ -176,6 +258,18 @@ export const SubscriptionPlanTable = pgTable(
       color: string;
       icon: string;
     }>(),
+    allowedPaymentGateways: uuid("allowed_payment_gateways").array(),
+    preferredGatewayId: uuid("preferred_gateway_id").references(
+      () => PaymentGatewayTable.id
+    ),
+    gatewayPricing: json("gateway_pricing").$type<{
+      [gatewayId: string]: {
+        monthly: number;
+        yearly: number;
+        setupFee?: number;
+        processingFee?: number;
+      };
+    }>(),
     createdBy: uuid("created_by")
       .notNull()
       .references(() => UserTable.id),
@@ -228,23 +322,56 @@ export const UserTable = pgTable("user", {
     .default(sql`CURRENT_TIMESTAMP + INTERVAL '30 days'`),
 });
 
-export const PaymentGatewayTable = pgTable("payment_gateway", {
-  id: uuid("id").primaryKey().notNull().defaultRandom(),
-  name: text("name").notNull().unique(),
-  provider: text("provider").notNull(),
-  isActive: boolean("is_active").default(false).notNull(),
-  isTestMode: boolean("is_test_mode").default(true).notNull(),
-  config: json("config").notNull().$type<{
-    publicKey: string;
-    secretKey: string;
-    webhookSecret?: string;
-    webhookUrl?: string;
-    supportedCurrencies: string[];
-    metadata?: Record<string, any>;
-  }>(),
-  createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
-});
+export const PaymentGatewayTable = pgTable(
+  "payment_gateway",
+  {
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
+    name: text("name").notNull().unique(),
+    provider: text("provider").notNull(),
+    displayName: json("display_name").$type<{
+      en: string;
+      ar: string;
+    }>(),
+    description: json("description").$type<{
+      en: string;
+      ar: string;
+    }>(),
+    logoUrl: text("logo_url"),
+    isActive: boolean("is_active").default(false).notNull(),
+    isTestMode: boolean("is_test_mode").default(true).notNull(),
+    config: json("config").notNull().$type<{
+      publicKey: string;
+      secretKey: string;
+      webhookSecret?: string;
+      webhookUrl?: string;
+      supportedCurrencies: string[];
+      metadata?: Record<string, any>;
+    }>(),
+    features: json("features").$type<{
+      recurring: boolean;
+      refunds: boolean;
+      webhooks: boolean;
+    }>(),
+    supportedMethods: text("supported_methods").array(),
+    webhookEvents: text("webhook_events").array(),
+    lastTestAt: timestamp("last_test_at"),
+    testResult: json("test_result").$type<{
+      success: boolean;
+      message: string;
+      testedAt: Date;
+      responseTime?: number;
+      errors?: string[];
+    }>(),
+    displayOrder: integer("display_order").default(1),
+    countryRestrictions: text("country_restrictions").array(),
+    createdAt: timestamp("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: timestamp("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (t) => [
+    index("idx_payment_gateway_active").on(t.isActive),
+    index("idx_payment_gateway_provider").on(t.provider),
+  ],
+);
 
 export const SubscriptionRequestTable = pgTable(
   "subscription_request",
@@ -638,3 +765,6 @@ export type UsageEntity = typeof UsageTable.$inferSelect;
 export type ImageGenerationEntity = typeof ImageGenerationTable.$inferSelect;
 export type DailyUsageSummaryEntity =
   typeof DailyUsageSummaryTable.$inferSelect;
+export type AIModelEntity = typeof AIModelsTable.$inferSelect;
+export type PlanModelAccessEntity = typeof PlanModelAccessTable.$inferSelect;
+export type ModelSyncLogEntity = typeof ModelSyncLogTable.$inferSelect;
