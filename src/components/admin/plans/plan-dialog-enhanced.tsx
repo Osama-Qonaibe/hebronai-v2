@@ -54,6 +54,66 @@ const IMAGE_RESOLUTIONS = [
   { value: "1024x1792", label: "1024×1792 (Tall)" },
 ];
 
+const DEFAULT_PLAN_DATA = {
+  name: "",
+  slug: "",
+  displayName: { en: "", ar: "" },
+  description: { en: "", ar: "" },
+  pricing: { monthly: 0, yearly: 0, currency: "USD" },
+  models: {
+    allowed: [] as string[],
+    default: "",
+    limits: {} as Record<string, any>,
+  },
+  limits: {
+    chats: { maxActive: 5, maxHistory: 50 },
+    messages: { maxPerChat: 100, maxPerDay: 50, maxPerMonth: 1000 },
+    files: {
+      maxSize: 5242880,
+      maxCount: 3,
+      allowedTypes: ["pdf", "txt", "md"],
+    },
+    images: {
+      maxPerDay: 10,
+      maxPerMonth: 100,
+      maxResolution: "1024x1024",
+    },
+    api: { rateLimit: 10, burstLimit: 20 },
+  },
+  features: {
+    mcpServers: { enabled: false, maxServers: 0, customServers: false },
+    workflows: { enabled: false, maxWorkflows: 0 },
+    agents: {
+      enabled: false,
+      maxCustomAgents: 0,
+      shareAgents: false,
+    },
+    advanced: {
+      codeInterpreter: false,
+      imageGeneration: false,
+      voiceChat: false,
+      documentAnalysis: false,
+      apiAccess: false,
+      prioritySupport: false,
+      teamWorkspace: false,
+      exportData: false,
+    },
+  },
+  adminSettings: {
+    isActive: true,
+    isVisible: true,
+    isFeatured: false,
+    allowSignup: true,
+    maxUsers: null as number | null,
+    trialDays: 0,
+  },
+  metadata: {
+    order: 1,
+    color: "#6366f1",
+    icon: "package",
+  },
+};
+
 export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps) {
   const t = useTranslations("Admin.Plans");
   const tCommon = useTranslations("Common");
@@ -61,66 +121,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
   const [activeTab, setActiveTab] = useState("basic");
   const [availableModels, setAvailableModels] = useState<AIModel[]>([]);
   const [loadingModels, setLoadingModels] = useState(false);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    slug: "",
-    displayName: { en: "", ar: "" },
-    description: { en: "", ar: "" },
-    pricing: { monthly: 0, yearly: 0, currency: "USD" },
-    models: {
-      allowed: [] as string[],
-      default: "",
-      limits: {} as Record<string, any>,
-    },
-    limits: {
-      chats: { maxActive: 5, maxHistory: 50 },
-      messages: { maxPerChat: 100, maxPerDay: 50, maxPerMonth: 1000 },
-      files: {
-        maxSize: 5242880,
-        maxCount: 3,
-        allowedTypes: ["pdf", "txt", "md"],
-      },
-      images: {
-        maxPerDay: 10,
-        maxPerMonth: 100,
-        maxResolution: "1024x1024",
-      },
-      api: { rateLimit: 10, burstLimit: 20 },
-    },
-    features: {
-      mcpServers: { enabled: false, maxServers: 0, customServers: false },
-      workflows: { enabled: false, maxWorkflows: 0 },
-      agents: {
-        enabled: false,
-        maxCustomAgents: 0,
-        shareAgents: false,
-      },
-      advanced: {
-        codeInterpreter: false,
-        imageGeneration: false,
-        voiceChat: false,
-        documentAnalysis: false,
-        apiAccess: false,
-        prioritySupport: false,
-        teamWorkspace: false,
-        exportData: false,
-      },
-    },
-    adminSettings: {
-      isActive: true,
-      isVisible: true,
-      isFeatured: false,
-      allowSignup: true,
-      maxUsers: null as number | null,
-      trialDays: 0,
-    },
-    metadata: {
-      order: 1,
-      color: "#6366f1",
-      icon: "package",
-    },
-  });
+  const [formData, setFormData] = useState(DEFAULT_PLAN_DATA);
 
   useEffect(() => {
     if (open) {
@@ -130,18 +131,21 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
   useEffect(() => {
     if (plan) {
-      setFormData({
-        name: plan.name,
-        slug: plan.slug,
-        displayName: plan.displayName,
-        description: plan.description,
-        pricing: plan.pricing,
-        models: plan.models,
-        limits: plan.limits,
-        features: plan.features,
-        adminSettings: plan.adminSettings,
-        metadata: plan.metadata,
-      });
+      const mergedData = {
+        ...DEFAULT_PLAN_DATA,
+        ...plan,
+        limits: {
+          ...DEFAULT_PLAN_DATA.limits,
+          ...plan.limits,
+          images: {
+            ...DEFAULT_PLAN_DATA.limits.images,
+            ...(plan.limits?.images || {}),
+          },
+        },
+      };
+      setFormData(mergedData);
+    } else {
+      setFormData(DEFAULT_PLAN_DATA);
     }
   }, [plan, open]);
 
@@ -1049,9 +1053,9 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                     {formData.features.advanced.imageGeneration ? (
                       <>
                         <div className="space-y-2">
-                          <Label>صور يومياً: {formData.limits.images.maxPerDay}</Label>
+                          <Label>صور يومياً: {formData.limits.images?.maxPerDay || 10}</Label>
                           <Slider
-                            value={[formData.limits.images.maxPerDay]}
+                            value={[formData.limits.images?.maxPerDay || 10]}
                             onValueChange={([value]) =>
                               setFormData({
                                 ...formData,
@@ -1066,9 +1070,9 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>صور شهرياً: {formData.limits.images.maxPerMonth}</Label>
+                          <Label>صور شهرياً: {formData.limits.images?.maxPerMonth || 100}</Label>
                           <Slider
-                            value={[formData.limits.images.maxPerMonth]}
+                            value={[formData.limits.images?.maxPerMonth || 100]}
                             onValueChange={([value]) =>
                               setFormData({
                                 ...formData,
@@ -1085,7 +1089,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         <div className="space-y-2">
                           <Label>أقصى دقة للصور</Label>
                           <Select
-                            value={formData.limits.images.maxResolution}
+                            value={formData.limits.images?.maxResolution || "1024x1024"}
                             onValueChange={(value) =>
                               setFormData({
                                 ...formData,
