@@ -93,7 +93,7 @@ export const pgUserRepository: UserRepository = {
       .from(UserTable)
       .where(eq(UserTable.id, userId));
 
-    return result || null;
+    return (result as BasicUserWithLastLogin) || null;
   },
 
   getUserCount: async () => {
