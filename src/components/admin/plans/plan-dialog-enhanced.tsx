@@ -36,16 +36,15 @@ interface PlanDialogProps {
   plan: SubscriptionPlan | null;
 }
 
-const AVAILABLE_MODELS = [
-  { value: "gpt-4o", label: "GPT-4o", tier: "premium" },
-  { value: "gpt-4o-mini", label: "GPT-4o Mini", tier: "standard" },
-  { value: "gpt-4-turbo", label: "GPT-4 Turbo", tier: "premium" },
-  { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo", tier: "basic" },
-  { value: "claude-3-5-sonnet", label: "Claude 3.5 Sonnet", tier: "premium" },
-  { value: "claude-3-opus", label: "Claude 3 Opus", tier: "premium" },
-  { value: "claude-3-haiku", label: "Claude 3 Haiku", tier: "basic" },
-  { value: "gemini-2.0-flash-exp", label: "Gemini 2.0 Flash", tier: "standard" },
-];
+interface AIModel {
+  value: string;
+  label: string;
+  provider: string;
+  modelName: string;
+  isToolCallUnsupported: boolean;
+  isImageInputUnsupported: boolean;
+  supportedFileMimeTypes: string[];
+}
 
 const IMAGE_RESOLUTIONS = [
   { value: "256x256", label: "256×256 (Low)" },
@@ -60,6 +59,8 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
   const tCommon = useTranslations("Common");
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("basic");
+  const [availableModels, setAvailableModels] = useState<AIModel[]>([]);
+  const [loadingModels, setLoadingModels] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -68,8 +69,8 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
     description: { en: "", ar: "" },
     pricing: { monthly: 0, yearly: 0, currency: "USD" },
     models: {
-      allowed: ["gpt-3.5-turbo"],
-      default: "gpt-3.5-turbo",
+      allowed: [] as string[],
+      default: "",
       limits: {} as Record<string, any>,
     },
     limits: {
@@ -122,6 +123,12 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
   });
 
   useEffect(() => {
+    if (open) {
+      fetchAvailableModels();
+    }
+  }, [open]);
+
+  useEffect(() => {
     if (plan) {
       setFormData({
         name: plan.name,
@@ -137,6 +144,22 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
       });
     }
   }, [plan, open]);
+
+  const fetchAvailableModels = async () => {
+    setLoadingModels(true);
+    try {
+      const response = await fetch("/api/admin/models");
+      if (response.ok) {
+        const data = await response.json();
+        setAvailableModels(data.models);
+      }
+    } catch (error) {
+      console.error("Failed to fetch models:", error);
+      toast.error("فشل تحميل النماذج المتاحة");
+    } finally {
+      setLoadingModels(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -168,15 +191,29 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
     }
   };
 
-  const toggleModel = (model: string) => {
-    const allowed = formData.models.allowed.includes(model)
-      ? formData.models.allowed.filter((m) => m !== model)
-      : [...formData.models.allowed, model];
+  const toggleModel = (modelValue: string) => {
+    const allowed = formData.models.allowed.includes(modelValue)
+      ? formData.models.allowed.filter((m) => m !== modelValue)
+      : [...formData.models.allowed, modelValue];
+    
+    let defaultModel = formData.models.default;
+    if (!allowed.includes(defaultModel) && allowed.length > 0) {
+      defaultModel = allowed[0];
+    }
+
     setFormData({
       ...formData,
-      models: { ...formData.models, allowed },
+      models: { ...formData.models, allowed, default: defaultModel },
     });
   };
+
+  const groupedModels = availableModels.reduce((acc, model) => {
+    if (!acc[model.provider]) {
+      acc[model.provider] = [];
+    }
+    acc[model.provider].push(model);
+    return acc;
+  }, {} as Record<string, AIModel[]>);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -508,72 +545,97 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
               <TabsContent value="models" className="space-y-4 mt-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle>النماذج المتاحة</CardTitle>
+                    <CardTitle className="flex items-center justify-between">
+                      <span>النماذج المتاحة</span>
+                      {loadingModels && <Loader2 className="h-4 w-4 animate-spin" />}
+                    </CardTitle>
                     <CardDescription>
-                      اختر النماذج التي يمكن للمستخدمين الوصول إليها في هذه الخطة
+                      اختر النماذج من الموجودة فعلياً في النظام - يتم التحميل ديناميكياً
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-3">
-                    {AVAILABLE_MODELS.map((model) => (
-                      <div
-                        key={model.value}
-                        className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
-                      >
-                        <div className="flex items-center space-x-3 space-x-reverse">
-                          <Checkbox
-                            checked={formData.models.allowed.includes(model.value)}
-                            onCheckedChange={() => toggleModel(model.value)}
-                          />
-                          <div>
-                            <div className="font-medium">{model.label}</div>
-                            <div className="text-xs text-muted-foreground capitalize">
-                              {model.tier === "premium" && "⭐ Premium"}
-                              {model.tier === "standard" && "🔷 Standard"}
-                              {model.tier === "basic" && "🔹 Basic"}
-                            </div>
+                  <CardContent className="space-y-4">
+                    {loadingModels ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        جاري تحميل النماذج...
+                      </div>
+                    ) : availableModels.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        لا توجد نماذج متاحة
+                      </div>
+                    ) : (
+                      Object.entries(groupedModels).map(([provider, models]) => (
+                        <div key={provider} className="space-y-2">
+                          <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                            {provider}
+                          </div>
+                          <div className="space-y-2">
+                            {models.map((model) => (
+                              <div
+                                key={model.value}
+                                className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+                              >
+                                <div className="flex items-center space-x-3 space-x-reverse">
+                                  <Checkbox
+                                    checked={formData.models.allowed.includes(model.value)}
+                                    onCheckedChange={() => toggleModel(model.value)}
+                                  />
+                                  <div>
+                                    <div className="font-medium">{model.modelName}</div>
+                                    {(model.isToolCallUnsupported || model.isImageInputUnsupported) && (
+                                      <div className="text-xs text-muted-foreground">
+                                        {model.isToolCallUnsupported && "⚠️ No Tools"}
+                                        {model.isImageInputUnsupported && " ⚠️ No Images"}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                {formData.models.default === model.value && (
+                                  <div className="flex items-center gap-1 text-xs text-primary">
+                                    <Check className="h-3 w-3" />
+                                    افتراضي
+                                  </div>
+                                )}
+                              </div>
+                            ))}
                           </div>
                         </div>
-                        {formData.models.default === model.value && (
-                          <div className="flex items-center gap-1 text-xs text-primary">
-                            <Check className="h-3 w-3" />
-                            افتراضي
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>النموذج الافتراضي</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Select
-                      value={formData.models.default}
-                      onValueChange={(value) =>
-                        setFormData({
-                          ...formData,
-                          models: { ...formData.models, default: value },
-                        })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {formData.models.allowed.map((modelValue) => {
-                          const model = AVAILABLE_MODELS.find((m) => m.value === modelValue);
-                          return (
-                            <SelectItem key={modelValue} value={modelValue}>
-                              {model?.label || modelValue}
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectContent>
-                    </Select>
-                  </CardContent>
-                </Card>
+                {formData.models.allowed.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>النموذج الافتراضي</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <Select
+                        value={formData.models.default}
+                        onValueChange={(value) =>
+                          setFormData({
+                            ...formData,
+                            models: { ...formData.models, default: value },
+                          })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {formData.models.allowed.map((modelValue) => {
+                            const model = availableModels.find((m) => m.value === modelValue);
+                            return (
+                              <SelectItem key={modelValue} value={modelValue}>
+                                {model?.label || modelValue}
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                    </CardContent>
+                  </Card>
+                )}
               </TabsContent>
 
               <TabsContent value="features" className="space-y-4 mt-4">
