@@ -1,0 +1,5 @@
+# Vercel Build Ignore
+scripts/migrate-image-limits.ts
+scripts/migrations/
+*.test.ts
+*.spec.ts
