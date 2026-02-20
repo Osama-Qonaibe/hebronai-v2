@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.4.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.3.1...hebronai-v2-v3.4.0) (2026-02-20)
+
+
+### Features
+
+* add migration script for image limits ([a98250d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a98250db11f59ac16efc2cb7207eee0da792d2d8))
+
+
+### Bug Fixes
+
+* exclude migration scripts from TypeScript build ([ef573df](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ef573dfc0efafa121a5d4ef9d571f9c4f733b360))
+* ignore migration scripts from Vercel build ([ac57b51](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ac57b511b7f3b1ec5385b5e1a64599955097937b))
+
 ## [3.3.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.3.0...hebronai-v2-v3.3.1) (2026-02-20)
 
 
