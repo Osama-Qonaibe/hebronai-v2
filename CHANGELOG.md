@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.7.0...hebronai-v2-v2.8.0) (2026-02-20)
+
+
+### Features
+
+* Add comprehensive Admin.Plans translations (EN) ([e2a16af](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e2a16af29a081ef1c7943f1c58b78e2816d867b4))
+
 ## [2.7.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.6.0...hebronai-v2-v2.7.0) (2026-02-20)
 
 
