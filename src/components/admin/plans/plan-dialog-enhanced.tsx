@@ -20,7 +20,6 @@ import { toast } from "sonner";
 import { SubscriptionPlan } from "@/types/subscription";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "ui/tabs";
 import { Slider } from "ui/slider";
-import { Badge } from "ui/badge";
 import {
   Select,
   SelectContent,
@@ -214,7 +213,6 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                 </TabsTrigger>
               </TabsList>
 
-              {/* Basic Tab - Same as before */}
               <TabsContent value="basic" className="space-y-4 mt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -391,9 +389,6 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                 </div>
               </TabsContent>
 
-              {/* Pricing, Models, Features tabs remain the same... I'll skip to Limits tab */}
-              
-              {/* Limits Tab - with Images added */}
               <TabsContent value="limits" className="space-y-4 mt-4">
                 <Card>
                   <CardHeader>
