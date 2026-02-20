@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { AIModelsTable, ModelSyncLogTable } from '@/lib/db/pg/schema.pg';
-import { eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { ModelSyncRequest, ModelSyncResponse } from '@/types/ai-models';
 
 const PROVIDER_ENDPOINTS = {
