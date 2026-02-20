@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.1.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.0.2...hebronai-v2-v3.1.0) (2026-02-20)
+
+
+### Features
+
+* add image generation limits controls to plan dialog ([b345f39](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b345f39d27f727039e8eda9b64f7303b93da6600))
+* add image generation limits to subscription plans ([75db951](https://github.com/Osama-Qonaibe/hebronai-v2/commit/75db9516106cd6caa5b8438473abe60934978620))
+* add slider UI component for plan limits ([b221876](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b2218768dfd54cb1bd0fdafd2ffa30fedca07936))
+* integrate enhanced plan dialog ([ce2f708](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ce2f7086e204e5321487b50e08154d196218a285))
+* phase 1 - enhanced plan dialog with full admin controls ([5c83cf6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5c83cf646789d9d035afb540293f63d1bfe912a3))
+
+
+### Bug Fixes
+
+* remove unused Workflow import ([c274a1f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c274a1fa79f34a1edd346d10a80ca455e27377b8))
+
 ## [3.0.2](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.0.1...hebronai-v2-v3.0.2) (2026-02-20)
 
 
