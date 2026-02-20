@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.3.0...hebronai-v2-v3.3.1) (2026-02-20)
+
+
+### Bug Fixes
+
+* handle missing limits.images in old plans ([46a578f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/46a578fdcae2990148e351247f41856e4da33504))
+
 ## [3.3.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.2.0...hebronai-v2-v3.3.0) (2026-02-20)
 
 
