@@ -35,15 +35,6 @@ interface PlanDialogProps {
   plan: SubscriptionPlan | null;
 }
 
-const AVAILABLE_MODELS = [
-  { value: "gpt-4o", label: "GPT-4o" },
-  { value: "gpt-4o-mini", label: "GPT-4o Mini" },
-  { value: "gpt-4-turbo", label: "GPT-4 Turbo" },
-  { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo" },
-  { value: "claude-3-5-sonnet", label: "Claude 3.5 Sonnet" },
-  { value: "claude-3-opus", label: "Claude 3 Opus" },
-];
-
 const IMAGE_RESOLUTIONS = [
   { value: "256x256", label: "256×256 (Low)" },
   { value: "512x512", label: "512×512 (Medium)" },
@@ -163,16 +154,6 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
     } finally {
       setLoading(false);
     }
-  };
-
-  const toggleModel = (model: string) => {
-    const allowed = formData.models.allowed.includes(model)
-      ? formData.models.allowed.filter((m) => m !== model)
-      : [...formData.models.allowed, model];
-    setFormData({
-      ...formData,
-      models: { ...formData.models, allowed },
-    });
   };
 
   return (
