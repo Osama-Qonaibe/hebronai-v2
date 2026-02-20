@@ -198,7 +198,7 @@ export function UserAccessCard({
       </Card>
 
       <UserRoleSelector
-        user={user}
+        user={{ id: user.id, name: user.name, role: user.role }}
         onRoleChange={handleUserUpdate}
         open={showRoleDialog}
         onOpenChange={setShowRoleDialog}
