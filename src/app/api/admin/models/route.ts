@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import { customModelProvider } from "@/lib/ai/models";
-import { getServerSession } from "@/lib/auth/server-utils";
+import { hasAdminPermission } from "@/lib/auth/permissions";
 
 export async function GET() {
   try {
-    const session = await getServerSession();
-    if (!session?.user || session.user.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const hasPermission = await hasAdminPermission();
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: "Unauthorized: Admin access required" },
+        { status: 403 },
+      );
     }
 
     const modelsData = customModelProvider.modelsInfo
