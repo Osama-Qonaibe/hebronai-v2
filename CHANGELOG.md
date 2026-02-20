@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.6.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.5.0...hebronai-v2-v2.6.0) (2026-02-20)
+
+
+### Features
+
+* Add admin plans page ([21d57b5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/21d57b5e1a6b0215aae42c4568dae8067cb92e02))
+* Add PlanDialog component for creating/editing plans ([a7f22c9](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a7f22c9a6a66a976845e5e3373828da8c33cc3b3))
+* Add PlansTable component for admin ([c63ddcc](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c63ddcc7cda96d2b24758360143bd80f73f831df))
+
 ## [2.5.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.4.0...hebronai-v2-v2.5.0) (2026-02-20)
 
 
