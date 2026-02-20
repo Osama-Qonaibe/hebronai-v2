@@ -86,7 +86,12 @@ export async function POST(req: NextRequest) {
     let totalSynced = 0;
     let totalAdded = 0;
     let totalUpdated = 0;
-    const logs = [];
+    const logs: Array<{
+      provider: string;
+      modelsSynced?: number;
+      status: string;
+      error?: string;
+    }> = [];
 
     for (const provider of providers) {
       try {
