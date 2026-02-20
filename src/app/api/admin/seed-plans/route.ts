@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db/pg/db.pg";
+import { pgDb } from "@/lib/db/pg/db.pg";
 import { SubscriptionPlanTable, UserTable } from "@/lib/db/pg/schema.pg";
 import { hasAdminPermission } from "@/lib/auth/permissions";
 import { eq } from "drizzle-orm";
@@ -219,7 +219,7 @@ export async function POST() {
       );
     }
 
-    const adminUsers = await db
+    const adminUsers = await pgDb
       .select()
       .from(UserTable)
       .where(eq(UserTable.role, "admin"))
@@ -233,7 +233,7 @@ export async function POST() {
     const results = [];
 
     for (const plan of defaultPlans) {
-      const existing = await db
+      const existing = await pgDb
         .select()
         .from(SubscriptionPlanTable)
         .where(eq(SubscriptionPlanTable.slug, plan.slug))
@@ -244,7 +244,7 @@ export async function POST() {
         continue;
       }
 
-      await db.insert(SubscriptionPlanTable).values({
+      await pgDb.insert(SubscriptionPlanTable).values({
         ...plan,
         createdBy: systemAdminId,
       });

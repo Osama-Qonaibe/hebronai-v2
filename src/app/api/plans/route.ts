@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db/pg/db.pg";
+import { pgDb } from "@/lib/db/pg/db.pg";
 import { SubscriptionPlanTable } from "@/lib/db/pg/schema.pg";
 import { sql } from "drizzle-orm";
 
 export async function GET() {
   try {
-    const plans = await db
+    const plans = await pgDb
       .select()
       .from(SubscriptionPlanTable)
       .where(

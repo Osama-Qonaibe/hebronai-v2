@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db/pg/db.pg";
+import { pgDb } from "@/lib/db/pg/db.pg";
 import { PaymentGatewayTable } from "@/lib/db/pg/schema.pg";
 import { hasAdminPermission } from "@/lib/auth/permissions";
 import { desc } from "drizzle-orm";
@@ -14,7 +14,7 @@ export async function GET() {
       );
     }
 
-    const gateways = await db
+    const gateways = await pgDb
       .select()
       .from(PaymentGatewayTable)
       .orderBy(desc(PaymentGatewayTable.createdAt));
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    const [newGateway] = await db
+    const [newGateway] = await pgDb
       .insert(PaymentGatewayTable)
       .values(body)
       .returning();

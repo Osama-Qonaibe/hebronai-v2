@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db/pg/db.pg";
+import { pgDb } from "@/lib/db/pg/db.pg";
 import { PaymentGatewayTable } from "@/lib/db/pg/schema.pg";
 import { hasAdminPermission } from "@/lib/auth/permissions";
 import { eq } from "drizzle-orm";
@@ -19,7 +19,7 @@ export async function PATCH(
 
     const body = await request.json();
 
-    const [updatedGateway] = await db
+    const [updatedGateway] = await pgDb
       .update(PaymentGatewayTable)
       .set({
         ...body,
@@ -58,7 +58,7 @@ export async function DELETE(
       );
     }
 
-    await db
+    await pgDb
       .delete(PaymentGatewayTable)
       .where(eq(PaymentGatewayTable.id, params.id));
 

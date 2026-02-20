@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db/pg/db.pg";
+import { pgDb } from "@/lib/db/pg/db.pg";
 import { SubscriptionPlanTable } from "@/lib/db/pg/schema.pg";
 import { hasAdminPermission } from "@/lib/auth/permissions";
 import { auth } from "@/lib/auth/server";
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const includeInactive = searchParams.get("includeInactive") === "true";
 
-    let query = db.select().from(SubscriptionPlanTable);
+    let query = pgDb.select().from(SubscriptionPlanTable);
 
     if (!includeInactive) {
       query = query.where(
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    const [newPlan] = await db
+    const [newPlan] = await pgDb
       .insert(SubscriptionPlanTable)
       .values({
         ...body,

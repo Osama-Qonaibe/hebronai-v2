@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db/pg/db.pg";
+import { pgDb } from "@/lib/db/pg/db.pg";
 import { SubscriptionPlanTable } from "@/lib/db/pg/schema.pg";
 import { hasAdminPermission } from "@/lib/auth/permissions";
 import { eq } from "drizzle-orm";
@@ -17,7 +17,7 @@ export async function GET(
       );
     }
 
-    const [plan] = await db
+    const [plan] = await pgDb
       .select()
       .from(SubscriptionPlanTable)
       .where(eq(SubscriptionPlanTable.id, params.id))
@@ -52,7 +52,7 @@ export async function PATCH(
 
     const body = await request.json();
 
-    const [updatedPlan] = await db
+    const [updatedPlan] = await pgDb
       .update(SubscriptionPlanTable)
       .set({
         ...body,
@@ -88,7 +88,7 @@ export async function DELETE(
       );
     }
 
-    await db
+    await pgDb
       .delete(SubscriptionPlanTable)
       .where(eq(SubscriptionPlanTable.id, params.id));
 
