@@ -14,7 +14,7 @@ import { Input } from "ui/input";
 import { Label } from "ui/label";
 import { Textarea } from "ui/textarea";
 import { Switch } from "ui/switch";
-import { Loader2, Info, Zap, Users, Workflow, Bot, Crown, Image as ImageIcon } from "lucide-react";
+import { Loader2, Info, Zap, Users, Bot, Crown, Image as ImageIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { SubscriptionPlan } from "@/types/subscription";
