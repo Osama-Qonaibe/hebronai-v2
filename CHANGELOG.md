@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.3.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.12...hebronai-v2-v2.3.0) (2026-02-20)
+
+
+### Features
+
+* Add admin plans API routes ([d80bbb1](https://github.com/Osama-Qonaibe/hebronai-v2/commit/d80bbb19882e2b3f1558a55850b07e50e5bacf6c))
+* Add public plans API and types ([6c343d6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6c343d6e44efa984947499205f900a6e79883387))
+* Add seed plans API endpoint ([2c04a4c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2c04a4ca74993fb4750fbbca002d91f0fd4ace62))
+* Add seed script for default subscription plans ([e75d9e7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e75d9e7a87335b7ce4798af0247bb5cbab65548d))
+* Add subscription plans and payment gateways tables ([545c762](https://github.com/Osama-Qonaibe/hebronai-v2/commit/545c7628bad79c7a25f19aa79e4eeb20ba108885))
+
+
+### Bug Fixes
+
+* Add explicit type for results array in seed-plans ([453dc7e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/453dc7eb19f0af42d901434ecd101ab999d41264))
+* Correct db import paths in all API routes ([745503d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/745503d5107a9f25e8070d450f2b7fb1ea7d4a1f))
+* Handle async params in Next.js 15+ dynamic routes ([e00645c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e00645c0cd6255aa530b252b58914f58967d3b1c))
+* Remove seed script from scripts folder ([ac4cdfa](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ac4cdfaa5a9e437a8f2e0fafc8effb6b90ffe59a))
+* Use correct pgDb import name in all API routes ([aa891fe](https://github.com/Osama-Qonaibe/hebronai-v2/commit/aa891fec219dab0ccbc5f3f1ce70173b453ff437))
+* Use type assertion for plan insertion to avoid TypeScript errors ([eda462f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/eda462f17554c75ad62b14e5cb2dd4b3f73dd816))
+
 ## [2.2.12](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v2.2.11...hebronai-v2-v2.2.12) (2026-02-19)
 
 
