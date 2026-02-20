@@ -209,6 +209,12 @@ const defaultPlans = [
   },
 ];
 
+type SeedResult = {
+  plan: string;
+  status: string;
+  reason?: string;
+};
+
 export async function POST() {
   try {
     const hasPermission = await hasAdminPermission();
@@ -230,7 +236,7 @@ export async function POST() {
         ? adminUsers[0].id
         : "00000000-0000-0000-0000-000000000000";
 
-    const results = [];
+    const results: SeedResult[] = [];
 
     for (const plan of defaultPlans) {
       const existing = await pgDb
