@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pgDb } from "@/lib/db/pg/db.pg";
-import { SubscriptionPlanTable } from "@/lib/db/pg/schema.pg";
+import { SubscriptionPlanTable, SubscriptionPlanEntity } from "@/lib/db/pg/schema.pg";
 import { hasAdminPermission } from "@/lib/auth/permissions";
 import { auth } from "@/lib/auth/server";
 import { desc, sql } from "drizzle-orm";
@@ -60,13 +60,15 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    const [newPlan] = await pgDb
+    const result = await pgDb
       .insert(SubscriptionPlanTable)
       .values({
         ...body,
         createdBy: session.user.id,
       })
       .returning();
+
+    const newPlan: SubscriptionPlanEntity = result[0];
 
     return NextResponse.json({ plan: newPlan }, { status: 201 });
   } catch (error) {
