@@ -23,7 +23,7 @@ import {
   CheckCircle2,
   XCircle,
 } from "lucide-react";
-import { PlanDialog } from "./plan-dialog";
+import { PlanDialogEnhanced } from "./plan-dialog-enhanced";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
@@ -243,7 +243,7 @@ export function PlansTable() {
         </CardContent>
       </Card>
 
-      <PlanDialog
+      <PlanDialogEnhanced
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         plan={selectedPlan}
