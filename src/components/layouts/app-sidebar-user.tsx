@@ -26,8 +26,10 @@ import {
   MoonStar,
   ChevronRight,
   Settings,
-  Facebook,
-  Instagram,
+  FileText,
+  FileCheck,
+  Shield,
+  Mail,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { appStore } from "@/app/store";
@@ -42,6 +44,7 @@ import { useThemeStyle } from "@/hooks/use-theme-style";
 import { BasicUser } from "app-types/user";
 import { getUserAvatar } from "lib/user/utils";
 import { Skeleton } from "ui/skeleton";
+import Link from "next/link";
 
 export function AppSidebarUserInner(props: { user?: BasicUser }) {
   const { data: user } = useSWR<BasicUser>(`/api/user/details`, fetcher, {
@@ -135,24 +138,31 @@ export function AppSidebarUserInner(props: { user?: BasicUser }) {
               <Command className="size-4 text-foreground" />
               <span>{t("keyboardShortcuts")}</span>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                window.open("https://www.facebook.com/virallinkup", "_blank");
-              }}
-            >
-              <Facebook className="size-4 text-foreground" />
-              <span>Follow on Facebook</span>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/about">
+                <FileText className="size-4 text-foreground" />
+                <span>{t("about")}</span>
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                window.open(
-                  "https://www.instagram.com/virallinkup_services",
-                  "_blank",
-                );
-              }}
-            >
-              <Instagram className="size-4 text-foreground" />
-              <span>Follow on Instagram</span>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/terms">
+                <FileCheck className="size-4 text-foreground" />
+                <span>{t("terms")}</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/privacy">
+                <Shield className="size-4 text-foreground" />
+                <span>{t("privacy")}</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/contact">
+                <Mail className="size-4 text-foreground" />
+                <span>{t("contact")}</span>
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
 
