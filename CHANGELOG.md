@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.0.1...hebronai-v2-v3.0.2) (2026-02-21)
+
+
+### Bug Fixes
+
+* correct translation namespace for admin plans ([a12e512](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a12e5124e9e0b027f31b85695377a583d84c4a58))
+
 ## [3.0.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.0.0...hebronai-v2-v3.0.1) (2026-02-20)
 
 
