@@ -2,7 +2,6 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 import ReactMarkdown from 'react-markdown';
 import { BackButton } from '@/components/back-button';
-import { useTranslations } from 'next-intl';
 
 export default async function AboutPage({
   params: { locale },
