@@ -23,7 +23,13 @@ async function runCommand(command: string, description: string) {
     console.log(`${description} finished successfully.`);
   } catch (error: any) {
     console.error(`${description} error:`, error);
-    process.exit(1);
+    // Don't exit on migration errors to allow build to continue
+    if (!description.includes("migration")) {
+      process.exit(1);
+    } else {
+      console.warn(`⚠️  ${description} failed, but continuing build...`);
+      console.warn("💡 You can run migrations manually after deployment.");
+    }
   }
 }
 
@@ -41,7 +47,9 @@ async function main() {
       return;
     }
 
-    console.log("Running on Vercel, performing database migration.");
+    console.log("Running on Vercel, attempting database migration.");
+    console.log("💡 If migration fails, the build will continue.");
+    console.log("   You can run migrations manually using: pnpm db:push");
     await runCommand("pnpm db:migrate", "Database migration");
   } else if (IS_DOCKER_ENV) {
     if (FILE_BASED_MCP_CONFIG) {
