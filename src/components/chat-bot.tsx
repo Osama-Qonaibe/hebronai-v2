@@ -45,7 +45,7 @@ import { Think } from "ui/think";
 import { useGenerateThreadTitle } from "@/hooks/queries/use-generate-thread-title";
 import dynamic from "next/dynamic";
 import { useMounted } from "@/hooks/use-mounted";
-import { getStorageManager } from "lib/browser-stroage";
+import { getStorageManager } from "lib/browser-storage";
 import { AnimatePresence, motion } from "framer-motion";
 import { useThreadFileUploader } from "@/hooks/use-thread-file-uploader";
 import { useFileDragOverlay } from "@/hooks/use-file-drag-overlay";
@@ -163,7 +163,6 @@ export default function ChatBot({ threadId, initialMessages }: Props) {
           window.history.replaceState({}, "", `/chat/${threadId}`);
         }
         const lastMessage = messages.at(-1)!;
-        // Filter out UI-only parts (e.g., source-url) so the model doesn't receive unknown parts
         const attachments: ChatAttachment[] = lastMessage.parts.reduce(
           (acc: ChatAttachment[], part: any) => {
             if (part?.type === "file") {
@@ -227,7 +226,6 @@ export default function ChatBot({ threadId, initialMessages }: Props) {
   const addToolResult = useCallback(
     async (result: Parameters<typeof _addToolResult>[0]) => {
       await _addToolResult(result);
-      // sendMessage();
     },
     [_addToolResult],
   );
