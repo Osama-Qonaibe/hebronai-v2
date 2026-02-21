@@ -1,4 +1,3 @@
-import { getTranslations } from 'next-intl/server';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import ReactMarkdown from 'react-markdown';
@@ -8,7 +7,6 @@ export default async function TermsPage({
 }: {
   params: { locale: string };
 }) {
-  const t = await getTranslations();
   const lang = locale === 'ar' ? 'ar' : 'en';
   
   const content = await readFile(
