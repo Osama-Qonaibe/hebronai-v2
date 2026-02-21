@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.5.0...hebronai-v2-v3.5.1) (2026-02-21)
+
+
+### Bug Fixes
+
+* إضافة Chat.Greeting للإنجليزية ([b0436a0](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b0436a090450b763fa81b9564dab1c5111b71603))
+
 ## [3.5.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.4.1...hebronai-v2-v3.5.0) (2026-02-21)
 
 
