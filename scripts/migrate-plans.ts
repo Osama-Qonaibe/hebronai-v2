@@ -13,10 +13,7 @@ async function migratePlans() {
   console.log("⏳ Starting plan migration...");
 
   try {
-    const plans = await pgDb
-      .select()
-      .from(SubscriptionPlanTable)
-      .execute();
+    const plans = await pgDb.select().from(SubscriptionPlanTable).execute();
 
     if (plans.length === 0) {
       console.log("❌ No plans found. Run seed-plans first!");
@@ -56,7 +53,9 @@ async function migratePlans() {
       );
     }
 
-    console.log(`\n🎉 Migration complete! Migrated ${migrated}/${users.length} users`);
+    console.log(
+      `\n🎉 Migration complete! Migrated ${migrated}/${users.length} users`,
+    );
   } catch (error) {
     console.error("❌ Migration failed:", error);
     process.exit(1);
