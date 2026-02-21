@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.5.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.4.1...hebronai-v2-v3.5.0) (2026-02-21)
+
+
+### Features
+
+* إضافة ترجمة back ([df6ab1e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/df6ab1e4aed1a21472dbbfffe62aff69e91375c6))
+* إضافة زر رجوع للصفحات القانونية ([f44109e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f44109e6e0c27f070d244abe1985f46045a03be6))
+* إضافة مكون زر رجوع احترافي ([7d70cab](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7d70cab80ac569133fb3a33e0bb396828ef48fd1))
+
+
+### Bug Fixes
+
+* Restore complete Arabic translations file with all sections ([bd9e669](https://github.com/Osama-Qonaibe/hebronai-v2/commit/bd9e66963345e7253afcbeaaa3ada609b9023521))
+* إزالة import غير مستخدم ([558c553](https://github.com/Osama-Qonaibe/hebronai-v2/commit/558c553ca6f0ca8d483f25578c87c0db9a196e9a))
+* إصلاح ترجمات الشات وإضافة المفاتيح المفقودة ([e5e2c9d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e5e2c9d3ea89fa1aa6647105beb78ef6948036f6))
+* نقل الصفحات القانونية داخل [locale] + إصلاح BackButton ([dd68602](https://github.com/Osama-Qonaibe/hebronai-v2/commit/dd68602d2fe8fb6286a256a0a6696c2033f9567b))
+
 ## [3.4.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.4.0...hebronai-v2-v3.4.1) (2026-02-21)
 
 
