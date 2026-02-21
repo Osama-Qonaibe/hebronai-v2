@@ -1,4 +1,23 @@
 {
+  "Chat": {
+    "Title": "Home",
+    "Greeting": {
+      "goodMorning": "Good morning, {name}",
+      "goodAfternoon": "Good afternoon, {name}",
+      "goodEvening": "Good evening, {name}",
+      "niceToSeeYouAgain": "Nice to see you again, {name}",
+      "whatAreYouWorkingOnToday": "What are you working on today, {name}?",
+      "letMeKnowWhenYoureReadyToBegin": "Let me know when you're ready to begin",
+      "whatAreYourThoughtsToday": "What are your thoughts today?",
+      "whereWouldYouLikeToStart": "Where would you like to start?",
+      "whatAreYouThinking": "What are you thinking, {name}?"
+    },
+    "placeholder": "Type your message here...",
+    "send": "Send",
+    "thinking": "Thinking...",
+    "error": "An error occurred",
+    "tryAgain": "Try again"
+  },
   "Common": {
     "cancel": "Cancel",
     "update": "Update",
@@ -42,7 +61,26 @@
     "createWithExample": "Create With Example",
     "resultsFound": "{count} results found",
     "youAreAnExpertIn": "You are an expert in {role}",
-    "sharedBy": "Shared by {userName}"
+    "sharedBy": "Shared by {userName}",
+    "backToHome": "Back to Home",
+    "loading": "Loading...",
+    "close": "Close"
+  },
+  "Navigation": {
+    "home": "Home",
+    "about": "About HebronAI",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy",
+    "contact": "Contact Us"
+  },
+  "Auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember Me"
   },
   "Layout": {
     "workflow": "Workflow",
