@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.4.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.4.0...hebronai-v2-v3.4.1) (2026-02-21)
+
+
+### Bug Fixes
+
+* Create browser-storage.ts with correct spelling ([36e1175](https://github.com/Osama-Qonaibe/hebronai-v2/commit/36e1175eed840b13d3f88fee87dd8330680c6ce1))
+* Rename browser-stroage.ts (typo correction) ([3a0962e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/3a0962e301eef725c27f882fb102d5db1a136d6b))
+* Update import from browser-stroage to browser-storage in chat-bot.tsx ([a9d17cc](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a9d17cc45389a59f386dc8955b2ead6be0a51eb4))
+* Update imports from browser-stroage to browser-storage ([2b66aa6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2b66aa6b939a61668865f5328e1ab29cf9119ff3))
+
 ## [3.4.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.3.1...hebronai-v2-v3.4.0) (2026-02-20)
 
 
