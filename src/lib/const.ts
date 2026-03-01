@@ -66,11 +66,6 @@ export const SUPPORTED_LOCALES = [
     rtl: true,
   },
   {
-    code: "ko",
-    name: "Korean 🇰🇷",
-  },
-
-  {
     code: "es",
     name: "Spanish 🇪🇸",
   },
