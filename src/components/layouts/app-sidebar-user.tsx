@@ -151,7 +151,8 @@ export function AppSidebarUserInner(props: { user?: BasicUser }) {
                   "https://www.instagram.com/virallinkup_services",
                   "_blank",
                 );
-              }>
+              }}
+            >
               <Instagram className="size-4 text-foreground" />
               <span>{t("followInstagram")}</span>
             </DropdownMenuItem>
