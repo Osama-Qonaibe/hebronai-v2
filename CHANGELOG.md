@@ -5,20 +5,20 @@
 
 ### Bug Fixes
 
-* add RTL support to Palette icon in theme button ([ec6a6be](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ec6a6be3a0d231057bdec13022cf2c37b9f3f2cb))
-* add spacing between text and arrow in theme button ([cf36f3c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/cf36f3c71ac79df53167dd9c7954645e39368542))
-* complete RTL support for all UI elements ([9a30391](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9a30391c7a453243739e94fd8b43caa332c8726d))
-* complete RTL support for theme button icons ([ef4df55](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ef4df55cf3a60788a671cf65bd1c1de8234720c0))
-* correct RTL selectors for dropdown menu ([5e6a286](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5e6a2863646b52540091f9f3a01eb2d070671b6c))
-* match theme button spacing with language button ([5a5a026](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5a5a026681040a1761e1ab3caf3909adcc958520))
-* professional RTL support for dropdown menu ([6763c3d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6763c3d8a053f083fb5324d63394d5bebe4232ce))
-* RTL support for theme toggle button ([3692d7b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/3692d7bacc6317a7008019efee5391e440b7abc1))
-* syntax error in Instagram dropdown item ([9980b20](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9980b20454460823c3f0d132e16707dd9c46a359))
+* add RTL support to Palette icon in theme button ([ec6a6be](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ec6a6be3a0d231057bdec13022cf2c37b9f3f2cb)) by @Osama-Qonaibe
+* add spacing between text and arrow in theme button ([cf36f3c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/cf36f3c71ac79df53167dd9c7954645e39368542)) by @Osama-Qonaibe
+* complete RTL support for all UI elements ([9a30391](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9a30391c7a453243739e94fd8b43caa332c8726d)) by @Osama-Qonaibe
+* complete RTL support for theme button icons ([ef4df55](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ef4df55cf3a60788a671cf65bd1c1de8234720c0)) by @Osama-Qonaibe
+* correct RTL selectors for dropdown menu ([5e6a286](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5e6a2863646b52540091f9f3a01eb2d070671b6c)) by @Osama-Qonaibe
+* match theme button spacing with language button ([5a5a026](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5a5a026681040a1761e1ab3caf3909adcc958520)) by @Osama-Qonaibe
+* professional RTL support for dropdown menu ([6763c3d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6763c3d8a053f083fb5324d63394d5bebe4232ce)) by @Osama-Qonaibe
+* RTL support for theme toggle button ([3692d7b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/3692d7bacc6317a7008019efee5391e440b7abc1)) by @Osama-Qonaibe
+* syntax error in Instagram dropdown item ([9980b20](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9980b20454460823c3f0d132e16707dd9c46a359)) by @Osama-Qonaibe
 
 
 ### Reverts
 
-* restore working RTL dropdown menu ([a1a5de0](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a1a5de0d75425e87b089b6a4491875e4703affce))
+* restore working RTL dropdown menu ([a1a5de0](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a1a5de0d75425e87b089b6a4491875e4703affce)) by @Osama-Qonaibe
 
 ## [4.0.5](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.4...hebronai-v2-v4.0.5) (2026-03-01)
 
