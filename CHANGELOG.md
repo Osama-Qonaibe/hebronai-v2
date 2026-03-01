@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.5](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.4...hebronai-v2-v4.0.5) (2026-03-01)
+
+
+### Bug Fixes
+
+* RTL text alignment for sidebar dropdown menu ([73baa18](https://github.com/Osama-Qonaibe/hebronai-v2/commit/73baa184f963681434ebca81efb3e74b81c29040))
+
 ## [4.0.4](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.3...hebronai-v2-v4.0.4) (2026-03-01)
 
 
