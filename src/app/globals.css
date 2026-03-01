@@ -1538,3 +1538,11 @@
 [dir="rtl"] a {
   text-align: right;
 }
+
+[dir="rtl"] [data-radix-popper-content-wrapper] {
+  direction: rtl !important;
+}
+
+[dir="rtl"] [role="menu"] {
+  text-align: right;
+}
