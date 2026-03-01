@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Check, Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import type { PlanWithLimits } from '@/lib/db/pg/schema';
+import type { PlanWithLimits } from '@/lib/services/plan-service';
 
 interface PricingCardProps {
   plan: PlanWithLimits;
@@ -17,7 +17,7 @@ export function PricingCard({ plan, isCurrentPlan, isLoggedIn }: PricingCardProp
   const router = useRouter();
   const isPopular = plan.tags?.includes('popular');
   const isNew = plan.tags?.includes('new');
-  const isFree = plan.price === 0;
+  const monthlyPrice = plan.pricing.monthly;
 
   const handleSubscribe = () => {
     if (!isLoggedIn) {
@@ -34,15 +34,16 @@ export function PricingCard({ plan, isCurrentPlan, isLoggedIn }: PricingCardProp
     router.push(`/upgrade?plan=${plan.slug}`);
   };
 
-  // Format features from limits
+  // Format features from different plan properties
   const features = [
-    plan.limits.tokensPerHour > 0 && `${plan.limits.tokensPerHour.toLocaleString()} توكن في الساعة`,
-    plan.limits.maxAgents > 0 && `${plan.limits.maxAgents} وكيل`,
-    plan.limits.maxWorkflows > 0 && `${plan.limits.maxWorkflows} سير عمل`,
-    plan.limits.maxMCPServers > 0 && `${plan.limits.maxMCPServers} خادم MCP`,
-    plan.limits.imageGenerationsPerDay > 0 && `${plan.limits.imageGenerationsPerDay} صورة/يوم`,
-    plan.limits.maxFileUploads > 0 && `${plan.limits.maxFileUploads} ملف مرفق`,
-    plan.limits.maxDailyMessages > 0 && `${plan.limits.maxDailyMessages} رسالة/يوم`,
+    plan.models.allowed.length > 0 && `${plan.models.allowed.length} نموذج AI`,
+    plan.limits.messages.maxPerDay > 0 && `${plan.limits.messages.maxPerDay.toLocaleString()} رسالة/يوم`,
+    plan.features.agents.maxCustomAgents > 0 && `${plan.features.agents.maxCustomAgents} وكيل`,
+    plan.features.workflows.maxWorkflows > 0 && `${plan.features.workflows.maxWorkflows} سير عمل`,
+    plan.features.mcpServers.maxServers > 0 && `${plan.features.mcpServers.maxServers} خادم MCP`,
+    plan.limits.files.maxCount > 0 && `${plan.limits.files.maxCount} ملف مرفق`,
+    plan.features.advanced.imageGeneration && 'توليد صور',
+    plan.features.advanced.codeInterpreter && 'مفسر أكواد',
   ].filter(Boolean) as string[];
 
   return (
@@ -72,10 +73,10 @@ export function PricingCard({ plan, isCurrentPlan, isLoggedIn }: PricingCardProp
       </div>
 
       <CardHeader className="pt-12">
-        <CardTitle className="text-2xl">{plan.name}</CardTitle>
+        <CardTitle className="text-2xl">{plan.displayName.ar || plan.name}</CardTitle>
         {plan.description && (
           <CardDescription className="text-base">
-            {plan.description}
+            {plan.description.ar || plan.description.en}
           </CardDescription>
         )}
       </CardHeader>
@@ -83,11 +84,11 @@ export function PricingCard({ plan, isCurrentPlan, isLoggedIn }: PricingCardProp
       <CardContent className="space-y-6">
         {/* Price */}
         <div className="flex items-baseline gap-2">
-          {isFree ? (
+          {monthlyPrice === 0 ? (
             <span className="text-4xl font-bold">مجاني</span>
           ) : (
             <>
-              <span className="text-4xl font-bold">${plan.price}</span>
+              <span className="text-4xl font-bold">${monthlyPrice}</span>
               <span className="text-muted-foreground">/شهر</span>
             </>
           )}
@@ -113,7 +114,7 @@ export function PricingCard({ plan, isCurrentPlan, isLoggedIn }: PricingCardProp
         >
           {isCurrentPlan
             ? 'إدارة الخطة'
-            : isFree
+            : monthlyPrice === 0
             ? 'ابدأ مجاناً'
             : 'اشترك الآن'
           }
