@@ -176,6 +176,10 @@ export const SubscriptionPlanTable = pgTable(
       color: string;
       icon: string;
     }>(),
+    // ✨ NEW: Hybrid system fields
+    isBuiltIn: boolean("is_built_in").notNull().default(false),
+    basedOnSlug: text("based_on_slug").references(() => SubscriptionPlanTable.slug),
+    tags: json("tags").$type<string[]>().default([]),
     createdBy: uuid("created_by")
       .notNull()
       .references(() => UserTable.id),
@@ -191,6 +195,7 @@ export const SubscriptionPlanTable = pgTable(
     index("subscription_plan_active_idx").on(
       sql`((admin_settings->>'isActive')::boolean)`,
     ),
+    index("subscription_plan_built_in_idx").on(t.isBuiltIn),
   ],
 );
 
@@ -211,11 +216,10 @@ export const UserTable = pgTable("user", {
 
   planId: uuid("plan_id").references(() => SubscriptionPlanTable.id),
 
+  // ✨ UPDATED: Made nullable for hybrid system - planId takes priority
   plan: varchar("plan", {
     enum: ["free", "basic", "pro", "enterprise"],
-  })
-    .notNull()
-    .default("free"),
+  }).default("free"),
 
   planStatus: varchar("plan_status", {
     enum: ["trial", "active", "expired"],

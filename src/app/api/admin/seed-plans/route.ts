@@ -8,6 +8,7 @@ const defaultPlans = [
   {
     name: "Free",
     slug: "free",
+    isBuiltIn: true, // ✨ NEW: Mark as built-in plan
     displayName: { en: "Free Plan", ar: "خطة مجانية" },
     description: {
       en: "Perfect for trying out HebronAI",
@@ -63,6 +64,7 @@ const defaultPlans = [
   {
     name: "Pro",
     slug: "pro",
+    isBuiltIn: true, // ✨ NEW: Mark as built-in plan
     displayName: { en: "Pro Plan", ar: "خطة احترافية" },
     description: {
       en: "For power users and professionals",
@@ -134,6 +136,7 @@ const defaultPlans = [
   {
     name: "Enterprise",
     slug: "enterprise",
+    isBuiltIn: true, // ✨ NEW: Mark as built-in plan
     displayName: { en: "Enterprise Plan", ar: "خطة المؤسسات" },
     description: {
       en: "For teams and organizations",
@@ -246,10 +249,25 @@ export async function POST() {
         .limit(1);
 
       if (existing.length > 0) {
-        results.push({ plan: plan.name, status: "skipped", reason: "exists" });
+        // ✨ UPDATE: Update existing built-in plans instead of skipping
+        await pgDb
+          .update(SubscriptionPlanTable)
+          .set({
+            ...plan,
+            isBuiltIn: true,
+            updatedAt: new Date(),
+          } as any)
+          .where(eq(SubscriptionPlanTable.slug, plan.slug));
+
+        results.push({
+          plan: plan.name,
+          status: "updated",
+          reason: "existing plan updated with latest config",
+        });
         continue;
       }
 
+      // Create new plan
       await pgDb.insert(SubscriptionPlanTable).values({
         ...plan,
         createdBy: systemAdminId,
