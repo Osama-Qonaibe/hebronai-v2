@@ -5,10 +5,10 @@
 
 ### Bug Fixes
 
-* archive button icon alignment ([5e107e5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5e107e5e628dc73beeacb61b5b7587b0c8264909))
-* remove mr-2 from archive icons for consistent alignment ([f3500c8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f3500c89ec8e76cafec72b77693285b58cc2fae3))
-* remove unused ChevronRight import ([0822025](https://github.com/Osama-Qonaibe/hebronai-v2/commit/08220251a680b8b3834b1ddb302aeefa4bb9c09e))
-* theme button RTL - remove icon prop ([a735064](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a735064f46f0ef158a5cb528e09242297f293ba8))
+* archive button icon alignment ([5e107e5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5e107e5e628dc73beeacb61b5b7587b0c8264909)) by @Osama-Qonaibe
+* remove mr-2 from archive icons for consistent alignment ([f3500c8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f3500c89ec8e76cafec72b77693285b58cc2fae3)) by @Osama-Qonaibe
+* remove unused ChevronRight import ([0822025](https://github.com/Osama-Qonaibe/hebronai-v2/commit/08220251a680b8b3834b1ddb302aeefa4bb9c09e)) by @Osama-Qonaibe
+* theme button RTL - remove icon prop ([a735064](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a735064f46f0ef158a5cb528e09242297f293ba8)) by @Osama-Qonaibe
 
 ## [4.0.6](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.5...hebronai-v2-v4.0.6) (2026-03-01)
 
