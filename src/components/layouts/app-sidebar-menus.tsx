@@ -99,9 +99,9 @@ export function AppSidebarMenus({ user }: { user?: BasicUser }) {
                 className="font-semibold"
               >
                 {expandedArchive ? (
-                  <FolderOpenIcon className="size-4 mr-2" />
+                  <FolderOpenIcon className="size-4" />
                 ) : (
-                  <FolderSearchIcon className="size-4 mr-2" />
+                  <FolderSearchIcon className="size-4" />
                 )}
                 {t("Archive.title")}
               </SidebarMenuButton>
