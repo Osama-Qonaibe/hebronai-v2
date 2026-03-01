@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-/* Individual theme variants - themes from  https://github.com/rawestmoreland/theme-generator/blob/main/src/app/globals.css */
 
 @theme inline {
   --color-background: var(--background);
@@ -1521,28 +1520,18 @@
 [dir="rtl"] input,
 [dir="rtl"] textarea,
 [dir="rtl"] [contenteditable] {
-  text-align: right !important;
-  direction: rtl !important;
+  text-align: right;
+  direction: rtl;
 }
 
-[dir="rtl"] [data-radix-popper-content-wrapper] {
-  direction: rtl !important;
-  text-align: right !important;
-}
-
-[dir="rtl"] [role="menu"],
-[dir="rtl"] [role="menuitem"] {
-  text-align: right !important;
-  direction: rtl !important;
-}
-
-[dir="rtl"] [role="menu"] svg,
-[dir="rtl"] [role="menuitem"] svg {
-  margin-right: auto !important;
-  margin-left: 0.5rem !important;
-}
-
-[dir="rtl"] button[role="menuitem"] {
-  justify-content: flex-end !important;
-  text-align: right !important;
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4,
+[dir="rtl"] h5,
+[dir="rtl"] h6,
+[dir="rtl"] p,
+[dir="rtl"] label,
+[dir="rtl"] span:not(.icon) {
+  text-align: right;
 }
