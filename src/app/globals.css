@@ -1518,84 +1518,11 @@
   }
 }
 
-/* ============================================
-   RTL Support - Clean and Professional
-   ============================================ */
-
-/* Flip directional icons */
-[dir="rtl"] .lucide-chevron-right,
-[dir="rtl"] .lucide-chevron-left,
-[dir="rtl"] .lucide-arrow-right,
-[dir="rtl"] .lucide-arrow-left {
-  transform: scaleX(-1);
-}
-
-/* Sidebar positioning - Fixed container */
-[dir="rtl"] [data-slot="sidebar-container"][data-side="left"] {
-  left: auto !important;
-  right: 0 !important;
-}
-
-[dir="rtl"]
-  [data-slot="sidebar-container"][data-side="left"][data-collapsible="offcanvas"] {
-  right: calc(var(--sidebar-width) * -1) !important;
-  left: auto !important;
-}
-
-/* Sidebar gap */
-[dir="rtl"] [data-slot="sidebar-gap"] {
-  order: 1;
-}
-
-/* Content padding for sidebar states */
-[dir="rtl"] .peer-data-\[state\=collapsed\]\:pl-12 {
-  padding-left: 0 !important;
-  padding-right: 3rem !important;
-}
-
-[dir="rtl"] .peer-data-\[state\=expanded\]\:pl-64 {
-  padding-left: 0 !important;
-  padding-right: 16rem !important;
-}
-
-/* Sidebar sub-menu */
-[dir="rtl"] [data-sidebar="menu-sub"] {
-  border-left: none !important;
-  border-right: 1px solid var(--sidebar-border) !important;
-  margin-left: 0 !important;
-  margin-right: 0.875rem !important;
-  padding-left: 0 !important;
-  padding-right: 0.625rem !important;
-}
-
-/* Mobile sidebar */
-[dir="rtl"] [data-mobile="true"] {
-  left: auto !important;
-  right: 0 !important;
-}
-
-/* ============================================
-   RTL Text Alignment Support
-   ============================================ */
-
-[dir="rtl"] .text-left {
-  text-align: right !important;
-}
-
-[dir="ltr"] .text-left {
-  text-align: left !important;
-}
-
-[dir="rtl"] [role="dialog"],
-[dir="rtl"] [role="alertdialog"],
-[dir="rtl"] [data-radix-popper-content-wrapper] {
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] [contenteditable] {
   text-align: right;
-}
-
-[dir="rtl"] button,
-[dir="rtl"] .button,
-[dir="rtl"] a {
-  text-align: inherit;
+  direction: rtl;
 }
 
 [dir="rtl"] h1,
@@ -1603,47 +1530,11 @@
 [dir="rtl"] h3,
 [dir="rtl"] h4,
 [dir="rtl"] h5,
-[dir="rtl"] h6 {
-  text-align: right;
-}
-
-[dir="ltr"] h1,
-[dir="ltr"] h2,
-[dir="ltr"] h3,
-[dir="ltr"] h4,
-[dir="ltr"] h5,
-[dir="ltr"] h6 {
-  text-align: left;
-}
-
+[dir="rtl"] h6,
 [dir="rtl"] p,
-[dir="rtl"] span,
-[dir="rtl"] div {
+[dir="rtl"] label,
+[dir="rtl"] span:not(.icon),
+[dir="rtl"] button,
+[dir="rtl"] a {
   text-align: right;
-}
-
-[dir="ltr"] p,
-[dir="ltr"] span,
-[dir="ltr"] div {
-  text-align: left;
-}
-
-[dir="rtl"] li {
-  text-align: right;
-}
-
-[dir="ltr"] li {
-  text-align: left;
-}
-
-[dir="rtl"] input,
-[dir="rtl"] textarea,
-[dir="rtl"] select {
-  text-align: right;
-}
-
-[dir="ltr"] input,
-[dir="ltr"] textarea,
-[dir="ltr"] select {
-  text-align: left;
 }
