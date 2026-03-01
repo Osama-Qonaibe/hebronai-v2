@@ -1,6 +1,6 @@
-import { db } from '../db/pg';
-import { plans as plansTable, users as usersTable } from '../db/pg/schema';
-import type { PlanWithLimits } from '../db/pg/schema';
+import { db } from '@/lib/db/pg';
+import { plans as plansTable, users as usersTable } from '@/lib/db/pg/schema';
+import type { PlanWithLimits } from '@/lib/db/pg/schema';
 import { eq, and, or, isNull } from 'drizzle-orm';
 
 export async function getUserPlan(userId: string): Promise<PlanWithLimits> {
