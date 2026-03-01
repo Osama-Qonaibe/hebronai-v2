@@ -199,7 +199,7 @@ function SelectTheme() {
           </>
         }
       >
-        <Palette className="size-4" />
+        <Palette className="mr-2 size-4" />
         <span>{t("theme")}</span>
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
