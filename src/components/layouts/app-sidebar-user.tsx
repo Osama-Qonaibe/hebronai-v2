@@ -187,18 +187,7 @@ function SelectTheme() {
 
   return (
     <DropdownMenuSub>
-      <DropdownMenuSubTrigger
-        icon={
-          <>
-            <span className="text-muted-foreground text-xs min-w-0 truncate mr-2 [html[dir='rtl']_&]:ml-2 [html[dir='rtl']_&]:mr-0">
-              {`${capitalizeFirstLetter(theme)} ${capitalizeFirstLetter(
-                themeStyle,
-              )}`}
-            </span>
-            <ChevronRight className="size-4" />
-          </>
-        }
-      >
+      <DropdownMenuSubTrigger>
         <Palette className="mr-2 size-4 [html[dir='rtl']_&]:ml-2 [html[dir='rtl']_&]:mr-0" />
         <span>{t("theme")}</span>
       </DropdownMenuSubTrigger>
