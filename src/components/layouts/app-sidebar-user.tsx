@@ -151,8 +151,7 @@ export function AppSidebarUserInner(props: { user?: BasicUser }) {
                   "https://www.instagram.com/virallinkup_services",
                   "_blank",
                 );
-              }}
-            >
+              }>
               <Instagram className="size-4 text-foreground" />
               <span>{t("followInstagram")}</span>
             </DropdownMenuItem>
@@ -199,7 +198,7 @@ function SelectTheme() {
           </>
         }
       >
-        <Palette className="mr-2 size-4" />
+        <Palette className="mr-2 size-4 [html[dir='rtl']_&]:ml-2 [html[dir='rtl']_&]:mr-0" />
         <span>{t("theme")}</span>
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
