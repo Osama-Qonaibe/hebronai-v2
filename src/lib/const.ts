@@ -65,10 +65,6 @@ export const SUPPORTED_LOCALES = [
     name: "العربية 🇸🇦",
     rtl: true,
   },
-  {
-    code: "no",
-    name: "Norwegian 🇳🇴",
-  },
 ];
 
 export const BACKGROUND_COLORS = [
