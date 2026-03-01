@@ -1,2 +1,2 @@
-export { db } from './db.pg';
+export { pgDb as db } from './db.pg';
 export * from './schema.pg';
