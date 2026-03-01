@@ -159,7 +159,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
       }
     } catch (error) {
       console.error("Failed to fetch models:", error);
-      toast.error("فشل تحميل النماذج المتاحة");
+      toast.error(t("failedToLoadModels"));
     } finally {
       setLoadingModels(false);
     }
@@ -185,11 +185,11 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
         window.location.reload();
       } else {
         const error = await response.json();
-        toast.error(error.error || "Failed to save plan");
+        toast.error(error.error || t("failedToSavePlan"));
       }
     } catch (error) {
       console.error("Save failed:", error);
-      toast.error("Failed to save plan");
+      toast.error(t("failedToSavePlan"));
     } finally {
       setLoading(false);
     }
@@ -228,7 +228,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
               {plan ? t("editPlan") : t("createPlan")}
             </DialogTitle>
             <DialogDescription>
-              {plan ? "تعديل إعدادات الخطة بالكامل" : "إنشاء خطة جديدة مع تحكم كامل بالميزات"}
+              {plan ? t("editPlanDescription") : t("createPlanDescription")}
             </DialogDescription>
           </DialogHeader>
 
@@ -237,30 +237,30 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
               <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="basic">
                   <Info className="h-4 w-4 mr-2" />
-                  أساسي
+                  {t("basicTab")}
                 </TabsTrigger>
                 <TabsTrigger value="pricing">
                   <Crown className="h-4 w-4 mr-2" />
-                  التسعير
+                  {t("pricingTab")}
                 </TabsTrigger>
                 <TabsTrigger value="models">
                   <Zap className="h-4 w-4 mr-2" />
-                  النماذج
+                  {t("modelsTab")}
                 </TabsTrigger>
                 <TabsTrigger value="features">
                   <Bot className="h-4 w-4 mr-2" />
-                  الميزات
+                  {t("featuresTab")}
                 </TabsTrigger>
                 <TabsTrigger value="limits">
                   <Users className="h-4 w-4 mr-2" />
-                  الحدود
+                  {t("limitsTab")}
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="basic" className="space-y-4 mt-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">اسم داخلي *</Label>
+                    <Label htmlFor="name">{t("internalName")}</Label>
                     <Input
                       id="name"
                       value={formData.name}
@@ -284,7 +284,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>اسم العرض (EN) *</Label>
+                    <Label>{t("displayNameEn")}</Label>
                     <Input
                       value={formData.displayName.en}
                       onChange={(e) =>
@@ -297,7 +297,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>اسم العرض (AR) *</Label>
+                    <Label>{t("displayNameAr")}</Label>
                     <Input
                       value={formData.displayName.ar}
                       onChange={(e) =>
@@ -313,7 +313,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>الوصف (EN)</Label>
+                    <Label>{t("descriptionEn")}</Label>
                     <Textarea
                       value={formData.description.en}
                       onChange={(e) =>
@@ -326,7 +326,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>الوصف (AR)</Label>
+                    <Label>{t("descriptionAr")}</Label>
                     <Textarea
                       value={formData.description.ar}
                       onChange={(e) =>
@@ -342,7 +342,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
                 <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label>الترتيب *</Label>
+                    <Label>{t("order")}</Label>
                     <Input
                       type="number"
                       min="1"
@@ -357,7 +357,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>اللون</Label>
+                    <Label>{t("color")}</Label>
                     <Input
                       type="color"
                       value={formData.metadata.color}
@@ -370,7 +370,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>الأيقونة</Label>
+                    <Label>{t("icon")}</Label>
                     <Input
                       value={formData.metadata.icon}
                       onChange={(e) =>
@@ -387,8 +387,8 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                 <div className="space-y-4 pt-4 border-t">
                   <div className="flex items-center justify-between">
                     <div>
-                      <Label>نشط</Label>
-                      <p className="text-sm text-muted-foreground">متاح للمستخدمين</p>
+                      <Label>{t("activeLabel")}</Label>
+                      <p className="text-sm text-muted-foreground">{t("activeDescription")}</p>
                     </div>
                     <Switch
                       checked={formData.adminSettings.isActive}
@@ -402,8 +402,8 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <Label>ظاهر</Label>
-                      <p className="text-sm text-muted-foreground">يظهر في صفحة الأسعار</p>
+                      <Label>{t("visibleLabel")}</Label>
+                      <p className="text-sm text-muted-foreground">{t("visibleDescription")}</p>
                     </div>
                     <Switch
                       checked={formData.adminSettings.isVisible}
@@ -417,8 +417,8 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
-                      <Label>مميز (Popular)</Label>
-                      <p className="text-sm text-muted-foreground">إضافة علامة "الأكثر شعبية"</p>
+                      <Label>{t("featuredLabel")}</Label>
+                      <p className="text-sm text-muted-foreground">{t("featuredDescription")}</p>
                     </div>
                     <Switch
                       checked={formData.adminSettings.isFeatured}
@@ -436,15 +436,15 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
               <TabsContent value="pricing" className="space-y-4 mt-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle>التسعير الشهري والسنوي</CardTitle>
+                    <CardTitle>{t("monthlyYearlyPricing")}</CardTitle>
                     <CardDescription>
-                      حدد الأسعار بالدولار الأمريكي - السعر السنوي يُطبق كخصم تلقائي
+                      {t("monthlyPricingDesc")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>السعر الشهري (USD) *</Label>
+                        <Label>{t("monthlyPrice")}</Label>
                         <Input
                           type="number"
                           min="0"
@@ -461,7 +461,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>السعر السنوي (USD) *</Label>
+                        <Label>{t("yearlyPrice")}</Label>
                         <Input
                           type="number"
                           min="0"
@@ -480,7 +480,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                     </div>
                     {formData.pricing.monthly > 0 && formData.pricing.yearly > 0 && (
                       <div className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
-                        💡 الخصم السنوي: {((1 - formData.pricing.yearly / (formData.pricing.monthly * 12)) * 100).toFixed(0)}%
+                        💡 {t("yearlyDiscount").replace("{percent}", ((1 - formData.pricing.yearly / (formData.pricing.monthly * 12)) * 100).toFixed(0))}
                       </div>
                     )}
                   </CardContent>
@@ -488,11 +488,11 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>إعدادات الفترة التجريبية</CardTitle>
+                    <CardTitle>{t("trialSettings")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label>أيام التجربة المجانية</Label>
+                      <Label>{t("trialDays")}</Label>
                       <Input
                         type="number"
                         min="0"
@@ -510,7 +510,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         placeholder="0"
                       />
                       <p className="text-xs text-muted-foreground">
-                        0 = بدون تجربة مجانية | الحد الأقصى: 90 يوم
+                        {t("trialDaysHint")}
                       </p>
                     </div>
                   </CardContent>
@@ -518,11 +518,11 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>حد المستخدمين</CardTitle>
+                    <CardTitle>{t("userLimit")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label>الحد الأقصى للمستخدمين (اختياري)</Label>
+                      <Label>{t("maxUsersLabel")}</Label>
                       <Input
                         type="number"
                         min="0"
@@ -536,10 +536,10 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                             },
                           })
                         }
-                        placeholder="غير محدود"
+                        placeholder={t("unlimitedValue")}
                       />
                       <p className="text-xs text-muted-foreground">
-                        اتركه فارغاً لعدد غير محدود من المستخدمين
+                        {t("maxUsersHint")}
                       </p>
                     </div>
                   </CardContent>
@@ -550,21 +550,21 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center justify-between">
-                      <span>النماذج المتاحة</span>
+                      <span>{t("availableModels")}</span>
                       {loadingModels && <Loader2 className="h-4 w-4 animate-spin" />}
                     </CardTitle>
                     <CardDescription>
-                      اختر النماذج من الموجودة فعلياً في النظام - يتم التحميل ديناميكياً
+                      {t("modelsLoadedDynamically")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {loadingModels ? (
                       <div className="text-center py-8 text-muted-foreground">
-                        جاري تحميل النماذج...
+                        {t("loadingModels")}
                       </div>
                     ) : availableModels.length === 0 ? (
                       <div className="text-center py-8 text-muted-foreground">
-                        لا توجد نماذج متاحة
+                        {t("noModels")}
                       </div>
                     ) : (
                       Object.entries(groupedModels).map(([provider, models]) => (
@@ -587,8 +587,8 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                                     <div className="font-medium">{model.modelName}</div>
                                     {(model.isToolCallUnsupported || model.isImageInputUnsupported) && (
                                       <div className="text-xs text-muted-foreground">
-                                        {model.isToolCallUnsupported && "⚠️ No Tools"}
-                                        {model.isImageInputUnsupported && " ⚠️ No Images"}
+                                        {model.isToolCallUnsupported && t("noToolsSupport")}
+                                        {model.isImageInputUnsupported && " " + t("noImageSupport")}
                                       </div>
                                     )}
                                   </div>
@@ -596,7 +596,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                                 {formData.models.default === model.value && (
                                   <div className="flex items-center gap-1 text-xs text-primary">
                                     <Check className="h-3 w-3" />
-                                    افتراضي
+                                    {t("defaultBadge")}
                                   </div>
                                 )}
                               </div>
@@ -611,7 +611,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                 {formData.models.allowed.length > 0 && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>النموذج الافتراضي</CardTitle>
+                      <CardTitle>{t("defaultModel")}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <Select
@@ -645,14 +645,14 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
               <TabsContent value="features" className="space-y-4 mt-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle>MCP Servers</CardTitle>
+                    <CardTitle>{t("mcpServersCard")}</CardTitle>
                     <CardDescription>
-                      التحكم بخوادم Model Context Protocol
+                      {t("mcpServersCardDesc")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <Label>تفعيل MCP Servers</Label>
+                      <Label>{t("enableMcpServers")}</Label>
                       <Switch
                         checked={formData.features.mcpServers.enabled}
                         onCheckedChange={(checked) =>
@@ -669,7 +669,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                     {formData.features.mcpServers.enabled && (
                       <>
                         <div className="space-y-2">
-                          <Label>عدد الخوادم: {formData.features.mcpServers.maxServers}</Label>
+                          <Label>{t("serverCount").replace("{count}", formData.features.mcpServers.maxServers.toString())}</Label>
                           <Slider
                             value={[formData.features.mcpServers.maxServers]}
                             onValueChange={([value]) =>
@@ -686,7 +686,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                           />
                         </div>
                         <div className="flex items-center justify-between">
-                          <Label>السماح بخوادم مخصصة</Label>
+                          <Label>{t("allowCustomServers")}</Label>
                           <Switch
                             checked={formData.features.mcpServers.customServers}
                             onCheckedChange={(checked) =>
@@ -707,11 +707,11 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Workflows</CardTitle>
+                    <CardTitle>{t("workflowsCard")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <Label>تفعيل Workflows</Label>
+                      <Label>{t("enableWorkflows")}</Label>
                       <Switch
                         checked={formData.features.workflows.enabled}
                         onCheckedChange={(checked) =>
@@ -727,7 +727,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                     </div>
                     {formData.features.workflows.enabled && (
                       <div className="space-y-2">
-                        <Label>عدد Workflows: {formData.features.workflows.maxWorkflows}</Label>
+                        <Label>{t("workflowCount").replace("{count}", formData.features.workflows.maxWorkflows.toString())}</Label>
                         <Slider
                           value={[formData.features.workflows.maxWorkflows]}
                           onValueChange={([value]) =>
@@ -749,11 +749,11 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Agents</CardTitle>
+                    <CardTitle>{t("agentsCard")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <Label>تفعيل Agents</Label>
+                      <Label>{t("enableAgents")}</Label>
                       <Switch
                         checked={formData.features.agents.enabled}
                         onCheckedChange={(checked) =>
@@ -770,7 +770,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                     {formData.features.agents.enabled && (
                       <>
                         <div className="space-y-2">
-                          <Label>عدد Agents مخصصة: {formData.features.agents.maxCustomAgents}</Label>
+                          <Label>{t("agentCount").replace("{count}", formData.features.agents.maxCustomAgents.toString())}</Label>
                           <Slider
                             value={[formData.features.agents.maxCustomAgents]}
                             onValueChange={([value]) =>
@@ -787,7 +787,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                           />
                         </div>
                         <div className="flex items-center justify-between">
-                          <Label>مشاركة Agents</Label>
+                          <Label>{t("shareAgents")}</Label>
                           <Switch
                             checked={formData.features.agents.shareAgents}
                             onCheckedChange={(checked) =>
@@ -808,11 +808,11 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>الميزات المتقدمة</CardTitle>
+                    <CardTitle>{t("advancedFeatures")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label>Code Interpreter</Label>
+                      <Label>{t("codeInterpreter")}</Label>
                       <Switch
                         checked={formData.features.advanced.codeInterpreter}
                         onCheckedChange={(checked) =>
@@ -827,7 +827,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <Label>Image Generation</Label>
+                      <Label>{t("imageGeneration")}</Label>
                       <Switch
                         checked={formData.features.advanced.imageGeneration}
                         onCheckedChange={(checked) =>
@@ -842,7 +842,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <Label>Voice Chat</Label>
+                      <Label>{t("voiceChat")}</Label>
                       <Switch
                         checked={formData.features.advanced.voiceChat}
                         onCheckedChange={(checked) =>
@@ -857,7 +857,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <Label>Document Analysis</Label>
+                      <Label>{t("documentAnalysis")}</Label>
                       <Switch
                         checked={formData.features.advanced.documentAnalysis}
                         onCheckedChange={(checked) =>
@@ -872,7 +872,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <Label>API Access</Label>
+                      <Label>{t("apiAccess")}</Label>
                       <Switch
                         checked={formData.features.advanced.apiAccess}
                         onCheckedChange={(checked) =>
@@ -887,7 +887,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <Label>Priority Support</Label>
+                      <Label>{t("prioritySupport")}</Label>
                       <Switch
                         checked={formData.features.advanced.prioritySupport}
                         onCheckedChange={(checked) =>
@@ -902,7 +902,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <Label>Team Workspace</Label>
+                      <Label>{t("teamWorkspace")}</Label>
                       <Switch
                         checked={formData.features.advanced.teamWorkspace}
                         onCheckedChange={(checked) =>
@@ -917,7 +917,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       />
                     </div>
                     <div className="flex items-center justify-between">
-                      <Label>Export Data</Label>
+                      <Label>{t("exportData")}</Label>
                       <Switch
                         checked={formData.features.advanced.exportData}
                         onCheckedChange={(checked) =>
@@ -938,11 +938,11 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
               <TabsContent value="limits" className="space-y-4 mt-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle>حدود المحادثات</CardTitle>
+                    <CardTitle>{t("chatLimits")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label>محادثات نشطة: {formData.limits.chats.maxActive}</Label>
+                      <Label>{t("activeChats").replace("{count}", formData.limits.chats.maxActive.toString())}</Label>
                       <Slider
                         value={[formData.limits.chats.maxActive]}
                         onValueChange={([value]) =>
@@ -959,7 +959,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>سجل المحادثات: {formData.limits.chats.maxHistory}</Label>
+                      <Label>{t("chatHistory").replace("{count}", formData.limits.chats.maxHistory.toString())}</Label>
                       <Slider
                         value={[formData.limits.chats.maxHistory]}
                         onValueChange={([value]) =>
@@ -980,11 +980,11 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>حدود الرسائل</CardTitle>
+                    <CardTitle>{t("messageLimits")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label>رسائل لكل محادثة: {formData.limits.messages.maxPerChat}</Label>
+                      <Label>{t("messagesPerChat").replace("{count}", formData.limits.messages.maxPerChat.toString())}</Label>
                       <Slider
                         value={[formData.limits.messages.maxPerChat]}
                         onValueChange={([value]) =>
@@ -1001,7 +1001,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>رسائل يومياً: {formData.limits.messages.maxPerDay}</Label>
+                      <Label>{t("messagesPerDay").replace("{count}", formData.limits.messages.maxPerDay.toString())}</Label>
                       <Slider
                         value={[formData.limits.messages.maxPerDay]}
                         onValueChange={([value]) =>
@@ -1018,7 +1018,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>رسائل شهرياً: {formData.limits.messages.maxPerMonth}</Label>
+                      <Label>{t("messagesPerMonth").replace("{count}", formData.limits.messages.maxPerMonth.toString())}</Label>
                       <Slider
                         value={[formData.limits.messages.maxPerMonth]}
                         onValueChange={([value]) =>
@@ -1041,19 +1041,19 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <ImageIcon className="h-5 w-5" />
-                      حدود توليد الصور
+                      {t("imageLimits")}
                     </CardTitle>
                     <CardDescription>
                       {formData.features.advanced.imageGeneration 
-                        ? "تحكم بعدد الصور المولدة وجودتها" 
-                        : "قم بتفعيل 'Image Generation' في تبويب الميزات أولاً"}
+                        ? t("imageLimitsDesc") 
+                        : t("imageLimitsDisabledDesc")}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {formData.features.advanced.imageGeneration ? (
                       <>
                         <div className="space-y-2">
-                          <Label>صور يومياً: {formData.limits.images?.maxPerDay || 10}</Label>
+                          <Label>{t("imagesPerDay").replace("{count}", (formData.limits.images?.maxPerDay || 10).toString())}</Label>
                           <Slider
                             value={[formData.limits.images?.maxPerDay || 10]}
                             onValueChange={([value]) =>
@@ -1070,7 +1070,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>صور شهرياً: {formData.limits.images?.maxPerMonth || 100}</Label>
+                          <Label>{t("imagesPerMonth").replace("{count}", (formData.limits.images?.maxPerMonth || 100).toString())}</Label>
                           <Slider
                             value={[formData.limits.images?.maxPerMonth || 100]}
                             onValueChange={([value]) =>
@@ -1087,7 +1087,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>أقصى دقة للصور</Label>
+                          <Label>{t("maxResolution")}</Label>
                           <Select
                             value={formData.limits.images?.maxResolution || "1024x1024"}
                             onValueChange={(value) =>
@@ -1115,7 +1115,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       </>
                     ) : (
                       <div className="text-center py-4 text-muted-foreground text-sm">
-                        لاستخدام هذه الميزة، فعّل 'Image Generation' في الميزات المتقدمة
+                        {t("enableImageGenerationFirst")}
                       </div>
                     )}
                   </CardContent>
@@ -1123,12 +1123,12 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>حدود الملفات</CardTitle>
+                    <CardTitle>{t("fileLimits")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
                       <Label>
-                        حجم الملف: {(formData.limits.files.maxSize / 1048576).toFixed(1)} MB
+                        {t("fileSize").replace("{size}", (formData.limits.files.maxSize / 1048576).toFixed(1))}
                       </Label>
                       <Slider
                         value={[formData.limits.files.maxSize / 1048576]}
@@ -1149,7 +1149,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>عدد الملفات: {formData.limits.files.maxCount}</Label>
+                      <Label>{t("fileCount").replace("{count}", formData.limits.files.maxCount.toString())}</Label>
                       <Slider
                         value={[formData.limits.files.maxCount]}
                         onValueChange={([value]) =>
@@ -1170,7 +1170,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>حدود API</CardTitle>
+                    <CardTitle>{t("apiLimits")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
