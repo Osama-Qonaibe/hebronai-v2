@@ -1,5 +1,5 @@
 import { getActivePlans } from '@/lib/services/plan-service';
-import { auth } from '@/lib/auth/config';
+import { auth } from '@/lib/auth/server';
 import { getUserPlan } from '@/lib/services/plan-service';
 import { PricingCard } from './components/pricing-card';
 import { PricingToggle } from './components/pricing-toggle';
