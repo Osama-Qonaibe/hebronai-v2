@@ -75,7 +75,6 @@ function DropdownMenuItem({
       data-variant={variant}
       className={cn(
         "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        "[html[dir='rtl']_&]:flex-row-reverse [html[dir='rtl']_&]:data-[inset]:pr-8 [html[dir='rtl']_&]:data-[inset]:pl-2",
         className,
       )}
       {...props}
@@ -94,13 +93,12 @@ function DropdownMenuCheckboxItem({
       data-slot="dropdown-menu-checkbox-item"
       className={cn(
         "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        "[html[dir='rtl']_&]:flex-row-reverse [html[dir='rtl']_&]:pl-2 [html[dir='rtl']_&]:pr-8",
         className,
       )}
       checked={checked}
       {...props}
     >
-      <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center [html[dir='rtl']_&]:left-auto [html[dir='rtl']_&]:right-2">
+      <span className="dropdown-check-icon pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
           <CheckIcon className="size-4" />
         </DropdownMenuPrimitive.ItemIndicator>
@@ -131,12 +129,11 @@ function DropdownMenuRadioItem({
       data-slot="dropdown-menu-radio-item"
       className={cn(
         "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        "[html[dir='rtl']_&]:flex-row-reverse [html[dir='rtl']_&]:pl-2 [html[dir='rtl']_&]:pr-8",
         className,
       )}
       {...props}
     >
-      <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center [html[dir='rtl']_&]:left-auto [html[dir='rtl']_&]:right-2">
+      <span className="dropdown-radio-icon pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
           <CircleIcon className="size-2 fill-current" />
         </DropdownMenuPrimitive.ItemIndicator>
@@ -159,7 +156,6 @@ function DropdownMenuLabel({
       data-inset={inset}
       className={cn(
         "px-2 py-1.5 text-sm font-medium data-[inset]:pl-8",
-        "[html[dir='rtl']_&]:data-[inset]:pr-8 [html[dir='rtl']_&]:data-[inset]:pl-2",
         className,
       )}
       {...props}
@@ -188,8 +184,7 @@ function DropdownMenuShortcut({
     <span
       data-slot="dropdown-menu-shortcut"
       className={cn(
-        "text-muted-foreground ml-auto text-xs tracking-widest",
-        "[html[dir='rtl']_&]:ml-0 [html[dir='rtl']_&]:mr-auto",
+        "dropdown-shortcut text-muted-foreground ml-auto text-xs tracking-widest",
         className,
       )}
       {...props}
@@ -219,13 +214,12 @@ function DropdownMenuSubTrigger({
       data-inset={inset}
       className={cn(
         "focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[inset]:pl-8",
-        "[html[dir='rtl']_&]:flex-row-reverse [html[dir='rtl']_&]:data-[inset]:pr-8 [html[dir='rtl']_&]:data-[inset]:pl-2",
         className,
       )}
       {...props}
     >
       {children}
-      {icon ?? <ChevronRightIcon className="ml-auto size-4 [html[dir='rtl']_&]:ml-0 [html[dir='rtl']_&]:mr-auto [html[dir='rtl']_&]:rotate-180" />}
+      {icon ?? <ChevronRightIcon className="dropdown-chevron ml-auto size-4" />}
     </DropdownMenuPrimitive.SubTrigger>
   );
 }
