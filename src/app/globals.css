@@ -1549,3 +1549,14 @@
   text-align: right !important;
   direction: rtl !important;
 }
+
+[dir="rtl"] [role="menu"] svg,
+[dir="rtl"] [role="menuitem"] svg {
+  margin-right: auto !important;
+  margin-left: 0.5rem !important;
+}
+
+[dir="rtl"] button[role="menuitem"] {
+  justify-content: flex-end !important;
+  text-align: right !important;
+}
