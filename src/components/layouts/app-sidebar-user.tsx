@@ -206,7 +206,7 @@ function SelectTheme() {
       <DropdownMenuPortal>
         <DropdownMenuSubContent className="w-48">
           <DropdownMenuLabel className="text-muted-foreground w-full flex items-center">
-            <span className="text-muted-foreground text-xs mr-2 select-none">
+            <span className="text-muted-foreground text-xs mr-2 select-none [html[dir='rtl']_&]:ml-2 [html[dir='rtl']_&]:mr-0">
               {capitalizeFirstLetter(theme)}
             </span>
             <div className="flex-1" />
