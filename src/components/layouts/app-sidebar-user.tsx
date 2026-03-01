@@ -188,7 +188,6 @@ function SelectTheme() {
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger
-        className="flex items-center"
         icon={
           <>
             <span className="text-muted-foreground text-xs min-w-0 truncate">
@@ -196,12 +195,12 @@ function SelectTheme() {
                 themeStyle,
               )}`}
             </span>
-            <ChevronRight className="size-4 ml-2" />
+            <ChevronRight className="size-4 ml-2 [html[dir='rtl']_&]:mr-2 [html[dir='rtl']_&]:ml-0" />
           </>
         }
       >
-        <Palette className="mr-2 size-4" />
-        <span className="mr-auto">{t("theme")}</span>
+        <Palette className="size-4" />
+        <span>{t("theme")}</span>
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent className="w-48">
