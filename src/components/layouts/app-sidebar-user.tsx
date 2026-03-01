@@ -190,12 +190,12 @@ function SelectTheme() {
       <DropdownMenuSubTrigger
         icon={
           <>
-            <span className="text-muted-foreground text-xs min-w-0 truncate">
+            <span className="text-muted-foreground text-xs min-w-0 truncate mr-2 [html[dir='rtl']_&]:ml-2 [html[dir='rtl']_&]:mr-0">
               {`${capitalizeFirstLetter(theme)} ${capitalizeFirstLetter(
                 themeStyle,
               )}`}
             </span>
-            <ChevronRight className="size-4 ml-2 [html[dir='rtl']_&]:mr-2 [html[dir='rtl']_&]:ml-0" />
+            <ChevronRight className="size-4" />
           </>
         }
       >
