@@ -93,7 +93,7 @@ export function AppSidebarUserInner(props: { user?: BasicUser }) {
             align="center"
           >
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+              <div className="flex items-center gap-2 px-1 py-1.5 text-sm">
                 <Avatar className="h-8 w-8 rounded-full">
                   <AvatarImage
                     src={getUserAvatar(user)}
@@ -103,7 +103,7 @@ export function AppSidebarUserInner(props: { user?: BasicUser }) {
                     {user?.name?.slice(0, 1) || ""}
                   </AvatarFallback>
                 </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
+                <div className="grid flex-1 text-sm leading-tight">
                   <span
                     className="truncate font-medium"
                     data-testid="sidebar-user-name"
@@ -136,14 +136,16 @@ export function AppSidebarUserInner(props: { user?: BasicUser }) {
               <span>{t("keyboardShortcuts")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem
+              className="cursor-pointer"
               onClick={() => {
                 window.open("https://www.facebook.com/virallinkup", "_blank");
               }}
             >
               <Facebook className="size-4 text-foreground" />
-              <span>Follow on Facebook</span>
+              <span>{t("followFacebook")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem
+              className="cursor-pointer"
               onClick={() => {
                 window.open(
                   "https://www.instagram.com/virallinkup_services",
@@ -152,7 +154,7 @@ export function AppSidebarUserInner(props: { user?: BasicUser }) {
               }}
             >
               <Instagram className="size-4 text-foreground" />
-              <span>Follow on Instagram</span>
+              <span>{t("followInstagram")}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
 
