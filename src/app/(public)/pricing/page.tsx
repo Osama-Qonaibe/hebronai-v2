@@ -1,8 +1,8 @@
-import { getActivePlans } from '@/lib/services/plan-service';
+import { getActivePlans, getUserPlan } from '@/lib/services/plan-service';
 import { getSession } from '@/lib/auth/server';
-import { getUserPlan } from '@/lib/services/plan-service';
 import { PricingCard } from './components/pricing-card';
 import { PricingToggle } from './components/pricing-toggle';
+import type { PlanWithLimits } from '@/lib/services/plan-service';
 
 export const metadata = {
   title: 'التسعير - HebronAI',
@@ -13,7 +13,7 @@ export default async function PricingPage() {
   const session = await getSession();
   const plans = await getActivePlans();
   
-  let currentPlan = null;
+  let currentPlan: PlanWithLimits | null = null;
   if (session?.user?.id) {
     currentPlan = await getUserPlan(session.user.id);
   }
