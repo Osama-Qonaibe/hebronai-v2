@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.0...hebronai-v2-v4.0.1) (2026-03-01)
+
+
+### Bug Fixes
+
+* Replace hardcoded Arabic text with translation keys in plan-dialog-enhanced ([0738ff4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/0738ff4bf9d64b96862742a13cb921b348da9b8a))
+
 ## [4.0.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.5.0...hebronai-v2-v4.0.0) (2026-03-01)
 
 
