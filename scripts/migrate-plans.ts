@@ -31,12 +31,14 @@ async function migratePlans() {
 
     let migrated = 0;
     for (const user of users) {
-      const planSlug = planMapping[user.plan];
+      // ✅ Handle nullable user.plan - default to 'free' if null
+      const userPlan = user.plan || "free";
+      const planSlug = planMapping[userPlan];
       const planId = planIdMap[planSlug];
 
       if (!planId) {
         console.log(
-          `⚠️  User ${user.email}: No matching plan for "${user.plan}"`,
+          `⚠️  User ${user.email}: No matching plan for "${userPlan}"`,
         );
         continue;
       }
@@ -49,7 +51,7 @@ async function migratePlans() {
 
       migrated++;
       console.log(
-        `✅ User ${user.email}: ${user.plan} -> ${planSlug} (${planId})`,
+        `✅ User ${user.email}: ${userPlan} -> ${planSlug} (${planId})`,
       );
     }
 
