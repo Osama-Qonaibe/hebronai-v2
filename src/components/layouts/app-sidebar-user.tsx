@@ -24,7 +24,6 @@ import {
   Languages,
   Sun,
   MoonStar,
-  ChevronRight,
   Settings,
   Facebook,
   Instagram,
