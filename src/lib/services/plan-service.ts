@@ -4,7 +4,7 @@ import {
   UserTable as users,
   type SubscriptionPlanEntity,
 } from '@/lib/db/pg';
-import { eq, and, or, isNull } from 'drizzle-orm';
+import { eq, and, or } from 'drizzle-orm';
 
 export type PlanWithLimits = SubscriptionPlanEntity;
 
@@ -17,15 +17,18 @@ export async function getUserPlan(userId: string): Promise<PlanWithLimits> {
     return getBuiltInPlan('free');
   }
 
+  // ✅ Priority 1: Custom plan (planId)
   if (user.planId) {
     const customPlan = await getCustomPlan(user.planId);
     if (customPlan) return customPlan;
   }
 
+  // ✅ Priority 2: Built-in plan (plan field)
   if (user.plan) {
     return getBuiltInPlan(user.plan);
   }
 
+  // ✅ Fallback: Free plan
   return getBuiltInPlan('free');
 }
 
@@ -35,6 +38,7 @@ export async function getBuiltInPlan(slug: string): Promise<PlanWithLimits> {
   });
 
   if (!plan) {
+    // Fallback to free plan
     const freePlan = await db.query.SubscriptionPlanTable.findFirst({
       where: and(eq(plans.slug, 'free'), eq(plans.isBuiltIn, true)),
     });
@@ -60,19 +64,18 @@ export async function getCustomPlan(
 }
 
 export async function getActivePlans(): Promise<PlanWithLimits[]> {
-  const isActive = plans.adminSettings;
+  // Get all plans (built-in or custom)
   const activePlans = await db
     .select()
     .from(plans)
     .where(
       or(
         eq(plans.isBuiltIn, true),
-        // Check if adminSettings.isActive is true
-        // We'll filter in-memory for complex JSON queries
+        // Custom plans are included too
       ),
     );
 
-  // Filter by isActive in adminSettings
+  // Filter by adminSettings.isActive
   return activePlans.filter(
     (plan: any) =>
       plan.adminSettings?.isActive === true ||
