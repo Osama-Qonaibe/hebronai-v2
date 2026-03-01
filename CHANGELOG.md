@@ -1,5 +1,34 @@
 # Changelog
 
+## [3.5.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.4.0...hebronai-v2-v3.5.0) (2026-03-01)
+
+
+### Features
+
+* Add getActivePlans function to plan service ([5bb869f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5bb869f9f040520e6798cc297da27f0e3c53e36a))
+* Create dynamic pricing page ([78fa017](https://github.com/Osama-Qonaibe/hebronai-v2/commit/78fa0176b2723873c7b1989e5a57ea24647c7c8f))
+* Create pricing card component with features list ([3a4720a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/3a4720a56c8c15778a226fed47fbdd9c71a5c94b))
+* Create pricing toggle component (Monthly/Yearly) ([1182f53](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1182f5331e0655c57549a4c4619e6589af4f48d1))
+* **db:** add hybrid subscription system fields ([8db9ed8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8db9ed87d852ca22510d27ef7d8aba7cf2befc9e))
+* Hybrid Subscription System + Dynamic Pricing Page ([447483c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/447483c2d60bd3ba1e344e154c058b4ea6de2a6f))
+* **seed:** mark built-in plans and update existing plans ([f71dd73](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f71dd73252e8236b1ba418af978f558765be16a0))
+* **subscription:** create unified plan service for hybrid system ([9776a8b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9776a8bdf465353ba6dc9bd1d9c50a4242f85a55))
+
+
+### Bug Fixes
+
+* Add proper type for currentPlan ([e031944](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e0319440d8dc1dad48a7182c4c4367814e921a92))
+* Add schema to pgDb configuration ([67db96c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/67db96ca6feeecb7f5ab84866a254e3898f1e693))
+* Correct import paths in plan-service ([648623c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/648623c05e31976ba2185bcf7ce4ebfa13a248e3))
+* Export db correctly as alias for pgDb ([026d1a5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/026d1a5a851abe7806198989d1c23034ef6867fc))
+* Import PlanWithLimits from plan-service ([de1bc24](https://github.com/Osama-Qonaibe/hebronai-v2/commit/de1bc241a71bd258601e1dc27144c69a5c7c6311))
+* **migration:** handle nullable user.plan field ([fb4c43b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/fb4c43b9956d19ea65a596d5e913cd177af873cb))
+* Remove unused isNull import ([c1fa0d7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c1fa0d70f57e86041de51b7b75db882109c6ad7f))
+* **types:** make user.plan nullable in user types ([968e61a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/968e61a28492b9dccaeb27e78405ac7376a40cdc))
+* Use correct auth import from server.ts ([96ed41e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/96ed41e1f90053480c6ebd09ba1530c43509f22a))
+* Use correct table names from schema ([7d3abf5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7d3abf5844a81ba1295a29ad28aacd9a3065eb93))
+* Use getSession instead of auth() ([18c9a61](https://github.com/Osama-Qonaibe/hebronai-v2/commit/18c9a617017228971aed39b3cd33437e79c7f6bc))
+
 ## [3.4.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v3.3.1...hebronai-v2-v3.4.0) (2026-02-20)
 
 
