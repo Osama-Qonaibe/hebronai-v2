@@ -5,4 +5,4 @@
 
 ### Bug Fixes
 
-* RTL dropdown submenu alignment ([4643bd3](https://github.com/Osama-Qonaibe/hebronai-v2/commit/4643bd3c5d16636f8bf2eff6dc11df4a512a50a6))
+* RTL dropdown submenu alignment ([4643bd3](https://github.com/Osama-Qonaibe/hebronai-v2/commit/4643bd3c5d16636f8bf2eff6dc11df4a512a50a6)) by @Osama-Qonaibe
