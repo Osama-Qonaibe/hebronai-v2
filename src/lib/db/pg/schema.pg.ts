@@ -260,9 +260,7 @@ export const SubscriptionRequestTable = pgTable(
     requestedPlanId: uuid("requested_plan_id").references(
       () => SubscriptionPlanTable.id,
     ),
-    requestedPlan: varchar("requested_plan", {
-      enum: ["free", "basic", "pro", "enterprise"],
-    }).notNull(),
+    requestedPlan: text("requested_plan").notNull(),
     paymentMethod: varchar("payment_method", {
       enum: ["stripe", "paypal", "bank_transfer", "manual"],
     }).notNull(),
