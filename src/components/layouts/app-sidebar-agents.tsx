@@ -129,7 +129,7 @@ export function AppSidebarAgents({ userRole }: { userRole?: string | null }) {
               )}
             </SidebarMenuItem>
           ) : agents.length == 0 ? (
-            <div className="px-2 mt-1">
+            <div className="px-2 mt-1 hidden">
               {canCreateAgent(userRole) ? (
                 <Link
                   href={"/agent/new"}
