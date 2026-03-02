@@ -96,7 +96,7 @@ export function AppSidebarMenus({ user }: { user?: BasicUser }) {
             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={toggleArchive}
-                className="font-semibold [html[dir='rtl']_&]:pl-0"
+                className="font-semibold !pr-2 !pl-2 [html[dir='rtl']_&]:!pr-2 [html[dir='rtl']_&]:!pl-2"
               >
                 {expandedArchive ? (
                   <FolderOpenIcon className="size-4" />
