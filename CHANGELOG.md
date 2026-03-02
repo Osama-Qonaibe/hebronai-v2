@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.2.0...hebronai-v2-v4.2.1) (2026-03-02)
+
+
+### Bug Fixes
+
+* correct translation key from AdminPlans to Admin.Plans ([c01f08f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c01f08f8c56f4041830fb61430b5b74ef3dd2ec4))
+
 ## [4.2.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.1.0...hebronai-v2-v4.2.0) (2026-03-02)
 
 
