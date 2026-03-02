@@ -1,6 +1,6 @@
 import { customModelProvider } from "lib/ai/models";
 import { getSession } from "auth/server";
-import { getUserSubscription } from "lib/auth/subscription";
+import { getUserSubscription, type SubscriptionPlan } from "lib/auth/subscription";
 import { getAccessibleModels } from "lib/subscription/model-access";
 
 export const GET = async () => {
@@ -39,7 +39,7 @@ export const GET = async () => {
       return Response.json({ error: "No subscription found" }, { status: 404 });
     }
 
-    const accessibleModels = getAccessibleModels(subscription.plan);
+    const accessibleModels = getAccessibleModels(subscription.plan as SubscriptionPlan);
 
     const accessibleModelKeys = new Set<string>();
     accessibleModels.forEach((rule) => {
