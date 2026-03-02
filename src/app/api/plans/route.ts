@@ -24,7 +24,9 @@ function convertStaticPlansToSubscriptionPlans(): StaticPlan[] {
       monthly: plan.price,
       yearly: 0,
       currency: "USD",
-      discount: 0
+      discount: {
+        yearly: 0
+      }
     },
     models: {
       allowed: ["gpt-4", "gpt-3.5-turbo"],
