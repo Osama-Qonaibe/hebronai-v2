@@ -53,7 +53,7 @@ export interface AdminSubscriptionRequest {
   userName: string | null;
   userEmail: string | null;
   userImage: string | null;
-  requestedPlan: SubscriptionPlan;
+  requestedPlan: string;
   paymentMethod: string;
   amount: string | null;
   currency: string | null;
