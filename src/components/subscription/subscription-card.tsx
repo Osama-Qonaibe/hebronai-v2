@@ -39,6 +39,7 @@ import { usePlans } from "@/hooks/use-plans";
 
 type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
 type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "manual";
+type SubscriptionType = "monthly" | "yearly";
 
 interface SubscriptionCardProps {
   currentPlan: string;
@@ -70,6 +71,7 @@ export function SubscriptionCard({
   const { plans, loading: plansLoading } = usePlans();
   const [loading, setLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [subscriptionType, setSubscriptionType] = useState<SubscriptionType>("monthly");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("paypal");
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [transactionId, setTransactionId] = useState("");
@@ -89,6 +91,7 @@ export function SubscriptionCard({
     }
 
     setSelectedPlan(planSlug);
+    setSubscriptionType("monthly");
     setTransactionId("");
     setNotes("");
   };
@@ -103,13 +106,18 @@ export function SubscriptionCard({
         throw new Error("Invalid plan selection");
       }
 
+      const amount = subscriptionType === "yearly" 
+        ? planDetails.pricing.yearly 
+        : planDetails.pricing.monthly;
+
       const response = await fetch("/api/user/subscription-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           requestedPlan: selectedPlan,
+          subscriptionType,
           paymentMethod,
-          amount: planDetails.pricing.monthly,
+          amount,
           currency: planDetails.pricing.currency,
           transactionId: transactionId || undefined,
           notes:
@@ -149,6 +157,7 @@ export function SubscriptionCard({
         }
 
         setSelectedPlan(null);
+        setSubscriptionType("monthly");
         setTransactionId("");
         setNotes("");
 
@@ -202,8 +211,10 @@ export function SubscriptionCard({
     const planName = locale === 'ar' 
       ? (planDetails.displayName.ar || planDetails.displayName.en)
       : (planDetails.displayName.en || planDetails.displayName.ar);
+    const price = subscriptionType === "yearly" ? planDetails.pricing.yearly : planDetails.pricing.monthly;
+    const period = subscriptionType === "yearly" ? "سنة" : "شهر";
     const message = encodeURIComponent(
-      `مرحباً، أرغب في الترقية إلى خطة ${planName} ($${planDetails.pricing.monthly}/شهر).\n\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\n\nأحتاج مساعدة.`,
+      `مرحباً، أرغب في الترقية إلى خطة ${planName} ($${price}/${period}).\n\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\n\nأحتاج مساعدة.`,
     );
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
     window.location.href = whatsappUrl;
@@ -224,6 +235,9 @@ export function SubscriptionCard({
   );
   const selectedPlanDetails = plans.find((p) => p.slug === selectedPlan);
   const isEnterprisePlan = selectedPlan === "enterprise";
+  const isCustomPlan = selectedPlan && !LEGACY_PLANS.includes(selectedPlan);
+  const hasYearlyPrice = selectedPlanDetails?.pricing.yearly && selectedPlanDetails.pricing.yearly > 0;
+  const showDurationOptions = isCustomPlan && hasYearlyPrice && !isEnterprisePlan;
   const showBankFields = paymentMethod === "bank_transfer" && !isEnterprisePlan;
   const showManualNotes = paymentMethod === "manual" && !isEnterprisePlan;
   const canSubmit = !loading && (!showBankFields || transactionId.trim().length > 0);
@@ -369,7 +383,7 @@ export function SubscriptionCard({
                 selectedPlanDetails.pricing.monthly > 0 &&
                 !isEnterprisePlan && (
                   <span className="mr-2 text-primary">
-                    ${selectedPlanDetails.pricing.monthly}/{t("month")}
+                    ${subscriptionType === "yearly" ? selectedPlanDetails.pricing.yearly : selectedPlanDetails.pricing.monthly}/{subscriptionType === "yearly" ? "سنة" : t("month")}
                   </span>
                 )}
             </DialogTitle>
@@ -428,6 +442,36 @@ export function SubscriptionCard({
               </>
             ) : (
               <>
+                {showDurationOptions && (
+                  <div className="space-y-2">
+                    <Label className="text-sm">مدة الاشتراك</Label>
+                    <RadioGroup
+                      value={subscriptionType}
+                      onValueChange={(v) => setSubscriptionType(v as SubscriptionType)}
+                      className="space-y-3"
+                    >
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="monthly" id="duration-monthly" />
+                        <Label
+                          htmlFor="duration-monthly"
+                          className="cursor-pointer font-normal"
+                        >
+                          شهري - ${selectedPlanDetails?.pricing.monthly}
+                        </Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <RadioGroupItem value="yearly" id="duration-yearly" />
+                        <Label
+                          htmlFor="duration-yearly"
+                          className="cursor-pointer font-normal"
+                        >
+                          سنوي - ${selectedPlanDetails?.pricing.yearly}
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <Label className="text-sm">طريقة الدفع</Label>
                   <RadioGroup
