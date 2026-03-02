@@ -5,11 +5,11 @@
 
 ### Bug Fixes
 
-* add RTL support for SidebarMenuButton icon alignment ([006b7f3](https://github.com/Osama-Qonaibe/hebronai-v2/commit/006b7f37f9d65f46e23d2e7b2ab75b192bfc9c93))
-* correct RTL alignment - keep icons on right without reversing order ([1dafecb](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1dafecb690fc7b281dd45826970e75136ac2b3ec))
-* RTL alignment for SidebarMenuAction (archive button spacing) ([cb3b095](https://github.com/Osama-Qonaibe/hebronai-v2/commit/cb3b0952c6de440c9a521c19130cd0292bf45856))
-* RTL archive button - remove left padding ([7da1eaf](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7da1eaf89ab2eb7ed81d7dc1be61128b152e70db))
-* RTL padding for archive button - remove left padding ([adeade2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/adeade210c3e0802ea6963cb55141d8250f6b346))
+* add RTL support for SidebarMenuButton icon alignment ([006b7f3](https://github.com/Osama-Qonaibe/hebronai-v2/commit/006b7f37f9d65f46e23d2e7b2ab75b192bfc9c93)) by @Osama-Qonaibe
+* correct RTL alignment - keep icons on right without reversing order ([1dafecb](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1dafecb690fc7b281dd45826970e75136ac2b3ec)) by @Osama-Qonaibe
+* RTL alignment for SidebarMenuAction (archive button spacing) ([cb3b095](https://github.com/Osama-Qonaibe/hebronai-v2/commit/cb3b0952c6de440c9a521c19130cd0292bf45856)) by @Osama-Qonaibe
+* RTL archive button - remove left padding ([7da1eaf](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7da1eaf89ab2eb7ed81d7dc1be61128b152e70db)) by @Osama-Qonaibe
+* RTL padding for archive button - remove left padding ([adeade2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/adeade210c3e0802ea6963cb55141d8250f6b346)) by @Osama-Qonaibe
 
 ## [4.0.7](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.6...hebronai-v2-v4.0.7) (2026-03-01)
 
