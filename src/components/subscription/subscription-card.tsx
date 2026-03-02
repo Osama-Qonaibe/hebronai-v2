@@ -56,6 +56,8 @@ function formatDate(date: Date): string {
   }).format(date);
 }
 
+const LEGACY_PLANS = ["free", "basic", "pro", "enterprise"];
+
 export function SubscriptionCard({
   currentPlan,
   currentStatus,
@@ -117,7 +119,10 @@ export function SubscriptionCard({
       });
 
       if (response.ok) {
-        if (paymentMethod === "paypal" || paymentMethod === "stripe") {
+        const isLegacyPlan = LEGACY_PLANS.includes(selectedPlan) && selectedPlan !== 'free';
+        const shouldRedirectToGateway = isLegacyPlan && (paymentMethod === "paypal" || paymentMethod === "stripe");
+
+        if (shouldRedirectToGateway) {
           const link = getPaymentLink(
             paymentMethod as "paypal" | "stripe",
             selectedPlan as "basic" | "pro",
@@ -139,7 +144,7 @@ export function SubscriptionCard({
           });
         } else {
           toast.success("✅ تم إرسال الطلب", {
-            description: "سيتم التواصل معك عبر واتساب لإتمام عملية الدفع.",
+            description: "سيتم مراجعة طلبك والتواصل معك لإتمام عملية الدفع.",
           });
         }
 
@@ -147,7 +152,7 @@ export function SubscriptionCard({
         setTransactionId("");
         setNotes("");
 
-        if (paymentMethod !== "paypal" && paymentMethod !== "stripe") {
+        if (!shouldRedirectToGateway) {
           setTimeout(() => {
             window.location.reload();
           }, 2000);
@@ -472,7 +477,11 @@ export function SubscriptionCard({
                 <Alert className="bg-blue-50 border-blue-200">
                   <AlertDescription className="text-sm leading-relaxed">
                     {paymentMethod === "paypal" || paymentMethod === "stripe" ? (
-                      <>🌐 سيتم إرسال الطلب للمراجعة وفتح بوابة الدفع تلقائياً</>
+                      LEGACY_PLANS.includes(selectedPlan || "") && selectedPlan !== 'free' ? (
+                        <>🌐 سيتم إرسال الطلب للمراجعة وفتح بوابة الدفع تلقائياً</>
+                      ) : (
+                        <>📋 سيتم إرسال الطلب للمراجعة والموافقة من المشرف</>
+                      )
                     ) : paymentMethod === "bank_transfer" ? (
                       <>🏦 أدخل تفاصيل التحويل البنكي أدناه</>
                     ) : (
