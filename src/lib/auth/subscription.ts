@@ -34,9 +34,7 @@ export async function getUserSubscription(): Promise<SubscriptionInfo | null> {
 
     let planSlug: string = "free";
 
-    if (user.plan) {
-      planSlug = user.plan;
-    } else if (user.planId) {
+    if (user.planId) {
       const [customPlan] = await db
         .select({ slug: SubscriptionPlanTable.slug })
         .from(SubscriptionPlanTable)
@@ -46,6 +44,8 @@ export async function getUserSubscription(): Promise<SubscriptionInfo | null> {
       if (customPlan) {
         planSlug = customPlan.slug;
       }
+    } else if (user.plan) {
+      planSlug = user.plan;
     }
 
     const status = (user.planStatus as SubscriptionStatus) || "active";
