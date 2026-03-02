@@ -5,15 +5,15 @@
 
 ### Features
 
-* cleaner and shorter model display names ([b6f8af4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b6f8af4c2d786f5f179b95a60ec69fb41b7b443a))
-* use short display names in model selector ([a26aad2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a26aad2fe276d6899bbecb109b84d1b432a35eed))
-* use short display names in plan models selector ([319e4c2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/319e4c2f0487c160fb2574739c9c0c9018f166ea))
+* cleaner and shorter model display names ([b6f8af4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b6f8af4c2d786f5f179b95a60ec69fb41b7b443a)) by @Osama-Qonaibe
+* use short display names in model selector ([a26aad2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a26aad2fe276d6899bbecb109b84d1b432a35eed)) by @Osama-Qonaibe
+* use short display names in plan models selector ([319e4c2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/319e4c2f0487c160fb2574739c9c0c9018f166ea)) by @Osama-Qonaibe
 
 
 ### Bug Fixes
 
-* truncate long model names in mobile view ([ec9bae8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ec9bae8897c352b8494aeb8331d59a3e3edcb841))
-* use short display names in prompt input model selector ([51abe66](https://github.com/Osama-Qonaibe/hebronai-v2/commit/51abe666624ee64fe3d2c14a1955789d83b6c6bb))
+* truncate long model names in mobile view ([ec9bae8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ec9bae8897c352b8494aeb8331d59a3e3edcb841)) by @Osama-Qonaibe
+* use short display names in prompt input model selector ([51abe66](https://github.com/Osama-Qonaibe/hebronai-v2/commit/51abe666624ee64fe3d2c14a1955789d83b6c6bb)) by @Osama-Qonaibe
 
 ## [4.1.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.11...hebronai-v2-v4.1.0) (2026-03-02)
 
