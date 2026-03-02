@@ -160,7 +160,7 @@ export function AppSidebarMenus({ user }: { user?: BasicUser }) {
               <Link href="/subscription">
                 <SidebarMenuButton className="font-semibold">
                   <CreditCard className="size-4" />
-                  Subscription
+                  {t("Layout.subscription")}
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
