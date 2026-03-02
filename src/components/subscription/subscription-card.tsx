@@ -33,7 +33,7 @@ import { RadioGroup, RadioGroupItem } from "ui/radio-group";
 import { Alert, AlertDescription } from "ui/alert";
 import { Input } from "ui/input";
 import { Textarea } from "ui/textarea";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { usePlans } from "@/hooks/use-plans";
 
@@ -64,6 +64,7 @@ export function SubscriptionCard({
   pendingRequest,
 }: SubscriptionCardProps) {
   const t = useTranslations("Subscription");
+  const locale = useLocale();
   const { plans, loading: plansLoading } = usePlans();
   const [loading, setLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
@@ -193,8 +194,9 @@ export function SubscriptionCard({
     const planDetails = plans.find((p) => p.slug === selectedPlan);
     if (!planDetails) return;
 
-    const planName =
-      planDetails.displayName.ar || planDetails.displayName.en;
+    const planName = locale === 'ar' 
+      ? (planDetails.displayName.ar || planDetails.displayName.en)
+      : (planDetails.displayName.en || planDetails.displayName.ar);
     const message = encodeURIComponent(
       `مرحباً، أرغب في الترقية إلى خطة ${planName} ($${planDetails.pricing.monthly}/شهر).\n\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\n\nأحتاج مساعدة.`,
     );
@@ -256,7 +258,9 @@ export function SubscriptionCard({
           {activePlans.map((plan) => {
             const isCurrent = plan.slug === currentPlan;
             const isFeatured = plan.metadata?.badge === "Popular";
-            const displayName = plan.displayName.ar || plan.displayName.en;
+            const displayName = locale === 'ar'
+              ? (plan.displayName.ar || plan.displayName.en)
+              : (plan.displayName.en || plan.displayName.ar);
             const priceDisplay =
               plan.pricing.monthly === 0
                 ? "$0"
@@ -355,7 +359,7 @@ export function SubscriptionCard({
             <DialogTitle className="text-base sm:text-lg">
               {isEnterprisePlan
                 ? t("plans.enterprise")
-                : `${t("upgradeTo")} ${selectedPlanDetails ? selectedPlanDetails.displayName.ar || selectedPlanDetails.displayName.en : ""}`}
+                : `${t("upgradeTo")} ${selectedPlanDetails ? (locale === 'ar' ? (selectedPlanDetails.displayName.ar || selectedPlanDetails.displayName.en) : (selectedPlanDetails.displayName.en || selectedPlanDetails.displayName.ar)) : ""}`}
               {selectedPlanDetails &&
                 selectedPlanDetails.pricing.monthly > 0 &&
                 !isEnterprisePlan && (
