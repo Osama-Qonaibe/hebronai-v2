@@ -118,6 +118,12 @@ export const SubscriptionPlanTable = pgTable(
       currency: string;
       discount?: { yearly: number };
     }>(),
+    durationValue: integer("duration_value").notNull().default(1),
+    durationUnit: varchar("duration_unit", {
+      enum: ["days", "months", "years"],
+    })
+      .notNull()
+      .default("months"),
     models: json("models").notNull().$type<{
       allowed: string[];
       default: string;
@@ -176,7 +182,6 @@ export const SubscriptionPlanTable = pgTable(
       color: string;
       icon: string;
     }>(),
-    // ✨ NEW: Hybrid system fields
     isBuiltIn: boolean("is_built_in").notNull().default(false),
     basedOnSlug: text("based_on_slug").references(() => SubscriptionPlanTable.slug),
     tags: json("tags").$type<string[]>().default([]),
@@ -216,7 +221,6 @@ export const UserTable = pgTable("user", {
 
   planId: uuid("plan_id").references(() => SubscriptionPlanTable.id),
 
-  // ✨ UPDATED: Made nullable for hybrid system - planId takes priority
   plan: varchar("plan", {
     enum: ["free", "basic", "pro", "enterprise"],
   }).default("free"),
