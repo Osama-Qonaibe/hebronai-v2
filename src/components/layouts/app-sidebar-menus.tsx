@@ -48,36 +48,6 @@ export function AppSidebarMenus({ user }: { user?: BasicUser }) {
   return (
     <SidebarGroup>
       <SidebarGroupContent>
-        <SidebarMenu>
-          <Tooltip>
-            <SidebarMenuItem className="mb-1">
-              <Link
-                href="/"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setOpenMobile(false);
-                  router.push(`/`);
-                  router.refresh();
-                }}
-              >
-                <SidebarMenuButton className="flex font-semibold group/new-chat bg-input/20 border border-border/40">
-                  <WriteIcon className="size-4" />
-                  {t("Layout.newChat")}
-                  <div className="flex items-center gap-1 text-xs font-medium ml-auto opacity-0 group-hover/new-chat:opacity-100 transition-opacity">
-                    {getShortcutKeyList(Shortcuts.openNewChat).map((key) => (
-                      <span
-                        key={key}
-                        className="border w-5 h-5 flex items-center justify-center bg-accent rounded"
-                      >
-                        {key}
-                      </span>
-                    ))}
-                  </div>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          </Tooltip>
-        </SidebarMenu>
         {getIsUserAdmin(user) && <AppSidebarAdmin />}
         <SidebarMenu>
           <Tooltip>
@@ -173,6 +143,36 @@ export function AppSidebarMenus({ user }: { user?: BasicUser }) {
                 <SidebarMenuButton className="font-semibold">
                   <MCPIcon className="size-4 fill-accent-foreground" />
                   {t("Layout.mcpConfiguration")}
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+          </Tooltip>
+        </SidebarMenu>
+        <SidebarMenu>
+          <Tooltip>
+            <SidebarMenuItem className="mb-1">
+              <Link
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setOpenMobile(false);
+                  router.push(`/`);
+                  router.refresh();
+                }}
+              >
+                <SidebarMenuButton className="flex font-semibold group/new-chat bg-input/20 border border-border/40">
+                  <WriteIcon className="size-4" />
+                  {t("Layout.newChat")}
+                  <div className="flex items-center gap-1 text-xs font-medium ml-auto opacity-0 group-hover/new-chat:opacity-100 transition-opacity">
+                    {getShortcutKeyList(Shortcuts.openNewChat).map((key) => (
+                      <span
+                        key={key}
+                        className="border w-5 h-5 flex items-center justify-center bg-accent rounded"
+                      >
+                        {key}
+                      </span>
+                    ))}
+                  </div>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
