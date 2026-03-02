@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.9](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.8...hebronai-v2-v4.0.9) (2026-03-02)
+
+
+### Bug Fixes
+
+* agents button RTL alignment - match other buttons padding ([38b9bd4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/38b9bd47b3da14c4eda8c63b34be3fe94dd98639))
+* archive button RTL alignment - match workflow button padding ([f9c902b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f9c902b2ab543024852429d77a64d12dd2961980))
+
 ## [4.0.8](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.7...hebronai-v2-v4.0.8) (2026-03-02)
 
 
