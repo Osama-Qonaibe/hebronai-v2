@@ -5,7 +5,7 @@
 
 ### Bug Fixes
 
-* complete ar.json file - add missing closing braces and Chat section ([8e5015f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8e5015f6a113dd2f1be920499eeb63637198e0fd))
+* complete ar.json file - add missing closing braces and Chat section ([8e5015f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8e5015f6a113dd2f1be920499eeb63637198e0fd)) by @Osama-Qonaibe
 
 ## [4.0.9](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.8...hebronai-v2-v4.0.9) (2026-03-02)
 
