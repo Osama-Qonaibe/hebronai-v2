@@ -2,6 +2,7 @@
 
 import { appStore } from "@/app/store";
 import { useChatModels } from "@/hooks/queries/use-chat-models";
+import { getModelDisplayName } from "@/lib/ai/model-display-names";
 import { ChatModel } from "app-types/chat";
 import { cn } from "lib/utils";
 import { CheckIcon, ChevronDown } from "lucide-react";
@@ -57,7 +58,7 @@ export const SelectModel = (props: PropsWithChildren<SelectModelProps>) => {
                   className="size-2.5 mr-1"
                 />
               )}
-              <p data-testid="selected-model-name">{model?.model || "model"}</p>
+              <p data-testid="selected-model-name">{model?.model ? getModelDisplayName(model.model) : "model"}</p>
             </div>
             <ChevronDown className="size-3" />
           </Button>
@@ -127,7 +128,7 @@ export const SelectModel = (props: PropsWithChildren<SelectModelProps>) => {
                         ) : (
                           <div className="ml-3" />
                         )}
-                        <span className="pr-2">{item.name}</span>
+                        <span className="pr-2">{getModelDisplayName(item.name)}</span>
                         {item.isToolCallUnsupported && (
                           <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
                             No tools
