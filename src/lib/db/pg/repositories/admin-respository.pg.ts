@@ -181,6 +181,7 @@ const pgAdminRepository: AdminRepository = {
 
       const isLegacyPlan = LEGACY_PLANS.includes(request.requestedPlan);
       let expirationDate: Date;
+      const subType = (request.subscriptionType || "monthly") as "monthly" | "yearly";
 
       const updateData: any = {
         planStatus: "active" as const,
@@ -215,9 +216,7 @@ const pgAdminRepository: AdminRepository = {
         }
 
         updateData.planId = planData.id;
-        expirationDate = calculateExpirationByType(
-          request.subscriptionType as "monthly" | "yearly",
-        );
+        expirationDate = calculateExpirationByType(subType);
 
         await tx
           .update(SubscriptionRequestTable)
