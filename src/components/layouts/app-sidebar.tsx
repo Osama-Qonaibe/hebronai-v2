@@ -46,8 +46,8 @@ export function AppSidebar({ user }: { user?: BasicUser }) {
 
       <SidebarContent className="mt-2 overflow-hidden relative">
         <div className="flex flex-col overflow-y-auto">
-          <AppSidebarMenus user={user} />
           <AppSidebarAgents userRole={userRole} />
+          <AppSidebarMenus user={user} />
           <AppSidebarThreads />
         </div>
       </SidebarContent>
