@@ -579,22 +579,22 @@ export default function PromptInput({
                   <Button
                     variant={"ghost"}
                     size={"sm"}
-                    className="rounded-full group data-[state=open]:bg-input! hover:bg-input! mr-1"
+                    className="rounded-full group data-[state=open]:bg-input! hover:bg-input! mr-1 max-w-[140px]"
                     data-testid="model-selector-button"
                   >
                     {chatModel?.model ? (
                       <>
                         {chatModel.provider === "openai" ? (
-                          <OpenAIIcon className="size-3 opacity-0 group-data-[state=open]:opacity-100 group-hover:opacity-100" />
+                          <OpenAIIcon className="size-3 opacity-0 group-data-[state=open]:opacity-100 group-hover:opacity-100 flex-shrink-0" />
                         ) : chatModel.provider === "xai" ? (
-                          <GrokIcon className="size-3 opacity-0 group-data-[state=open]:opacity-100 group-hover:opacity-100" />
+                          <GrokIcon className="size-3 opacity-0 group-data-[state=open]:opacity-100 group-hover:opacity-100 flex-shrink-0" />
                         ) : chatModel.provider === "anthropic" ? (
-                          <ClaudeIcon className="size-3 opacity-0 group-data-[state=open]:opacity-100 group-hover:opacity-100" />
+                          <ClaudeIcon className="size-3 opacity-0 group-data-[state=open]:opacity-100 group-hover:opacity-100 flex-shrink-0" />
                         ) : chatModel.provider === "google" ? (
-                          <GeminiIcon className="size-3 opacity-0 group-data-[state=open]:opacity-100 group-hover:opacity-100" />
+                          <GeminiIcon className="size-3 opacity-0 group-data-[state=open]:opacity-100 group-hover:opacity-100 flex-shrink-0" />
                         ) : null}
                         <span
-                          className="text-foreground group-data-[state=open]:text-foreground  "
+                          className="text-foreground group-data-[state=open]:text-foreground truncate"
                           data-testid="selected-model-name"
                         >
                           {getModelDisplayName(chatModel.model)}
@@ -604,7 +604,7 @@ export default function PromptInput({
                       <span className="text-muted-foreground">model</span>
                     )}
 
-                    <ChevronDown className="size-3" />
+                    <ChevronDown className="size-3 flex-shrink-0" />
                   </Button>
                 </SelectModel>
                 {!isLoading && !input.length && !voiceDisabled ? (
