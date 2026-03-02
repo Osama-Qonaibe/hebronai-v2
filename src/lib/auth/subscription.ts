@@ -2,14 +2,14 @@ import "server-only";
 import { getSession } from "./auth-instance";
 import { getPlanLimits, type SubscriptionPlan } from "../subscription/plans";
 import { pgDb as db } from "../db/pg/db.pg";
-import { UserTable } from "../db/pg/schema.pg";
+import { UserTable, SubscriptionPlanTable } from "../db/pg/schema.pg";
 import { eq } from "drizzle-orm";
 
 export type { SubscriptionPlan } from "../subscription/plans";
 export type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
 
 export interface SubscriptionInfo {
-  plan: SubscriptionPlan;
+  plan: string;
   status: SubscriptionStatus;
   expiresAt: Date | null;
   isActive: boolean;
@@ -23,6 +23,7 @@ export async function getUserSubscription(): Promise<SubscriptionInfo | null> {
     const [user] = await db
       .select({
         plan: UserTable.plan,
+        planId: UserTable.planId,
         planStatus: UserTable.planStatus,
         planExpiresAt: UserTable.planExpiresAt,
       })
@@ -31,14 +32,29 @@ export async function getUserSubscription(): Promise<SubscriptionInfo | null> {
 
     if (!user) return null;
 
-    const plan = (user.plan as SubscriptionPlan) || "free";
+    let planSlug: string = "free";
+
+    if (user.plan) {
+      planSlug = user.plan;
+    } else if (user.planId) {
+      const [customPlan] = await db
+        .select({ slug: SubscriptionPlanTable.slug })
+        .from(SubscriptionPlanTable)
+        .where(eq(SubscriptionPlanTable.id, user.planId))
+        .limit(1);
+      
+      if (customPlan) {
+        planSlug = customPlan.slug;
+      }
+    }
+
     const status = (user.planStatus as SubscriptionStatus) || "active";
     const expiresAt = user.planExpiresAt ? new Date(user.planExpiresAt) : null;
 
     const isActive = checkSubscriptionActive(status, expiresAt);
 
     return {
-      plan,
+      plan: planSlug,
       status,
       expiresAt,
       isActive,
@@ -77,7 +93,7 @@ export async function requireActiveSubscription(
     "pro",
     "enterprise",
   ];
-  const userPlanIndex = planHierarchy.indexOf(subscription.plan);
+  const userPlanIndex = planHierarchy.indexOf(subscription.plan as SubscriptionPlan);
   const minPlanIndex = planHierarchy.indexOf(minPlan);
 
   if (userPlanIndex < minPlanIndex) {
