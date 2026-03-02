@@ -28,18 +28,22 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       );
     }
 
+    console.log(`[ADMIN API] Processing ${action} for request ${id}`);
+
     if (action === "approve") {
       await adminRepository.approveSubscriptionRequest(
         id,
         session.user.id,
         adminNotes,
       );
+      console.log(`[ADMIN API] Successfully approved request ${id}`);
     } else {
       await adminRepository.rejectSubscriptionRequest(
         id,
         session.user.id,
         adminNotes,
       );
+      console.log(`[ADMIN API] Successfully rejected request ${id}`);
     }
 
     return NextResponse.json({
@@ -61,9 +65,14 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       );
     }
 
-    console.error("Error processing subscription request:", error);
+    console.error("[ADMIN API] Error processing subscription request:", error);
+    console.error("[ADMIN API] Error stack:", error instanceof Error ? error.stack : 'No stack');
+    
     return NextResponse.json(
-      { error: "Internal server error" },
+      { 
+        error: error instanceof Error ? error.message : "Internal server error",
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 },
     );
   }
