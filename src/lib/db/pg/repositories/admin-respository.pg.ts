@@ -228,9 +228,16 @@ const pgAdminRepository: AdminRepository = {
 
           console.log("[APPROVAL] Custom plan, expiration:", expirationDate);
 
-          await tx.execute(
-            sql`UPDATE "User" SET plan = NULL, "planId" = ${planData.id}, "planStatus" = 'active', "planExpiresAt" = ${expirationDate.toISOString()}, "updatedAt" = ${new Date().toISOString()} WHERE id = ${request.userId}`
-          );
+          await tx
+            .update(UserTable)
+            .set({
+              plan: "free",
+              planId: planData.id,
+              planStatus: "active",
+              planExpiresAt: expirationDate,
+              updatedAt: new Date(),
+            })
+            .where(eq(UserTable.id, request.userId));
         }
 
         await tx
