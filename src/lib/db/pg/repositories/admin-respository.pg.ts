@@ -34,6 +34,28 @@ const getUserColumnsWithoutPassword = () => {
 
 const LEGACY_PLANS = ["free", "basic", "pro", "enterprise"];
 
+function calculateExpirationFromDuration(
+  durationValue: number,
+  durationUnit: "days" | "months" | "years",
+  startDate: Date = new Date(),
+): Date {
+  const expirationDate = new Date(startDate);
+
+  switch (durationUnit) {
+    case "days":
+      expirationDate.setDate(expirationDate.getDate() + durationValue);
+      break;
+    case "months":
+      expirationDate.setMonth(expirationDate.getMonth() + durationValue);
+      break;
+    case "years":
+      expirationDate.setFullYear(expirationDate.getFullYear() + durationValue);
+      break;
+  }
+
+  return expirationDate;
+}
+
 const pgAdminRepository: AdminRepository = {
   getUsers: async (query?: AdminUsersQuery): Promise<AdminUsersPaginated> => {
     const {
@@ -164,18 +186,18 @@ const pgAdminRepository: AdminRepository = {
       }
 
       const isLegacyPlan = LEGACY_PLANS.includes(request.requestedPlan);
-      const expirationDate = calculateExpirationDate(
-        request.requestedPlan as SubscriptionPlan,
-      );
+      let expirationDate: Date;
 
       const updateData: any = {
         planStatus: "active" as const,
-        planExpiresAt: expirationDate,
         updatedAt: new Date(),
       };
 
       if (isLegacyPlan) {
         updateData.plan = request.requestedPlan as "free" | "basic" | "pro" | "enterprise";
+        expirationDate = calculateExpirationDate(
+          request.requestedPlan as SubscriptionPlan,
+        );
         
         await tx
           .update(SubscriptionRequestTable)
@@ -199,6 +221,10 @@ const pgAdminRepository: AdminRepository = {
         }
 
         updateData.planId = planData.id;
+        expirationDate = calculateExpirationFromDuration(
+          planData.durationValue,
+          planData.durationUnit as "days" | "months" | "years",
+        );
 
         await tx
           .update(SubscriptionRequestTable)
@@ -212,6 +238,8 @@ const pgAdminRepository: AdminRepository = {
           })
           .where(eq(SubscriptionRequestTable.id, requestId));
       }
+
+      updateData.planExpiresAt = expirationDate;
 
       await tx
         .update(UserTable)
