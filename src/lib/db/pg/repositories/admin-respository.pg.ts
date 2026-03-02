@@ -32,6 +32,8 @@ const getUserColumnsWithoutPassword = () => {
   return userColumns;
 };
 
+const LEGACY_PLANS = ["free", "basic", "pro", "enterprise"];
+
 const pgAdminRepository: AdminRepository = {
   getUsers: async (query?: AdminUsersQuery): Promise<AdminUsersPaginated> => {
     const {
@@ -161,42 +163,54 @@ const pgAdminRepository: AdminRepository = {
         throw new Error("Subscription request not found");
       }
 
-      const [planData] = await tx
-        .select()
-        .from(SubscriptionPlanTable)
-        .where(eq(SubscriptionPlanTable.slug, request.requestedPlan))
-        .limit(1);
-
-      if (!planData) {
-        throw new Error(`Plan "${request.requestedPlan}" not found`);
-      }
-
-      await tx
-        .update(SubscriptionRequestTable)
-        .set({
-          status: "approved",
-          approvedBy: adminId,
-          approvedAt: new Date(),
-          adminNotes,
-          updatedAt: new Date(),
-          requestedPlanId: planData.id,
-        })
-        .where(eq(SubscriptionRequestTable.id, requestId));
-
+      const isLegacyPlan = LEGACY_PLANS.includes(request.requestedPlan);
       const expirationDate = calculateExpirationDate(
         request.requestedPlan as SubscriptionPlan,
       );
 
       const updateData: any = {
-        planId: planData.id,
         planStatus: "active" as const,
         planExpiresAt: expirationDate,
         updatedAt: new Date(),
       };
 
-      const legacyPlans = ["free", "basic", "pro", "enterprise"];
-      if (legacyPlans.includes(request.requestedPlan)) {
+      if (isLegacyPlan) {
         updateData.plan = request.requestedPlan as "free" | "basic" | "pro" | "enterprise";
+        
+        await tx
+          .update(SubscriptionRequestTable)
+          .set({
+            status: "approved",
+            approvedBy: adminId,
+            approvedAt: new Date(),
+            adminNotes,
+            updatedAt: new Date(),
+          })
+          .where(eq(SubscriptionRequestTable.id, requestId));
+      } else {
+        const [planData] = await tx
+          .select()
+          .from(SubscriptionPlanTable)
+          .where(eq(SubscriptionPlanTable.slug, request.requestedPlan))
+          .limit(1);
+
+        if (!planData) {
+          throw new Error(`Plan "${request.requestedPlan}" not found`);
+        }
+
+        updateData.planId = planData.id;
+
+        await tx
+          .update(SubscriptionRequestTable)
+          .set({
+            status: "approved",
+            approvedBy: adminId,
+            approvedAt: new Date(),
+            adminNotes,
+            updatedAt: new Date(),
+            requestedPlanId: planData.id,
+          })
+          .where(eq(SubscriptionRequestTable.id, requestId));
       }
 
       await tx
