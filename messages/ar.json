@@ -258,7 +258,7 @@
       "temporaryChatInstructionsPlaceholder": "أدخل تعليماتك هنا",
       "temporaryChatInstructionsDescription": "يمكنك تعيين تعليمات للدردشة المؤقتة. سيتم استخدامها كموجه نظام للدردشة المؤقتة."
     },
-    "placeholder": "اسأل HebronAI",
+    "placeholder": "كيف يمكنني مساعدتك اليوم ؟",
     "Tool": {
       "webSearching": "جارٍ البحث على الويب...",
       "searchedTheWeb": "تم البحث على الويب",
