@@ -10,6 +10,7 @@ import {
   UserTable,
   SessionTable,
   SubscriptionRequestTable,
+  SubscriptionPlanTable,
 } from "../schema.pg";
 import {
   and,
@@ -160,6 +161,16 @@ const pgAdminRepository: AdminRepository = {
         throw new Error("Subscription request not found");
       }
 
+      const [planData] = await tx
+        .select()
+        .from(SubscriptionPlanTable)
+        .where(eq(SubscriptionPlanTable.slug, request.requestedPlan))
+        .limit(1);
+
+      if (!planData) {
+        throw new Error(`Plan "${request.requestedPlan}" not found`);
+      }
+
       await tx
         .update(SubscriptionRequestTable)
         .set({
@@ -168,35 +179,36 @@ const pgAdminRepository: AdminRepository = {
           approvedAt: new Date(),
           adminNotes,
           updatedAt: new Date(),
+          requestedPlanId: planData.id,
         })
         .where(eq(SubscriptionRequestTable.id, requestId));
 
-      // Calculate expiration date based on plan
       const expirationDate = calculateExpirationDate(
         request.requestedPlan as SubscriptionPlan,
       );
 
+      const updateData: any = {
+        planId: planData.id,
+        planStatus: "active" as const,
+        planExpiresAt: expirationDate,
+        updatedAt: new Date(),
+      };
+
+      const legacyPlans = ["free", "basic", "pro", "enterprise"];
+      if (legacyPlans.includes(request.requestedPlan)) {
+        updateData.plan = request.requestedPlan as "free" | "basic" | "pro" | "enterprise";
+      }
+
       await tx
         .update(UserTable)
-        .set({
-          plan: request.requestedPlan as
-            | "free"
-            | "basic"
-            | "pro"
-            | "enterprise",
-          planStatus: "active",
-          planExpiresAt: expirationDate,
-          updatedAt: new Date(),
-        })
+        .set(updateData)
         .where(eq(UserTable.id, request.userId));
 
-      // Get user details to send email
       const [user] = await tx
         .select()
         .from(UserTable)
         .where(eq(UserTable.id, request.userId));
 
-      // Send subscription activated email
       if (user) {
         const { sendSubscriptionActivatedEmail } = await import(
           "@/lib/email/notifications"
