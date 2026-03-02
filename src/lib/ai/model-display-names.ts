@@ -9,7 +9,7 @@ export const MODEL_DISPLAY_NAMES: Record<string, string> = {
   'gpt-5.1': 'GPT-5.1',
   'gpt-5.1-chat': 'GPT-5.1 Chat',
   'gpt-5.1-codex': 'GPT-5.1 Code',
-  'gpt-5.1-codex-mini': 'GPT-5.1 Code Mini',
+  'gpt-5.1-codex-mini': 'GPT-5.1 Mini',
   
   // OpenAI - GPT-4 Series
   'gpt-4.1': 'GPT-4.1',
@@ -21,12 +21,12 @@ export const MODEL_DISPLAY_NAMES: Record<string, string> = {
   'o3': 'o3',
   
   // OpenAI - Image Generation
-  'gpt-image-1.5': 'Image Gen 1.5',
-  'dall-e-3': 'DALL-E 3',
+  'gpt-image-1.5': 'Image Gen',
+  'dall-e-3': 'DALL-E',
   
   // OpenAI - Video Generation (Sora)
-  'sora-2-pro': 'Sora 2 Pro',
-  'sora-2': 'Sora 2',
+  'sora-2-pro': 'Sora Pro',
+  'sora-2': 'Sora',
   
   // OpenAI - Audio Models
   'gpt-audio': 'GPT Audio',
@@ -35,10 +35,10 @@ export const MODEL_DISPLAY_NAMES: Record<string, string> = {
   'tts-1': 'TTS',
   
   // Google Gemini
-  'gemini-2.5-flash-lite': 'Gemini 2.5 Lite',
-  'gemini-2.5-flash': 'Gemini 2.5 Flash',
+  'gemini-2.5-flash-lite': 'Gemini Lite',
+  'gemini-2.5-flash': 'Gemini Flash',
   'gemini-3-pro': 'Gemini 3 Pro',
-  'gemini-2.5-pro': 'Gemini 2.5 Pro',
+  'gemini-2.5-pro': 'Gemini Pro',
   
   // Anthropic Claude
   'sonnet-4.5': 'Sonnet 4.5',
@@ -46,32 +46,32 @@ export const MODEL_DISPLAY_NAMES: Record<string, string> = {
   'opus-4.5': 'Opus 4.5',
   
   // xAI Grok
-  'grok-4-1-fast': 'Grok 4.1 Fast',
+  'grok-4-1-fast': 'Grok Fast',
   'grok-4-1': 'Grok 4.1',
-  'grok-3-mini': 'Grok 3 Mini',
+  'grok-3-mini': 'Grok Mini',
   
   // Ollama Cloud
-  'deepseek-v3.1:671b-cloud': 'DeepSeek 671B',
-  'qwen3-coder:480b-cloud': 'Qwen3 Coder 480B',
-  'gpt-oss:120b-cloud': 'GPT-OSS 120B',
-  'gpt-oss:20b-cloud': 'GPT-OSS 20B',
-  'kimi-k2:1t-cloud': 'Kimi K2 (1T)',
+  'deepseek-v3.1:671b-cloud': 'DeepSeek V3',
+  'qwen3-coder:480b-cloud': 'Qwen Coder',
+  'gpt-oss:120b-cloud': 'GPT-OSS',
+  'gpt-oss:20b-cloud': 'GPT-OSS Mini',
+  'kimi-k2:1t-cloud': 'Kimi K2',
   'glm-4.6:cloud': 'GLM 4.6',
-  'qwen3-vl:235b-cloud': 'Qwen3 VL 235B',
+  'qwen3-vl:235b-cloud': 'Qwen Vision',
   
   // Groq
   'kimi-k2-instruct': 'Kimi K2',
-  'llama-4-scout-17b': 'Llama 4 Scout',
-  'gpt-oss-20b': 'GPT-OSS 20B',
-  'gpt-oss-120b': 'GPT-OSS 120B',
-  'qwen3-32b': 'Qwen3 32B',
+  'llama-4-scout-17b': 'Llama Scout',
+  'gpt-oss-20b': 'GPT-OSS Mini',
+  'gpt-oss-120b': 'GPT-OSS',
+  'qwen3-32b': 'Qwen 3',
   
   // OpenRouter
-  'auto': 'Auto Router',
-  'claude-3.5-sonnet': 'Claude 3.5 Sonnet',
-  'llama-3.1-405b': 'Llama 3.1 405B',
-  'mixtral-8x22b': 'Mixtral 8x22B',
-  'deepseek-chat-v3': 'DeepSeek Chat v3',
+  'auto': 'Auto',
+  'claude-3.5-sonnet': 'Sonnet 3.5',
+  'llama-3.1-405b': 'Llama 3.1',
+  'mixtral-8x22b': 'Mixtral',
+  'deepseek-chat-v3': 'DeepSeek Chat',
 };
 
 export function getModelDisplayName(fullName: string): string {
