@@ -12,11 +12,13 @@ const PLAN_DURATIONS: Record<SubscriptionPlan, ExpirationConfig> = {
   enterprise: { duration: 1, unit: "years" },
 };
 
+const DEFAULT_DURATION: ExpirationConfig = { duration: 1, unit: "months" };
+
 export function calculateExpirationDate(
-  plan: SubscriptionPlan,
+  plan: SubscriptionPlan | string,
   startDate: Date = new Date(),
 ): Date {
-  const config = PLAN_DURATIONS[plan];
+  const config = PLAN_DURATIONS[plan as SubscriptionPlan] || DEFAULT_DURATION;
   const expirationDate = new Date(startDate);
 
   switch (config.unit) {
