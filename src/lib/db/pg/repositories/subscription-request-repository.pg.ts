@@ -4,7 +4,7 @@ import { eq, and, desc } from "drizzle-orm";
 
 export type RequestStatus = "pending" | "approved" | "rejected" | "processing";
 export type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "manual";
-export type RequestedPlan = "free" | "basic" | "pro" | "enterprise";
+export type RequestedPlan = string;
 
 export interface CreateSubscriptionRequestData {
   userId: string;
