@@ -169,99 +169,69 @@ const pgAdminRepository: AdminRepository = {
     adminId: string,
     adminNotes?: string,
   ): Promise<void> => {
-    await db.transaction(async (tx) => {
-      const [request] = await tx
-        .select()
-        .from(SubscriptionRequestTable)
-        .where(eq(SubscriptionRequestTable.id, requestId));
-
-      if (!request) {
-        throw new Error("Subscription request not found");
-      }
-
-      console.log("[APPROVAL DEBUG] Request data:", {
-        id: request.id,
-        userId: request.userId,
-        requestedPlan: request.requestedPlan,
-        subscriptionType: request.subscriptionType,
-      });
-
-      const isLegacyPlan = LEGACY_PLANS.includes(request.requestedPlan);
-      let expirationDate: Date;
-      const subType = (request.subscriptionType || "monthly") as "monthly" | "yearly";
-
-      console.log("[APPROVAL DEBUG] Calculated:", {
-        isLegacyPlan,
-        subType,
-      });
-
-      if (isLegacyPlan) {
-        expirationDate = calculateExpirationDate(
-          request.requestedPlan as SubscriptionPlan,
-        );
-        
-        console.log("[APPROVAL DEBUG] Legacy plan expiration:", expirationDate);
-        
-        await tx
-          .update(UserTable)
-          .set({
-            plan: request.requestedPlan as "free" | "basic" | "pro" | "enterprise",
-            planStatus: "active" as const,
-            planExpiresAt: expirationDate,
-            updatedAt: new Date(),
-          })
-          .where(eq(UserTable.id, request.userId));
-
-        await tx
-          .update(SubscriptionRequestTable)
-          .set({
-            status: "approved",
-            approvedBy: adminId,
-            approvedAt: new Date(),
-            adminNotes,
-            updatedAt: new Date(),
-          })
-          .where(eq(SubscriptionRequestTable.id, requestId));
-      } else {
-        const [planData] = await tx
+    try {
+      await db.transaction(async (tx) => {
+        const [request] = await tx
           .select()
-          .from(SubscriptionPlanTable)
-          .where(eq(SubscriptionPlanTable.slug, request.requestedPlan))
-          .limit(1);
+          .from(SubscriptionRequestTable)
+          .where(eq(SubscriptionRequestTable.id, requestId));
 
-        if (!planData) {
-          console.error("[APPROVAL ERROR] Plan not found:", request.requestedPlan);
-          throw new Error(`Plan "${request.requestedPlan}" not found`);
+        if (!request) {
+          throw new Error("Subscription request not found");
         }
 
-        console.log("[APPROVAL DEBUG] Found plan:", {
-          id: planData.id,
-          slug: planData.slug,
-          name: planData.name,
+        console.log("[APPROVAL] Request:", {
+          id: request.id,
+          userId: request.userId,
+          requestedPlan: request.requestedPlan,
+          subscriptionType: request.subscriptionType,
         });
 
-        expirationDate = calculateExpirationByType(subType);
+        const isLegacyPlan = LEGACY_PLANS.includes(request.requestedPlan);
+        const subType = (request.subscriptionType || "monthly") as "monthly" | "yearly";
+        let expirationDate: Date;
 
-        console.log("[APPROVAL DEBUG] Custom plan expiration:", {
-          subscriptionType: subType,
-          expirationDate,
-        });
+        if (isLegacyPlan) {
+          expirationDate = calculateExpirationDate(
+            request.requestedPlan as SubscriptionPlan,
+          );
+          
+          console.log("[APPROVAL] Legacy plan, expiration:", expirationDate);
+          
+          await tx
+            .update(UserTable)
+            .set({
+              plan: request.requestedPlan as "free" | "basic" | "pro" | "enterprise",
+              planStatus: "active",
+              planExpiresAt: expirationDate,
+              updatedAt: new Date(),
+            })
+            .where(eq(UserTable.id, request.userId));
+        } else {
+          const [planData] = await tx
+            .select()
+            .from(SubscriptionPlanTable)
+            .where(eq(SubscriptionPlanTable.slug, request.requestedPlan))
+            .limit(1);
 
-        await tx
-          .update(UserTable)
-          .set({
-            planId: planData.id,
-            planStatus: "active" as const,
-            planExpiresAt: expirationDate,
-            updatedAt: new Date(),
-          })
-          .where(eq(UserTable.id, request.userId));
+          if (!planData) {
+            console.error("[APPROVAL ERROR] Plan not found:", request.requestedPlan);
+            throw new Error(`Plan "${request.requestedPlan}" not found in database`);
+          }
 
-        await tx.execute(sql`
-          UPDATE ${UserTable}
-          SET plan = NULL
-          WHERE id = ${request.userId}
-        `);
+          console.log("[APPROVAL] Found custom plan:", {
+            id: planData.id,
+            slug: planData.slug,
+          });
+
+          expirationDate = calculateExpirationByType(subType);
+
+          console.log("[APPROVAL] Custom plan, expiration:", expirationDate);
+
+          await tx.execute(
+            sql`UPDATE "User" SET plan = NULL, "planId" = ${planData.id}, "planStatus" = 'active', "planExpiresAt" = ${expirationDate.toISOString()}, "updatedAt" = ${new Date().toISOString()} WHERE id = ${request.userId}`
+          );
+        }
 
         await tx
           .update(SubscriptionRequestTable)
@@ -271,43 +241,45 @@ const pgAdminRepository: AdminRepository = {
             approvedAt: new Date(),
             adminNotes,
             updatedAt: new Date(),
-            requestedPlanId: planData.id,
           })
           .where(eq(SubscriptionRequestTable.id, requestId));
-      }
 
-      const [user] = await tx
-        .select()
-        .from(UserTable)
-        .where(eq(UserTable.id, request.userId));
+        console.log("[APPROVAL] Request updated successfully");
 
-      console.log("[APPROVAL DEBUG] Final user state:", {
-        id: user?.id,
-        plan: user?.plan,
-        planId: user?.planId,
-        planStatus: user?.planStatus,
-        planExpiresAt: user?.planExpiresAt,
+        const [user] = await tx
+          .select()
+          .from(UserTable)
+          .where(eq(UserTable.id, request.userId));
+
+        console.log("[APPROVAL] Final state:", {
+          plan: user?.plan,
+          planId: user?.planId,
+          planStatus: user?.planStatus,
+        });
+
+        if (user) {
+          const { sendSubscriptionActivatedEmail } = await import(
+            "@/lib/email/notifications"
+          );
+
+          void sendSubscriptionActivatedEmail(
+            {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              locale: (user as any).locale,
+            },
+            {
+              plan: request.requestedPlan,
+              expiresAt: expirationDate,
+            },
+          );
+        }
       });
-
-      if (user) {
-        const { sendSubscriptionActivatedEmail } = await import(
-          "@/lib/email/notifications"
-        );
-
-        void sendSubscriptionActivatedEmail(
-          {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            locale: (user as any).locale,
-          },
-          {
-            plan: request.requestedPlan,
-            expiresAt: expirationDate,
-          },
-        );
-      }
-    });
+    } catch (error) {
+      console.error("[APPROVAL CRITICAL ERROR]:", error);
+      throw error;
+    }
   },
 
   rejectSubscriptionRequest: async (
