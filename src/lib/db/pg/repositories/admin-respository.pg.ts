@@ -179,9 +179,21 @@ const pgAdminRepository: AdminRepository = {
         throw new Error("Subscription request not found");
       }
 
+      console.log("[APPROVAL DEBUG] Request data:", {
+        id: request.id,
+        userId: request.userId,
+        requestedPlan: request.requestedPlan,
+        subscriptionType: request.subscriptionType,
+      });
+
       const isLegacyPlan = LEGACY_PLANS.includes(request.requestedPlan);
       let expirationDate: Date;
       const subType = (request.subscriptionType || "monthly") as "monthly" | "yearly";
+
+      console.log("[APPROVAL DEBUG] Calculated:", {
+        isLegacyPlan,
+        subType,
+      });
 
       const updateData: any = {
         planStatus: "active" as const,
@@ -193,6 +205,8 @@ const pgAdminRepository: AdminRepository = {
         expirationDate = calculateExpirationDate(
           request.requestedPlan as SubscriptionPlan,
         );
+        
+        console.log("[APPROVAL DEBUG] Legacy plan expiration:", expirationDate);
         
         await tx
           .update(SubscriptionRequestTable)
@@ -212,11 +226,23 @@ const pgAdminRepository: AdminRepository = {
           .limit(1);
 
         if (!planData) {
+          console.error("[APPROVAL ERROR] Plan not found:", request.requestedPlan);
           throw new Error(`Plan "${request.requestedPlan}" not found`);
         }
 
+        console.log("[APPROVAL DEBUG] Found plan:", {
+          id: planData.id,
+          slug: planData.slug,
+          name: planData.name,
+        });
+
         updateData.planId = planData.id;
         expirationDate = calculateExpirationByType(subType);
+
+        console.log("[APPROVAL DEBUG] Custom plan expiration:", {
+          subscriptionType: subType,
+          expirationDate,
+        });
 
         await tx
           .update(SubscriptionRequestTable)
@@ -233,15 +259,27 @@ const pgAdminRepository: AdminRepository = {
 
       updateData.planExpiresAt = expirationDate;
 
-      await tx
+      console.log("[APPROVAL DEBUG] Updating user with:", updateData);
+
+      const result = await tx
         .update(UserTable)
         .set(updateData)
-        .where(eq(UserTable.id, request.userId));
+        .where(eq(UserTable.id, request.userId))
+        .returning();
+
+      console.log("[APPROVAL DEBUG] User updated:", result);
 
       const [user] = await tx
         .select()
         .from(UserTable)
         .where(eq(UserTable.id, request.userId));
+
+      console.log("[APPROVAL DEBUG] Final user state:", {
+        id: user?.id,
+        planId: user?.planId,
+        planStatus: user?.planStatus,
+        planExpiresAt: user?.planExpiresAt,
+      });
 
       if (user) {
         const { sendSubscriptionActivatedEmail } = await import(
