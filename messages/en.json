@@ -362,6 +362,7 @@
     }
   },
   "Layout": {
+    "subscription": "Subscription",
     "workflow": "Workflow",
     "admin": "Admin",
     "users": "Users",
@@ -416,7 +417,9 @@
     "showLessChats": "Show less",
     "reportAnIssue": "Report an issue",
     "joinCommunity": "Join Community",
-    "userSettings": "User Settings"
+    "userSettings": "User Settings",
+    "followFacebook": "Follow us on Facebook",
+    "followInstagram": "Follow us on Instagram"
   },
   "Archive": {
     "title": "Archive",
