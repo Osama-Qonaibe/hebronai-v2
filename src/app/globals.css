@@ -1517,11 +1517,11 @@
   }
 }
 
-[dir="rtl"] input,
+[dir="rtl"] input:not([type="checkbox"]):not([type="radio"]),
 [dir="rtl"] textarea,
-[dir="rtl"] [contenteditable] {
-  text-align: right;
-  direction: rtl;
+[dir="rtl"] [contenteditable="true"] {
+  text-align: right !important;
+  direction: rtl !important;
 }
 
 [dir="rtl"] h1,
@@ -1537,10 +1537,21 @@
 }
 
 [dir="rtl"] .ProseMirror {
-  text-align: right;
-  direction: rtl;
+  text-align: right !important;
+  direction: rtl !important;
 }
 
 [dir="rtl"] .ProseMirror p.is-editor-empty:first-child::before {
-  text-align: right;
+  text-align: right !important;
+  float: right !important;
+}
+
+[dir="rtl"] .ProseMirror [data-placeholder]::before {
+  text-align: right !important;
+  float: right !important;
+}
+
+[dir="rtl"] .tiptap p.is-editor-empty:first-child::before {
+  text-align: right !important;
+  float: right !important;
 }
