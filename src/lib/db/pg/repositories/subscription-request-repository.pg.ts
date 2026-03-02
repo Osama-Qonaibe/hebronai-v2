@@ -4,11 +4,13 @@ import { eq, and, desc } from "drizzle-orm";
 
 export type RequestStatus = "pending" | "approved" | "rejected" | "processing";
 export type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "manual";
+export type SubscriptionType = "monthly" | "yearly";
 export type RequestedPlan = string;
 
 export interface CreateSubscriptionRequestData {
   userId: string;
   requestedPlan: RequestedPlan;
+  subscriptionType?: SubscriptionType;
   paymentMethod: PaymentMethod;
   amount?: number;
   currency?: string;
@@ -24,6 +26,7 @@ export const subscriptionRequestRepository = {
       .values({
         userId: data.userId,
         requestedPlan: data.requestedPlan,
+        subscriptionType: data.subscriptionType || "monthly",
         paymentMethod: data.paymentMethod,
         amount: data.amount?.toString(),
         currency: data.currency || "USD",
