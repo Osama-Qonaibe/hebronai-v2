@@ -87,7 +87,6 @@ export default function MentionInput({
     text: string;
   } | null>(null);
 
-  // Memoize editor configuration
   const editorConfig = useMemo<UseEditorOptions>(() => {
     return {
       editable: !disabled,
@@ -193,7 +192,7 @@ export default function MentionInput({
       editorProps: {
         attributes: {
           class:
-            "w-full max-h-80 min-h-[2rem] break-words overflow-y-auto resize-none focus:outline-none px-2 py-1 prose prose-sm dark:prose-invert ",
+            "w-full max-h-80 min-h-[2rem] break-words overflow-y-auto resize-none focus:outline-none px-2 py-1 prose prose-sm dark:prose-invert ltr:text-left rtl:text-right",
         },
       },
     };
@@ -201,7 +200,6 @@ export default function MentionInput({
 
   const editor = useEditor(editorConfig);
 
-  // Expose editor through ref
   useEffect(() => {
     if (editorRef && editor) {
       editorRef.current = editor;
@@ -212,7 +210,6 @@ export default function MentionInput({
     editor?.setEditable(!disabled);
   }, [disabled]);
 
-  // Memoize handlers
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       const isSubmit =
@@ -233,7 +230,6 @@ export default function MentionInput({
     [editor, onEnter, open],
   );
 
-  // Memoize the DOM structure
   const suggestion = useMemo(() => {
     if (!open || disabledMention) return null;
     if (!Suggestion) return null;
@@ -272,7 +268,7 @@ export default function MentionInput({
     if (!editor?.isEmpty) return null;
 
     return (
-      <div className="absolute top-1 left-2 text-muted-foreground pointer-events-none">
+      <div className="absolute top-1 ltr:left-2 rtl:right-2 text-muted-foreground pointer-events-none">
         {placeholder}
       </div>
     );
