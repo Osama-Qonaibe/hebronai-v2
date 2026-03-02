@@ -195,19 +195,23 @@ const pgAdminRepository: AdminRepository = {
         subType,
       });
 
-      const updateData: any = {
-        planStatus: "active" as const,
-        updatedAt: new Date(),
-      };
-
       if (isLegacyPlan) {
-        updateData.plan = request.requestedPlan as "free" | "basic" | "pro" | "enterprise";
         expirationDate = calculateExpirationDate(
           request.requestedPlan as SubscriptionPlan,
         );
         
         console.log("[APPROVAL DEBUG] Legacy plan expiration:", expirationDate);
         
+        await tx
+          .update(UserTable)
+          .set({
+            plan: request.requestedPlan as "free" | "basic" | "pro" | "enterprise",
+            planStatus: "active" as const,
+            planExpiresAt: expirationDate,
+            updatedAt: new Date(),
+          })
+          .where(eq(UserTable.id, request.userId));
+
         await tx
           .update(SubscriptionRequestTable)
           .set({
@@ -236,14 +240,28 @@ const pgAdminRepository: AdminRepository = {
           name: planData.name,
         });
 
-        updateData.plan = null;
-        updateData.planId = planData.id;
         expirationDate = calculateExpirationByType(subType);
 
         console.log("[APPROVAL DEBUG] Custom plan expiration:", {
           subscriptionType: subType,
           expirationDate,
         });
+
+        await tx
+          .update(UserTable)
+          .set({
+            planId: planData.id,
+            planStatus: "active" as const,
+            planExpiresAt: expirationDate,
+            updatedAt: new Date(),
+          })
+          .where(eq(UserTable.id, request.userId));
+
+        await tx.execute(sql`
+          UPDATE ${UserTable}
+          SET plan = NULL
+          WHERE id = ${request.userId}
+        `);
 
         await tx
           .update(SubscriptionRequestTable)
@@ -257,18 +275,6 @@ const pgAdminRepository: AdminRepository = {
           })
           .where(eq(SubscriptionRequestTable.id, requestId));
       }
-
-      updateData.planExpiresAt = expirationDate;
-
-      console.log("[APPROVAL DEBUG] Updating user with:", updateData);
-
-      const result = await tx
-        .update(UserTable)
-        .set(updateData)
-        .where(eq(UserTable.id, request.userId))
-        .returning();
-
-      console.log("[APPROVAL DEBUG] User updated:", result);
 
       const [user] = await tx
         .select()
