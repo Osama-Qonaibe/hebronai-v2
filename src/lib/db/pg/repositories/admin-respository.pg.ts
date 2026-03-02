@@ -236,6 +236,7 @@ const pgAdminRepository: AdminRepository = {
           name: planData.name,
         });
 
+        updateData.plan = null;
         updateData.planId = planData.id;
         expirationDate = calculateExpirationByType(subType);
 
@@ -276,6 +277,7 @@ const pgAdminRepository: AdminRepository = {
 
       console.log("[APPROVAL DEBUG] Final user state:", {
         id: user?.id,
+        plan: user?.plan,
         planId: user?.planId,
         planStatus: user?.planStatus,
         planExpiresAt: user?.planExpiresAt,
