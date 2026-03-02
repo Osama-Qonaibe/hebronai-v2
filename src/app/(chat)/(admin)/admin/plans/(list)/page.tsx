@@ -12,7 +12,7 @@ export default async function AdminPlansPage() {
     redirect("/");
   }
 
-  const t = await getTranslations("AdminPlans");
+  const t = await getTranslations("Admin.Plans");
 
   return (
     <div className="container mx-auto py-6 space-y-6">
