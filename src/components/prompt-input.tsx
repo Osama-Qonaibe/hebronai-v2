@@ -56,6 +56,7 @@ import { FileUIPart, TextUIPart } from "ai";
 import { toast } from "sonner";
 import { isFilePartSupported, isIngestSupported } from "@/lib/ai/file-support";
 import { useChatModels } from "@/hooks/queries/use-chat-models";
+import { getModelDisplayName } from "@/lib/ai/model-display-names";
 
 interface PromptInputProps {
   placeholder?: string;
@@ -184,13 +185,11 @@ export default function PromptInput({
     (fileId: string) => {
       if (!threadId) return;
 
-      // Find file and abort if uploading
       const file = uploadedFiles.find((f) => f.id === fileId);
       if (file?.isUploading && file.abortController) {
         file.abortController.abort();
       }
 
-      // Cleanup preview URL if exists
       if (file?.previewUrl) {
         URL.revokeObjectURL(file.previewUrl);
       }
@@ -208,14 +207,11 @@ export default function PromptInput({
     [uploadedFiles, threadId, appStoreMutate],
   );
 
-  // uploadFiles handled by hook
-
   const handleFileSelect = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const list = e.target.files;
       if (!list) return;
       await uploadFiles(Array.from(list));
-      // Reset input
       if (fileInputRef.current) fileInputRef.current.value = "";
       setIsUploadDropdownOpen(false);
     },
@@ -240,7 +236,6 @@ export default function PromptInput({
         },
       }));
 
-      // Focus on the input
       editorRef.current?.commands.focus();
     },
     [threadId, editorRef],
@@ -349,7 +344,6 @@ export default function PromptInput({
           filename: file.name,
         } as FileUIPart);
       } else {
-        // Use a rich UI part for unsupported file types; will be filtered out for model input
         acc.push({
           type: "source-url",
           url: link,
@@ -387,7 +381,6 @@ export default function PromptInput({
     }));
   };
 
-  // Handle ESC key to clear mentions
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -408,8 +401,6 @@ export default function PromptInput({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [mentions.length, threadId, appStoreMutate, imageToolModel]);
-
-  // Drag overlay handled globally in ChatBot
 
   return (
     <div className="max-w-3xl mx-auto fade-in animate-in">
@@ -606,7 +597,7 @@ export default function PromptInput({
                           className="text-foreground group-data-[state=open]:text-foreground  "
                           data-testid="selected-model-name"
                         >
-                          {chatModel.model}
+                          {getModelDisplayName(chatModel.model)}
                         </span>
                       </>
                     ) : (
@@ -660,7 +651,6 @@ export default function PromptInput({
                 )}
               </div>
 
-              {/* Uploaded Files Preview - Below Input */}
               {uploadedFiles.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {uploadedFiles.map((file) => {
@@ -695,7 +685,6 @@ export default function PromptInput({
                           </div>
                         )}
 
-                        {/* Upload Progress Overlay */}
                         {file.isUploading && (
                           <div className="absolute inset-0 bg-background/90 flex rounded-lg flex-col items-center justify-center backdrop-blur-sm">
                             <Loader2 className="size-6 animate-spin text-foreground mb-2" />
@@ -711,7 +700,6 @@ export default function PromptInput({
                           </div>
                         )}
 
-                        {/* Hover Actions */}
                         <div
                           className={cn(
                             "absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity flex items-center justify-center rounded-lg",
@@ -756,7 +744,6 @@ export default function PromptInput({
                                           return;
                                         }
                                         const data = await res.json();
-                                        // Append preview text to input for the user to send
                                         setInput(
                                           `${input ? input + "\n\n" : ""}${data.text}`,
                                         );
@@ -784,7 +771,6 @@ export default function PromptInput({
                           </div>
                         </div>
 
-                        {/* Cancel Upload Button (Top Right) */}
                         {file.isUploading && (
                           <Button
                             variant="ghost"
