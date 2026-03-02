@@ -45,7 +45,7 @@ import {
   rememberMcpServerCustomizationsAction,
 } from "./actions";
 import { getSession } from "auth/server";
-import { getUserSubscription } from "lib/auth/subscription";
+import { getUserSubscription, type SubscriptionPlan } from "lib/auth/subscription";
 import { canAccessModel, getRequiredPlan } from "lib/subscription/model-access";
 import { colorize } from "consola/utils";
 import { generateUUID } from "lib/utils";
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
     // Check if user can access the requested model
     if (chatModel) {
       const hasAccess = canAccessModel(
-        subscription.plan,
+        subscription.plan as SubscriptionPlan,
         chatModel.provider,
         chatModel.model,
       );
@@ -333,7 +333,7 @@ export async function POST(request: Request) {
                 : t;
             return {
               ...bindingTools,
-              ...APP_DEFAULT_TOOLS, // APP_DEFAULT_TOOLS Not Supported Manual
+              ...APP_DEFAULT_TOOLS,
               ...IMAGE_TOOL,
             };
           })
