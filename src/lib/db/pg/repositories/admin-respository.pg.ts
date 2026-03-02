@@ -34,25 +34,18 @@ const getUserColumnsWithoutPassword = () => {
 
 const LEGACY_PLANS = ["free", "basic", "pro", "enterprise"];
 
-function calculateExpirationFromDuration(
-  durationValue: number,
-  durationUnit: "days" | "months" | "years",
+function calculateExpirationByType(
+  subscriptionType: "monthly" | "yearly",
   startDate: Date = new Date(),
 ): Date {
   const expirationDate = new Date(startDate);
-
-  switch (durationUnit) {
-    case "days":
-      expirationDate.setDate(expirationDate.getDate() + durationValue);
-      break;
-    case "months":
-      expirationDate.setMonth(expirationDate.getMonth() + durationValue);
-      break;
-    case "years":
-      expirationDate.setFullYear(expirationDate.getFullYear() + durationValue);
-      break;
+  
+  if (subscriptionType === "monthly") {
+    expirationDate.setMonth(expirationDate.getMonth() + 1);
+  } else {
+    expirationDate.setFullYear(expirationDate.getFullYear() + 1);
   }
-
+  
   return expirationDate;
 }
 
@@ -147,6 +140,7 @@ const pgAdminRepository: AdminRepository = {
         userEmail: UserTable.email,
         userImage: UserTable.image,
         requestedPlan: SubscriptionRequestTable.requestedPlan,
+        subscriptionType: SubscriptionRequestTable.subscriptionType,
         paymentMethod: SubscriptionRequestTable.paymentMethod,
         amount: SubscriptionRequestTable.amount,
         currency: SubscriptionRequestTable.currency,
@@ -221,9 +215,8 @@ const pgAdminRepository: AdminRepository = {
         }
 
         updateData.planId = planData.id;
-        expirationDate = calculateExpirationFromDuration(
-          planData.durationValue,
-          planData.durationUnit as "days" | "months" | "years",
+        expirationDate = calculateExpirationByType(
+          request.subscriptionType as "monthly" | "yearly",
         );
 
         await tx
@@ -395,8 +388,6 @@ function buildFilterCondition(
       return sql`${column} < ${value}`;
     case "lte":
       return sql`${column} <= ${value}`;
-    case "gt":
-      return sql`${column} > ${value}`;
     case "gte":
       return sql`${column} >= ${value}`;
     case "contains":
