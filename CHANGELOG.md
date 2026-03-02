@@ -5,7 +5,7 @@
 
 ### Features
 
-* add model display names for compact UI ([39ef573](https://github.com/Osama-Qonaibe/hebronai-v2/commit/39ef573a74e952c60025488603595cba7c97bf12))
+* add model display names for compact UI ([39ef573](https://github.com/Osama-Qonaibe/hebronai-v2/commit/39ef573a74e952c60025488603595cba7c97bf12)) by @Osama-Qonaibe
 
 ## [4.0.11](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.10...hebronai-v2-v4.0.11) (2026-03-02)
 
