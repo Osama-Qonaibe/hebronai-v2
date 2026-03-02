@@ -16,8 +16,8 @@ export interface SubscriptionPlan {
     currency: string;
     discount?: { yearly: number };
   };
-  durationValue: number;
-  durationUnit: "days" | "months" | "years";
+  durationValue?: number;
+  durationUnit?: "days" | "months" | "years";
   models: {
     allowed: string[];
     default: string;
