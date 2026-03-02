@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.11](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.10...hebronai-v2-v4.0.11) (2026-03-02)
+
+
+### Bug Fixes
+
+* RTL text alignment in mention input ([746a55c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/746a55c94f391f1f46e66b343d3f0926668e9681))
+
 ## [4.0.10](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.9...hebronai-v2-v4.0.10) (2026-03-02)
 
 
