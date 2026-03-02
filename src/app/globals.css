@@ -1535,3 +1535,12 @@
 [dir="rtl"] span:not(.icon) {
   text-align: right;
 }
+
+[dir="rtl"] .ProseMirror {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .ProseMirror p.is-editor-empty:first-child::before {
+  text-align: right;
+}
