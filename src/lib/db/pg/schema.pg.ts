@@ -265,6 +265,11 @@ export const SubscriptionRequestTable = pgTable(
       () => SubscriptionPlanTable.id,
     ),
     requestedPlan: text("requested_plan").notNull(),
+    subscriptionType: varchar("subscription_type", {
+      enum: ["monthly", "yearly"],
+    })
+      .notNull()
+      .default("monthly"),
     paymentMethod: varchar("payment_method", {
       enum: ["stripe", "paypal", "bank_transfer", "manual"],
     }).notNull(),
