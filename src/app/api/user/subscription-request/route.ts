@@ -4,7 +4,7 @@ import { subscriptionRequestRepository } from "@/lib/db/pg/repositories/subscrip
 import { z } from "zod";
 
 const createRequestSchema = z.object({
-  requestedPlan: z.enum(["free", "basic", "pro", "enterprise"]),
+  requestedPlan: z.string().min(1),
   paymentMethod: z.enum(["stripe", "paypal", "bank_transfer", "manual"]),
   amount: z.number().optional(),
   currency: z.string().default("USD"),
@@ -21,7 +21,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check for existing pending request
     const pendingRequest =
       await subscriptionRequestRepository.getPendingRequest(session.user.id);
 
