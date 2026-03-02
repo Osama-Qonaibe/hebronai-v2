@@ -29,6 +29,7 @@ import {
 } from "ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "ui/card";
 import { Checkbox } from "ui/checkbox";
+import { getModelDisplayName } from "@/lib/ai/model-display-names";
 
 interface PlanDialogProps {
   open: boolean;
@@ -584,7 +585,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                                     onCheckedChange={() => toggleModel(model.value)}
                                   />
                                   <div>
-                                    <div className="font-medium">{model.modelName}</div>
+                                    <div className="font-medium">{getModelDisplayName(model.modelName)}</div>
                                     {(model.isToolCallUnsupported || model.isImageInputUnsupported) && (
                                       <div className="text-xs text-muted-foreground">
                                         {model.isToolCallUnsupported && t("noToolsSupport")}
@@ -631,7 +632,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                             const model = availableModels.find((m) => m.value === modelValue);
                             return (
                               <SelectItem key={modelValue} value={modelValue}>
-                                {model?.label || modelValue}
+                                {model?.label ? getModelDisplayName(model.label) : modelValue}
                               </SelectItem>
                             );
                           })}
