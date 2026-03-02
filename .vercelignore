@@ -1,5 +1,50 @@
-# Vercel Build Ignore
-scripts/migrate-image-limits.ts
-scripts/migrations/
+# Test Files
+tests/
 *.test.ts
 *.spec.ts
+playwright.config.ts
+vitest.config.ts
+
+# Docker Files (not needed on Vercel)
+docker/
+Dockerfile
+.dockerignore
+docker-compose.yml
+compose.yml
+ecosystem.config.js
+
+# Documentation
+docs/
+CONTRIBUTING.md
+DEPLOYMENT.md
+AGENTS.md
+
+# Git Hooks (development only)
+.husky/
+
+# Scripts (keep only essentials)
+scripts/migrate-image-limits.ts
+scripts/migrations/
+scripts/seed.ts
+scripts/seed-test-users.ts
+scripts/cleanup-all-test-data.ts
+scripts/clean.ts
+scripts/verify-db.ts
+
+# Database (only if already migrated)
+drizzle/
+
+# Development Config
+.vscode/
+.idea/
+*.local
+
+# CI/CD (not needed on server)
+.github/workflows/
+
+# Changelog
+CHANGELOG.md
+
+# Release Please
+.release-please-manifest.json
+release-please-config.json
