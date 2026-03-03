@@ -211,7 +211,7 @@ export async function checkDailyMessageLimit(
 }
 
 /**
- * ✅ Image Generation Daily Limit
+ * ✅ Image Generation Daily Limit (FIXED)
  */
 export async function checkImageGenerationLimit(
   userId: string,
@@ -225,12 +225,21 @@ export async function checkImageGenerationLimit(
     };
   }
 
-  // Check if image generation is enabled
-  if (!plan.limits.features.advanced.imageGeneration) {
+  const maxPerDay = plan.limits.images?.maxPerDay || 0;
+
+  // ✅ منع Free plan من الصور تماماً
+  if (maxPerDay === 0) {
     return {
       allowed: false,
-      reason: `Image generation is not available in your ${plan.name} plan.`,
+      reason: `Image generation is not available in your ${plan.name} plan. Please upgrade to Basic or higher.`,
+      current: 0,
+      max: 0,
     };
+  }
+
+  // ✅ Enterprise فقط unlimited
+  if (isUnlimited(maxPerDay)) {
+    return { allowed: true };
   }
 
   const today = new Date();
@@ -252,11 +261,85 @@ export async function checkImageGenerationLimit(
 
   const currentCount = result?.count || 0;
 
-  // For now, allow unlimited images if feature is enabled
-  // Can add specific limits later
+  // ✅ تطبيق الحد اليومي
+  if (currentCount >= maxPerDay) {
+    return {
+      allowed: false,
+      reason: `Daily image generation limit (${maxPerDay}) reached. Resets at midnight. Current: ${currentCount}/${maxPerDay}`,
+      current: currentCount,
+      max: maxPerDay,
+    };
+  }
+
   return {
     allowed: true,
     current: currentCount,
+    max: maxPerDay,
+  };
+}
+
+/**
+ * ✅ Image Generation Monthly Limit (NEW - Safety Check)
+ */
+export async function checkImageGenerationMonthlyLimit(
+  userId: string,
+): Promise<LimitCheckResult> {
+  const plan = await getUserPlan(userId);
+
+  if (!plan || !plan.isActive) {
+    return {
+      allowed: false,
+      reason: "No active subscription found",
+    };
+  }
+
+  const maxPerMonth = plan.limits.images?.maxPerMonth || 0;
+
+  if (maxPerMonth === 0) {
+    return {
+      allowed: false,
+      reason: `Image generation is not available in your ${plan.name} plan.`,
+    };
+  }
+
+  if (isUnlimited(maxPerMonth)) {
+    return { allowed: true };
+  }
+
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const endOfMonth = new Date(startOfMonth);
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(ImageGenerationTable)
+    .where(
+      and(
+        eq(ImageGenerationTable.userId, userId),
+        gte(ImageGenerationTable.createdAt, startOfMonth),
+        lt(ImageGenerationTable.createdAt, endOfMonth),
+        eq(ImageGenerationTable.status, "completed"),
+      ),
+    );
+
+  const currentCount = result?.count || 0;
+
+  if (currentCount >= maxPerMonth) {
+    return {
+      allowed: false,
+      reason: `Monthly image generation limit (${maxPerMonth}) reached. Resets next month. Current: ${currentCount}/${maxPerMonth}`,
+      current: currentCount,
+      max: maxPerMonth,
+    };
+  }
+
+  return {
+    allowed: true,
+    current: currentCount,
+    max: maxPerMonth,
   };
 }
 
@@ -318,7 +401,7 @@ export async function checkTokenLimit(
         eq(UsageTable.resourceType, "tokens"),
         sql`${UsageTable.metadata}->>'model' = ${modelName}`,
         gte(UsageTable.periodStart, startOfMonth),
-        lt(UsageTable.periodStart, endOfMonth), // ✅ FIX: use periodStart for both
+        lt(UsageTable.periodStart, endOfMonth),
       ),
     );
 
@@ -438,6 +521,24 @@ export async function getUserUsageLimits(userId: string) {
       ),
     );
 
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+  const endOfMonth = new Date(startOfMonth);
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+
+  const [monthlyImagesCount] = await db
+    .select({ count: count() })
+    .from(ImageGenerationTable)
+    .where(
+      and(
+        eq(ImageGenerationTable.userId, userId),
+        gte(ImageGenerationTable.createdAt, startOfMonth),
+        lt(ImageGenerationTable.createdAt, endOfMonth),
+        eq(ImageGenerationTable.status, "completed"),
+      ),
+    );
+
   return {
     plan: {
       id: plan.id,
@@ -481,8 +582,19 @@ export async function getUserUsageLimits(userId: string) {
       },
       imagesDaily: {
         current: dailyImagesCount?.count || 0,
-        max: -1, // Unlimited for now
-        percentage: 0,
+        max: plan.limits.images?.maxPerDay || 0,
+        percentage: calculatePercentage(
+          dailyImagesCount?.count || 0,
+          plan.limits.images?.maxPerDay || 0,
+        ),
+      },
+      imagesMonthly: {
+        current: monthlyImagesCount?.count || 0,
+        max: plan.limits.images?.maxPerMonth || 0,
+        percentage: calculatePercentage(
+          monthlyImagesCount?.count || 0,
+          plan.limits.images?.maxPerMonth || 0,
+        ),
       },
       models: plan.limits.models,
     },
