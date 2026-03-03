@@ -49,12 +49,6 @@ export const MODEL_ACCESS_RULES: ModelAccessRule[] = [
     costPerMillionTokens: 0.075,
   },
   {
-    provider: "openRouter",
-    models: ["deepseek-chat-v3"],
-    tier: "basic",
-    costPerMillionTokens: 0.14,
-  },
-  {
     provider: "openai",
     models: ["gpt-5-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano"],
     tier: "pro",
