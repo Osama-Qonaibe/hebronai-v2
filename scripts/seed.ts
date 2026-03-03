@@ -3,7 +3,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "../src/lib/db/pg/schema.pg";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 async function seed() {
   console.log(
@@ -368,7 +368,12 @@ async function seed() {
       const existing = await db
         .select()
         .from(schema.SubscriptionPlanTable)
-        .where(eq(schema.SubscriptionPlanTable.slug, plan.slug))
+        .where(
+          and(
+            eq(schema.SubscriptionPlanTable.slug, plan.slug),
+            eq(schema.SubscriptionPlanTable.isBuiltIn, true)
+          )
+        )
         .limit(1);
 
       if (existing.length > 0) {
@@ -378,7 +383,12 @@ async function seed() {
             ...plan,
             updatedAt: new Date(),
           } as any)
-          .where(eq(schema.SubscriptionPlanTable.slug, plan.slug));
+          .where(
+            and(
+              eq(schema.SubscriptionPlanTable.slug, plan.slug),
+              eq(schema.SubscriptionPlanTable.isBuiltIn, true)
+            )
+          );
         console.log(`🔄 Updated: ${plan.name}`);
       } else {
         await db.insert(schema.SubscriptionPlanTable).values(plan as any);
