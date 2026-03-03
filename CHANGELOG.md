@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.2.2](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.2.1...hebronai-v2-v5.2.2) (2026-03-03)
+
+
+### Bug Fixes
+
+* Use built-in plans from plans.ts directly ([0e1b560](https://github.com/Osama-Qonaibe/hebronai-v2/commit/0e1b5603de3e23f1ccd3eac6b82cecf8241f0edf))
+
 ## [5.2.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.2.0...hebronai-v2-v5.2.1) (2026-03-03)
 
 
