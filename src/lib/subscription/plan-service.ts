@@ -4,9 +4,7 @@ import { SubscriptionPlanTable, UserTable } from "@/lib/db/pg/schema.pg";
 import { eq, and, sql } from "drizzle-orm";
 import { cache } from "react";
 
-// ✨ النوع الموحد للخطة
 export interface UnifiedPlanLimits {
-  // Models
   models: {
     allowed: string[];
     default: string;
@@ -19,7 +17,6 @@ export interface UnifiedPlanLimits {
     };
   };
 
-  // Chats & Messages
   chats: {
     maxActive: number;
     maxHistory: number;
@@ -30,20 +27,17 @@ export interface UnifiedPlanLimits {
     maxPerMonth: number;
   };
 
-  // Files
   files: {
     maxSize: number;
     maxCount: number;
     allowedTypes: string[];
   };
 
-  // API
   api: {
     rateLimit: number;
     burstLimit: number;
   };
 
-  // Features
   features: {
     mcpServers: {
       enabled: boolean;
@@ -95,14 +89,9 @@ export interface UnifiedPlan {
   };
 }
 
-// ✨ Cache للأداء (60 ثانية)
 const PLAN_CACHE_TTL = 60 * 1000;
 let plansCache: { data: UnifiedPlan[]; timestamp: number } | null = null;
 
-/**
- * ✅ الدالة الرئيسية: جلب خطة المستخدم
- * Priority: planId (dynamic) > plan (enum) > free (fallback)
- */
 export async function getUserPlan(
   userId: string,
 ): Promise<UnifiedPlan | null> {
@@ -111,6 +100,8 @@ export async function getUserPlan(
       .select({
         planId: UserTable.planId,
         plan: UserTable.plan,
+        planStatus: UserTable.planStatus,
+        planExpiresAt: UserTable.planExpiresAt,
       })
       .from(UserTable)
       .where(eq(UserTable.id, userId))
@@ -118,26 +109,25 @@ export async function getUserPlan(
 
     if (!user) return null;
 
-    // 1️⃣ الأولوية: planId (الخطة الديناميكية)
+    const isActive =
+      user.planStatus !== "expired" &&
+      (!user.planExpiresAt || new Date(user.planExpiresAt) > new Date());
+
+    let planData: UnifiedPlan | null = null;
+
     if (user.planId) {
       const [customPlan] = await db
         .select()
         .from(SubscriptionPlanTable)
-        .where(
-          and(
-            eq(SubscriptionPlanTable.id, user.planId),
-            sql`(admin_settings->>'isActive')::boolean = true`,
-          ),
-        )
+        .where(eq(SubscriptionPlanTable.id, user.planId))
         .limit(1);
 
       if (customPlan) {
-        return mapDbPlanToUnified(customPlan);
+        planData = mapDbPlanToUnified(customPlan);
       }
     }
 
-    // 2️⃣ Fallback: plan enum (الخطة القديمة)
-    if (user.plan) {
+    if (!planData && user.plan) {
       const [builtInPlan] = await db
         .select()
         .from(SubscriptionPlanTable)
@@ -150,21 +140,29 @@ export async function getUserPlan(
         .limit(1);
 
       if (builtInPlan) {
-        return mapDbPlanToUnified(builtInPlan);
+        planData = mapDbPlanToUnified(builtInPlan);
       }
     }
 
-    // 3️⃣ الافتراضي: Free Plan
-    return await getBuiltInPlan("free");
+    if (!planData) {
+      planData = await getBuiltInPlan("free");
+    }
+
+    if (planData) {
+      planData.isActive = isActive;
+    }
+
+    return planData;
   } catch (error) {
     console.error("Error getting user plan:", error);
-    return await getBuiltInPlan("free");
+    const freePlan = await getBuiltInPlan("free");
+    if (freePlan) {
+      freePlan.isActive = true;
+    }
+    return freePlan;
   }
 }
 
-/**
- * ✅ جلب خطة Built-in محددة
- */
 export async function getBuiltInPlan(
   slug: string,
 ): Promise<UnifiedPlan | null> {
@@ -187,12 +185,7 @@ export async function getBuiltInPlan(
   }
 }
 
-/**
- * ✅ جلب جميع الخطط النشطة للعرض
- * Uses React cache() for automatic request deduplication
- */
 export const getActivePlans = cache(async (): Promise<UnifiedPlan[]> => {
-  // استخدام Cache بسيط
   if (plansCache && Date.now() - plansCache.timestamp < PLAN_CACHE_TTL) {
     return plansCache.data;
   }
@@ -211,7 +204,6 @@ export const getActivePlans = cache(async (): Promise<UnifiedPlan[]> => {
 
     const unifiedPlans = plans.map(mapDbPlanToUnified);
 
-    // تحديث Cache
     plansCache = {
       data: unifiedPlans,
       timestamp: Date.now(),
@@ -224,9 +216,6 @@ export const getActivePlans = cache(async (): Promise<UnifiedPlan[]> => {
   }
 });
 
-/**
- * ✅ جلب خطة محددة بـ ID
- */
 export async function getPlanById(planId: string): Promise<UnifiedPlan | null> {
   try {
     const [plan] = await db
@@ -242,9 +231,6 @@ export async function getPlanById(planId: string): Promise<UnifiedPlan | null> {
   }
 }
 
-/**
- * ✅ جلب خطة محددة بـ Slug
- */
 export async function getPlanBySlug(
   slug: string,
 ): Promise<UnifiedPlan | null> {
@@ -262,9 +248,6 @@ export async function getPlanBySlug(
   }
 }
 
-/**
- * ✅ تحويل من DB Schema إلى Unified Format
- */
 function mapDbPlanToUnified(dbPlan: any): UnifiedPlan {
   return {
     id: dbPlan.id,
@@ -287,16 +270,10 @@ function mapDbPlanToUnified(dbPlan: any): UnifiedPlan {
   };
 }
 
-/**
- * ✅ تحديث Cache (للاستخدام بعد تعديل الخطط)
- */
 export function invalidatePlansCache() {
   plansCache = null;
 }
 
-/**
- * ✅ Helper: هل الحد unlimited؟
- */
 export function isUnlimited(value: number): boolean {
   return value === -1;
 }
