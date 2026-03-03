@@ -5,7 +5,7 @@
 
 ### Bug Fixes
 
-* Apply smart isActive check to protect limits while maintaining backward compatibility ([a382491](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a382491c21536b0a51958ccb85cbb2f3eabb04ff))
+* Apply smart isActive check to protect limits while maintaining backward compatibility ([a382491](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a382491c21536b0a51958ccb85cbb2f3eabb04ff)) by @Osama-Qonaibe
 
 ## [5.1.3](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.1.2...hebronai-v2-v5.1.3) (2026-03-03)
 
