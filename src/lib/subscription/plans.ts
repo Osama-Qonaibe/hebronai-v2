@@ -22,6 +22,8 @@ export interface PlanDetails {
   limits: PlanLimits;
   features: string[];
   popular?: boolean;
+  modelsCount?: number;
+  featuredModels?: string[];
 }
 
 export const PLAN_LIMITS: Record<SubscriptionPlan, PlanLimits> = {
@@ -83,17 +85,22 @@ export const PLANS: Record<SubscriptionPlan, PlanDetails> = {
     priceDisplay: "$0",
     period: "forever",
     limits: PLAN_LIMITS.free,
+    modelsCount: 10,
+    featuredModels: ["Groq Models", "Ollama Models"],
     features: [
       "features.2CustomAgents",
       "features.1Workflow",
       "features.1McpServer",
-      "features.50kTokensMonth",
+      "features.50000TokensMonth",
       "features.noImages",
       "features.500MBStorage",
+      "features.10ModelsAvailable",
       "features.freeModelsOnly",
+      "features.groqOllamaModels",
       "features.basicChat",
       "features.limitedCodeInterpreter",
       "features.5DocumentsMonth",
+      "features.100APICallsDay",
       "features.communitySupport",
     ],
   },
@@ -104,22 +111,29 @@ export const PLANS: Record<SubscriptionPlan, PlanDetails> = {
     priceDisplay: "$9.99",
     period: "month",
     limits: PLAN_LIMITS.basic,
+    modelsCount: 13,
+    featuredModels: ["GPT-5 Nano", "Gemini 2.5 Flash Lite", "DeepSeek v3"],
     features: [
       "features.5CustomAgents",
       "features.3Workflows",
       "features.2McpServers",
-      "features.300kTokensMonth",
-      "features.5ImagesDay",
+      "features.300000TokensMonth",
+      "features.5ImagesDay150Month",
       "features.3GBStorage",
-      "features.gpt5NanoAccess",
+      "features.13ModelsAvailable",
       "features.allFreeModels",
+      "features.gpt5NanoAccess",
+      "features.geminiFlashLiteAccess",
+      "features.deepseekAccess",
       "features.advancedChat",
       "features.fullCodeInterpreter",
       "features.20DocumentsMonth",
       "features.imageGeneration",
+      "features.workflowAutomation",
       "features.exportChat",
       "features.priorityQueue",
-      "features.emailSupport",
+      "features.500APICallsDay",
+      "features.emailSupport48h",
     ],
   },
   pro: {
@@ -129,27 +143,38 @@ export const PLANS: Record<SubscriptionPlan, PlanDetails> = {
     priceDisplay: "$24.99",
     period: "month",
     limits: PLAN_LIMITS.pro,
+    modelsCount: 21,
+    featuredModels: [
+      "GPT-5 Mini",
+      "Gemini 2.5 Pro",
+      "Grok 4-1 Fast",
+      "Claude Haiku 4.5",
+    ],
     features: [
       "features.20CustomAgents",
       "features.10Workflows",
       "features.5McpServers",
-      "features.1500kTokensMonth",
-      "features.15ImagesDay",
+      "features.1500000TokensMonth",
+      "features.15ImagesDay450Month",
       "features.15GBStorage",
-      "features.powerfulModels",
+      "features.21ModelsAvailable",
+      "features.allBasicModels",
       "features.gpt5MiniAccess",
-      "features.grokAccess",
+      "features.gpt41Access",
       "features.geminiProAccess",
+      "features.grokAccess",
+      "features.claudeHaikuAccess",
+      "features.llama405bAccess",
       "features.professionalChat",
       "features.unlimitedCodeInterpreter",
       "features.100DocumentsMonth",
       "features.advancedImageGeneration",
       "features.30MinutesVoiceChat",
-      "features.apiAccess",
+      "features.apiAccess2000Day",
       "features.exportAllFormats",
       "features.advancedAnalytics",
       "features.customAgentSharing",
-      "features.prioritySupport",
+      "features.prioritySupport12h",
     ],
     popular: true,
   },
@@ -160,18 +185,33 @@ export const PLANS: Record<SubscriptionPlan, PlanDetails> = {
     priceDisplay: "Custom",
     period: "month",
     limits: PLAN_LIMITS.enterprise,
+    modelsCount: 45,
+    featuredModels: [
+      "GPT-5.2 Pro",
+      "Claude Opus 4.5",
+      "Grok 4-1",
+      "Sora 2 Pro",
+    ],
     features: [
       "features.unlimitedAgents",
       "features.unlimitedWorkflows",
       "features.unlimitedMcpServers",
       "features.unlimitedTokens",
-      "features.unlimitedImages",
-      "features.unlimitedStorage",
-      "features.allModels",
-      "features.gpt52Access",
+      "features.unlimitedImagesDay",
+      "features.100GBPlusStorage",
+      "features.45PlusModelsAvailable",
+      "features.allProModels",
+      "features.gpt52ProAccess",
+      "features.gpt51Access",
+      "features.o3o4Access",
+      "features.gemini3ProAccess",
       "features.opusAccess",
+      "features.sonnetAccess",
       "features.grok4Access",
-      "features.soraAccess",
+      "features.dalleAccess",
+      "features.soraProAccess",
+      "features.whisperAccess",
+      "features.ttsHDAccess",
       "features.unlimitedVoiceChat",
       "features.unlimitedApiAccess",
       "features.teamWorkspace",
@@ -179,12 +219,12 @@ export const PLANS: Record<SubscriptionPlan, PlanDetails> = {
       "features.whiteLabelOption",
       "features.dedicatedInfrastructure",
       "features.onPremiseOption",
-      "features.slaGuarantee",
+      "features.slaGuarantee999",
       "features.advancedSecurity",
       "features.auditLogs",
       "features.ssoSaml",
-      "features.dedicatedSupport",
-      "features.accountManager",
+      "features.dedicatedAccountManager",
+      "features.support24_7",
       "features.phoneSupport",
       "features.customTraining",
     ],
@@ -201,4 +241,23 @@ export function getPlanDetails(plan: SubscriptionPlan): PlanDetails {
 
 export function getAllPlans(): PlanDetails[] {
   return Object.values(PLANS);
+}
+
+export function formatTokenCount(count: number): string {
+  if (count === -1) return "Unlimited";
+  if (count >= 1_000_000) {
+    return `${(count / 1_000_000).toLocaleString('en-US', { maximumFractionDigits: 1 })}M`;
+  }
+  if (count >= 1_000) {
+    return `${(count / 1_000).toLocaleString('en-US', { maximumFractionDigits: 0 })}K`;
+  }
+  return count.toLocaleString('en-US');
+}
+
+export function formatStorageSize(gb: number): string {
+  if (gb === -1) return "Unlimited";
+  if (gb < 1) {
+    return `${(gb * 1024).toFixed(0)} MB`;
+  }
+  return `${gb.toLocaleString('en-US')} GB`;
 }
