@@ -1,6 +1,6 @@
-import { db } from "@/database/client";
-import { usage } from "@/database/schema";
-import { eq, and, gte, sql } from "drizzle-orm";
+import { db } from "../src/database/client";
+import { usage } from "../src/database/schema";
+import { eq, sql } from "drizzle-orm";
 
 const TEST_USER_ID = "test-user-123";
 
