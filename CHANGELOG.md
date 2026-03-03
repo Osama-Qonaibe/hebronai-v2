@@ -5,8 +5,8 @@
 
 ### Bug Fixes
 
-* Correct OpenRouter model IDs to match API ([673bb6d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/673bb6d265491f756baf42a27a37029afddb8a55))
-* Replace DeepSeek with free version (correct API name) ([3275887](https://github.com/Osama-Qonaibe/hebronai-v2/commit/327588735f1bc295f8ca272cbd5957f53385b7ed))
+* Correct OpenRouter model IDs to match API ([673bb6d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/673bb6d265491f756baf42a27a37029afddb8a55)) by @Osama-Qonaibe
+* Replace DeepSeek with free version (correct API name) ([3275887](https://github.com/Osama-Qonaibe/hebronai-v2/commit/327588735f1bc295f8ca272cbd5957f53385b7ed)) by @Osama-Qonaibe
 
 ## [5.1.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.1.0...hebronai-v2-v5.1.1) (2026-03-03)
 
