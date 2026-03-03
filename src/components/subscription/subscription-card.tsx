@@ -394,11 +394,11 @@ export function SubscriptionCard({
                       </div>
                       <div className="pl-6 space-y-1">
                         <div className="text-sm">
-                          {(plan as any).modelsCount || 0} {locale === 'ar' ? 'نموذج AI' : 'AI models'}
+                          {plan.modelsCount || 0} {locale === 'ar' ? 'نموذج AI' : 'AI models'}
                         </div>
-                        {(plan as any).featuredModels && (plan as any).featuredModels.length > 0 && (
+                        {plan.featuredModels && plan.featuredModels.length > 0 && (
                           <div className="flex flex-wrap gap-1">
-                            {(plan as any).featuredModels.slice(0, 2).map((model: string) => (
+                            {plan.featuredModels.slice(0, 2).map((model: string) => (
                               <Badge key={model} variant="outline" className="text-xs px-1.5 py-0">
                                 {model}
                               </Badge>
