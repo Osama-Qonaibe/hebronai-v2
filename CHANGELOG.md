@@ -5,7 +5,7 @@
 
 ### Bug Fixes
 
-* Remove unused imports from prompts.ts ([babac42](https://github.com/Osama-Qonaibe/hebronai-v2/commit/babac4259453a8fd0c6663db754b58ea828376ff))
+* Remove unused imports from prompts.ts ([babac42](https://github.com/Osama-Qonaibe/hebronai-v2/commit/babac4259453a8fd0c6663db754b58ea828376ff)) by @Osama-Qonaibe
 
 ## [5.1.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.0.0...hebronai-v2-v5.1.0) (2026-03-03)
 
