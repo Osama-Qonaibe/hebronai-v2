@@ -230,7 +230,7 @@ export function SubscriptionCard({
 
   const handleEnterpriseContact = () => {
     const message = encodeURIComponent(
-      `مرحباً، أرغب في الاستفسار عن خطة Enterprise للشركات.\n\nأود معرفة المزيد عن المميزات والأسعار المخصصة.`,
+      `مرحباً، أرغب في الاستفسار عن خطة Enterprise للشركات.\\n\\nأود معرفة المزيد عن المميزات والأسعار المخصصة.`,
     );
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
     window.location.href = whatsappUrl;
@@ -248,7 +248,7 @@ export function SubscriptionCard({
     const price = subscriptionType === "yearly" ? planDetails.pricing.yearly : planDetails.pricing.monthly;
     const period = subscriptionType === "yearly" ? "سنة" : "شهر";
     const message = encodeURIComponent(
-      `مرحباً، أرغب في الترقية إلى خطة ${planName} ($${price}/${period}).\n\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\n\nأحتاج مساعدة.`,
+      `مرحباً، أرغب في الترقية إلى خطة ${planName} ($${price}/${period}).\\n\\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\\n\\nأحتاج مساعدة.`,
     );
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
     window.location.href = whatsappUrl;
@@ -364,24 +364,6 @@ export function SubscriptionCard({
                         </span>
                       )}
                     </div>
-                    {plan.pricing.monthly === 0 && (
-                      <p className="text-xs text-muted-foreground">
-                        {locale === 'ar' ? 'مثالي لتجربة HebronAI' : 'Perfect for trying HebronAI'}
-                      </p>
-                    )}
-                    {plan.pricing.monthly > 0 && plan.slug !== 'enterprise' && (
-                      <p className="text-xs text-muted-foreground">
-                        {locale === 'ar' 
-                          ? plan.slug === 'basic' ? 'للمستخدمين المبتدئين' : 'للمحترفين والمستخدمين المتقدمين'
-                          : plan.slug === 'basic' ? 'For beginners' : 'For professionals'
-                        }
-                      </p>
-                    )}
-                    {plan.slug === 'enterprise' && (
-                      <p className="text-xs text-muted-foreground">
-                        {locale === 'ar' ? 'حلول متكاملة للفرق والشركات' : 'Complete solutions for teams'}
-                      </p>
-                    )}
                   </div>
                 </CardHeader>
 
