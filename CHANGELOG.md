@@ -5,37 +5,37 @@
 
 ### Features
 
-* add duration field to subscription_plan table ([e6d8144](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e6d8144324cf102d91ecff756ed423da0d4ffe23))
-* add duration fields to SubscriptionPlan type ([5ed57e6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5ed57e6465c6f472828cbd767afed59427a15297))
-* add duration fields to SubscriptionPlanTable schema ([a474694](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a47469434756317bd6e5a49ae50f5d843e3c356b))
-* add subscription_type to subscription_request table ([187a02b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/187a02b572c5f9c3d871f6070405610e00deec81))
-* add subscriptionType to SubscriptionRequestTable schema ([7d5cd1f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7d5cd1f31357d0f77b9df1ae5d965464487ef5fa))
-* use subscriptionType (monthly/yearly) for expiration calculation ([10c1a1e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/10c1a1e7816066ded29eef23f0d211e3a62c13f7))
+* add duration field to subscription_plan table ([e6d8144](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e6d8144324cf102d91ecff756ed423da0d4ffe23)) by @Osama-Qonaibe
+* add duration fields to SubscriptionPlan type ([5ed57e6](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5ed57e6465c6f472828cbd767afed59427a15297)) by @Osama-Qonaibe
+* add duration fields to SubscriptionPlanTable schema ([a474694](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a47469434756317bd6e5a49ae50f5d843e3c356b)) by @Osama-Qonaibe
+* add subscription_type to subscription_request table ([187a02b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/187a02b572c5f9c3d871f6070405610e00deec81)) by @Osama-Qonaibe
+* add subscriptionType to SubscriptionRequestTable schema ([7d5cd1f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7d5cd1f31357d0f77b9df1ae5d965464487ef5fa)) by @Osama-Qonaibe
+* use subscriptionType (monthly/yearly) for expiration calculation ([10c1a1e](https://github.com/Osama-Qonaibe/hebronai-v2/commit/10c1a1e7816066ded29eef23f0d211e3a62c13f7)) by @Osama-Qonaibe
 
 
 ### Bug Fixes
 
-* accept any plan slug for subscription requests ([43f2b20](https://github.com/Osama-Qonaibe/hebronai-v2/commit/43f2b209839625031c0d319f6e0d2d67e9db53e6))
-* Add modelsCount and featuredModels to plan conversion ([e98e21b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e98e21b87e1c229f3bff27757f00d76bf0974d82))
-* Better error handling for subscription approval ([f1da743](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f1da743be80c4561eb4607337a31966a5dc7bc5e))
-* Cast subscription.plan to SubscriptionPlan in chat route ([eb3c740](https://github.com/Osama-Qonaibe/hebronai-v2/commit/eb3c740fa5f2b267cc5da66516f41e38829f23b3))
-* Cast subscription.plan to SubscriptionPlan type ([6d5f14c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6d5f14c8b30d0e19f9fcfd80dd78778a5162f86f))
-* change requestedPlan to text for admin plans support ([6e33c32](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6e33c324ea2be5fa9cc3094ef7a1834005eeee82))
-* change RequestedPlan type to string for admin plans ([5f204a2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5f204a20e3286111d76f2ce751f9e23ee2f36a74))
-* change requestedPlan type to string in admin types ([7f17f33](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7f17f3388a4bb8c0e005c3923d366642ec64048e))
-* Check planId before plan for custom subscriptions ([50c60e2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/50c60e2d534dc55a345907da7dfee9b478cdd44f))
-* Get plan slug from planId for custom plans ([aeb09be](https://github.com/Osama-Qonaibe/hebronai-v2/commit/aeb09bef01806d887783578e147238ce696b3155))
-* handle admin plans without hardcoded payment gateways ([4ecba46](https://github.com/Osama-Qonaibe/hebronai-v2/commit/4ecba464b9848606f80f35ddd4114dfddd7faf16))
-* handle custom plans expiration with default 1 month ([68ed197](https://github.com/Osama-Qonaibe/hebronai-v2/commit/68ed19719d7cb8e8fce58c65a5fe633f0fa8c80c))
-* handle legacy plans approval without SubscriptionPlanTable lookup ([5d4bd05](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5d4bd05b4d884df94cb316251e08d1a4c26687f7))
-* Handle null plan update for custom subscriptions ([7360493](https://github.com/Osama-Qonaibe/hebronai-v2/commit/736049322eb4ed81c7715ea427435e3d9b346c12))
-* make duration fields optional to prevent build errors ([cb1a3a9](https://github.com/Osama-Qonaibe/hebronai-v2/commit/cb1a3a9353516f4d558f93652b46b71533ce7bbc))
-* Set plan to free for custom plans instead of null ([ebb1a8c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ebb1a8c32f5119b50a4404116da977e4d3a38bec))
-* Set plan to null for custom plans during approval ([1efcb7a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1efcb7a8d5163a3bfa7a2131c31ab16567d1e471))
-* Simplify custom plan approval without SQL ([7fce8c3](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7fce8c37c8cc3b9173b67bef3fa977f097e1f925))
-* use plan duration from database for custom plans ([aa29a66](https://github.com/Osama-Qonaibe/hebronai-v2/commit/aa29a66b223d7acf9d28c15035025384417d0a96))
-* Use PLAN_LIMITS from plans.ts for image limits instead of UnifiedPlanLimits ([71dd973](https://github.com/Osama-Qonaibe/hebronai-v2/commit/71dd97305827c792dea84896fee4155969bcd673))
-* use planId system for subscription approval ([baf3f46](https://github.com/Osama-Qonaibe/hebronai-v2/commit/baf3f4691e40cc3d3615f7de234df2625ee7e5b4))
+* accept any plan slug for subscription requests ([43f2b20](https://github.com/Osama-Qonaibe/hebronai-v2/commit/43f2b209839625031c0d319f6e0d2d67e9db53e6)) by @Osama-Qonaibe
+* Add modelsCount and featuredModels to plan conversion ([e98e21b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e98e21b87e1c229f3bff27757f00d76bf0974d82)) by @Osama-Qonaibe
+* Better error handling for subscription approval ([f1da743](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f1da743be80c4561eb4607337a31966a5dc7bc5e)) by @Osama-Qonaibe
+* Cast subscription.plan to SubscriptionPlan in chat route ([eb3c740](https://github.com/Osama-Qonaibe/hebronai-v2/commit/eb3c740fa5f2b267cc5da66516f41e38829f23b3)) by @Osama-Qonaibe
+* Cast subscription.plan to SubscriptionPlan type ([6d5f14c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6d5f14c8b30d0e19f9fcfd80dd78778a5162f86f)) by @Osama-Qonaibe
+* change requestedPlan to text for admin plans support ([6e33c32](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6e33c324ea2be5fa9cc3094ef7a1834005eeee82)) by @Osama-Qonaibe
+* change RequestedPlan type to string for admin plans ([5f204a2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5f204a20e3286111d76f2ce751f9e23ee2f36a74)) by @Osama-Qonaibe
+* change requestedPlan type to string in admin types ([7f17f33](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7f17f3388a4bb8c0e005c3923d366642ec64048e)) by @Osama-Qonaibe
+* Check planId before plan for custom subscriptions ([50c60e2](https://github.com/Osama-Qonaibe/hebronai-v2/commit/50c60e2d534dc55a345907da7dfee9b478cdd44f)) by @Osama-Qonaibe
+* Get plan slug from planId for custom plans ([aeb09be](https://github.com/Osama-Qonaibe/hebronai-v2/commit/aeb09bef01806d887783578e147238ce696b3155)) by @Osama-Qonaibe
+* handle admin plans without hardcoded payment gateways ([4ecba46](https://github.com/Osama-Qonaibe/hebronai-v2/commit/4ecba464b9848606f80f35ddd4114dfddd7faf16)) by @Osama-Qonaibe
+* handle custom plans expiration with default 1 month ([68ed197](https://github.com/Osama-Qonaibe/hebronai-v2/commit/68ed19719d7cb8e8fce58c65a5fe633f0fa8c80c)) by @Osama-Qonaibe
+* handle legacy plans approval without SubscriptionPlanTable lookup ([5d4bd05](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5d4bd05b4d884df94cb316251e08d1a4c26687f7)) by @Osama-Qonaibe
+* Handle null plan update for custom subscriptions ([7360493](https://github.com/Osama-Qonaibe/hebronai-v2/commit/736049322eb4ed81c7715ea427435e3d9b346c12)) by @Osama-Qonaibe
+* make duration fields optional to prevent build errors ([cb1a3a9](https://github.com/Osama-Qonaibe/hebronai-v2/commit/cb1a3a9353516f4d558f93652b46b71533ce7bbc)) by @Osama-Qonaibe
+* Set plan to free for custom plans instead of null ([ebb1a8c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ebb1a8c32f5119b50a4404116da977e4d3a38bec)) by @Osama-Qonaibe
+* Set plan to null for custom plans during approval ([1efcb7a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1efcb7a8d5163a3bfa7a2131c31ab16567d1e471)) by @Osama-Qonaibe
+* Simplify custom plan approval without SQL ([7fce8c3](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7fce8c37c8cc3b9173b67bef3fa977f097e1f925)) by @Osama-Qonaibe
+* use plan duration from database for custom plans ([aa29a66](https://github.com/Osama-Qonaibe/hebronai-v2/commit/aa29a66b223d7acf9d28c15035025384417d0a96)) by @Osama-Qonaibe
+* Use PLAN_LIMITS from plans.ts for image limits instead of UnifiedPlanLimits ([71dd973](https://github.com/Osama-Qonaibe/hebronai-v2/commit/71dd97305827c792dea84896fee4155969bcd673)) by @Osama-Qonaibe
+* use planId system for subscription approval ([baf3f46](https://github.com/Osama-Qonaibe/hebronai-v2/commit/baf3f4691e40cc3d3615f7de234df2625ee7e5b4)) by @Osama-Qonaibe
 
 ## [5.0.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.2.0...hebronai-v2-v5.0.0) (2026-03-02)
 
