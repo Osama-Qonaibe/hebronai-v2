@@ -53,7 +53,7 @@ import { nanoBananaTool, openaiImageTool } from "lib/ai/tools/image";
 import { ImageToolName } from "lib/ai/tools";
 import { buildCsvIngestionPreviewParts } from "@/lib/ai/ingest/csv-ingest";
 import { serverFileStorage } from "lib/file-storage";
-import { checkImageGenerationLimit, checkImageGenerationMonthlyLimit } from "lib/auth/usage-limits";
+import { checkImageGenerationLimit, checkImageGenerationMonthlyLimit, checkTotalTokenLimit } from "lib/auth/usage-limits";
 
 const logger = globalLogger.withDefaults({
   message: colorize("blackBright", `Chat API: `),
@@ -80,7 +80,6 @@ export async function POST(request: Request) {
       attachments = [],
     } = chatApiSchemaRequestBodySchema.parse(json);
 
-    // Check subscription and model access
     const subscription = await getUserSubscription();
     if (!subscription?.isActive) {
       return Response.json(
@@ -92,7 +91,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if user can access the requested model
     if (chatModel) {
       const hasAccess = canAccessModel(
         subscription.plan as SubscriptionPlan,
@@ -118,7 +116,6 @@ export async function POST(request: Request) {
 
     const useImageTool = Boolean(imageTool?.model);
 
-    // Check image generation limits
     if (useImageTool) {
       const dailyLimit = await checkImageGenerationLimit(session.user.id);
       if (!dailyLimit.allowed) {
@@ -145,6 +142,26 @@ export async function POST(request: Request) {
           { status: 429 },
         );
       }
+    }
+
+    const estimatedTokens = message.parts
+      .filter((p: any) => p.type === "text")
+      .reduce((sum: number, p: any) => sum + (p.text?.length || 0), 0) / 4;
+
+    const tokenLimit = await checkTotalTokenLimit(
+      session.user.id,
+      Math.ceil(estimatedTokens * 2),
+    );
+    if (!tokenLimit.allowed) {
+      return Response.json(
+        {
+          error: tokenLimit.reason,
+          current: tokenLimit.current,
+          max: tokenLimit.max,
+          limitType: "tokens",
+        },
+        { status: 429 },
+      );
     }
 
     const model = customModelProvider.getModel(chatModel);
