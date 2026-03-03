@@ -5,6 +5,60 @@ import { User } from "better-auth";
 import { createMCPToolId } from "./mcp/mcp-tool-id";
 import { format } from "date-fns";
 import { Agent } from "app-types/agent";
+import { readFileSync } from "fs";
+import { join } from "path";
+
+const HEBRONAI_INFO_EN = `
+## About HebronAI Platform
+
+HebronAI is an advanced AI chatbot platform developed by **Osama Qonaibe** from Palestine. It's an enterprise-grade platform built with Next.js, TypeScript, and modern AI frameworks.
+
+**Key Information**:
+- **Company**: ViralLinkUp Ltd (UK Company #16804604)
+- **Founder & CEO**: Osama Qonaibe
+- **Location**: Palestine - Hebron
+- **Founded**: October 2025
+- **Website**: www.hebronai.net
+- **Email**: osama@hebronai.net
+- **Phone**: +972534414330
+
+**Platform Features**:
+- Support for 50+ AI models (OpenAI, Anthropic, Google, DeepSeek, Qwen, Groq, xAI, etc.)
+- Custom AI Agents and Workflows
+- MCP (Model Context Protocol) integration
+- Image, video, and audio generation
+- Web search, code execution, data visualization
+- Enterprise-grade security and encryption
+- Multi-language support (Arabic/English)
+
+**Vision**: Making advanced AI technology accessible to everyone in Palestine and the Arab world, building a strong Palestinian technical infrastructure that competes globally.
+`.trim();
+
+const HEBRONAI_INFO_AR = `
+## عن منصة HebronAI
+
+HebronAI هي منصة ذكاء اصطناعي متقدمة طورها **أسامة قنيبي** من فلسطين. منصة احترافية مبنية على Next.js و TypeScript وأحدث تقنيات الذكاء الاصطناعي.
+
+**معلومات أساسية**:
+- **الشركة**: ViralLinkUp Ltd (شركة بريطانية رقم 16804604)
+- **المؤسس والمدير التنفيذي**: أسامة قنيبي
+- **الموقع**: فلسطين - الخليل
+- **التأسيس**: أكتوبر 2025
+- **الموقع الإلكتروني**: www.hebronai.net
+- **البريد**: osama@hebronai.net
+- **الهاتف**: +972534414330
+
+**مزايا المنصة**:
+- دعم أكثر من 50 نموذج AI (OpenAI, Anthropic, Google, DeepSeek, Qwen, Groq, xAI وغيرها)
+- وكلاء AI مخصصين وسير عمل
+- دمج بروتوكول MCP
+- توليد صور وفيديو وصوت
+- بحث ويب، تنفيذ أكواد، تصوير بيانات
+- أمان وتشفير على مستوى المؤسسات
+- دعم متعدد اللغات (عربي/إنجليزي)
+
+**الرؤية**: جعل تقنيات الذكاء الاصطناعي المتقدمة في متناول الجميع في فلسطين والعالم العربي، وبناء بنية تحتية تقنية فلسطينية قوية تنافس عالمياً.
+`.trim();
 
 export const CREATE_THREAD_TITLE_PROMPT = `
 You are a chat title generation expert.
@@ -48,6 +102,11 @@ ${toolsList}
 CRITICAL: Generate all output content in the same language as the user's request. Be specific and comprehensive. Proactively seek clarification if requirements are ambiguous. Your output should enable the new agent to operate autonomously and reliably within its domain.`.trim();
 };
 
+const getHebronAIInfo = (userPreferences?: UserPreferences) => {
+  const locale = userPreferences?.locale || 'en';
+  return locale === 'ar' ? HEBRONAI_INFO_AR : HEBRONAI_INFO_EN;
+};
+
 export const buildUserSystemPrompt = (
   user?: User,
   userPreferences?: UserPreferences,
@@ -63,6 +122,11 @@ export const buildUserSystemPrompt = (
   }
 
   prompt += `. The current date and time is ${currentTime}.`;
+
+  // Add HebronAI platform info for default assistant only
+  if (!agent) {
+    prompt += `\n\n${getHebronAIInfo(userPreferences)}`;
+  }
 
   // Agent-specific instructions as primary core
   if (agent?.instructions?.systemPrompt) {
@@ -146,6 +210,11 @@ export const buildSpeechSystemPrompt = (
   }
 
   prompt += `. The current date and time is ${currentTime}.`;
+
+  // Add HebronAI platform info for default assistant only
+  if (!agent) {
+    prompt += `\n\n${getHebronAIInfo(userPreferences)}`;
+  }
 
   // Agent-specific instructions as primary core
   if (agent?.instructions?.systemPrompt) {
@@ -256,8 +325,7 @@ ${prompt}
 export const generateExampleToolSchemaPrompt = (options: {
   toolInfo: MCPToolInfo;
   prompt?: string;
-}) => `\n
-You are given a tool with the following details:
+}) => `\n\nYou are given a tool with the following details:
 - Tool Name: ${options.toolInfo.name}
 - Tool Description: ${options.toolInfo.description}
 
@@ -270,8 +338,7 @@ Step 2: Based on that question, generate a valid JSON input object that matches 
 }
 `;
 
-export const MANUAL_REJECT_RESPONSE_PROMPT = `\n
-The user has declined to run the tool. Please respond with the following three approaches:
+export const MANUAL_REJECT_RESPONSE_PROMPT = `\n\nThe user has declined to run the tool. Please respond with the following three approaches:
 
 1. Ask 1-2 specific questions to clarify the user's goal.
 
