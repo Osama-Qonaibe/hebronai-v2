@@ -18,6 +18,12 @@ import {
   MessageCircle,
   Send,
   Loader2,
+  Bot,
+  MessageSquare,
+  Zap,
+  Image as ImageIcon,
+  HardDrive,
+  Infinity,
 } from "lucide-react";
 import { getPaymentLink, getBankTransferDetails } from "@/lib/payment/config";
 import {
@@ -36,6 +42,7 @@ import { Textarea } from "ui/textarea";
 import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { usePlans } from "@/hooks/use-plans";
+import { Separator } from "ui/separator";
 
 type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
 type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "manual";
@@ -55,6 +62,33 @@ function formatDate(date: Date): string {
     month: "short",
     day: "numeric",
   }).format(date);
+}
+
+function formatNumber(num: number, locale: string): string {
+  if (num === -1) return locale === 'ar' ? 'غير محدود' : 'Unlimited';
+  if (num >= 1_000_000) {
+    return `${(num / 1_000_000).toFixed(1)}M`;
+  }
+  if (num >= 1_000) {
+    return `${(num / 1_000).toFixed(0)}K`;
+  }
+  return num.toLocaleString(locale === 'ar' ? 'ar-EG' : 'en-US');
+}
+
+function formatStorage(gb: number, locale: string): string {
+  if (gb === -1) return locale === 'ar' ? 'غير محدود' : 'Unlimited';
+  if (gb < 1) {
+    return `${(gb * 1024).toFixed(0)} MB`;
+  }
+  if (gb > 100) {
+    return `100+ GB`;
+  }
+  return `${gb} GB`;
+}
+
+function calculatePercentageIncrease(current: number, base: number): number {
+  if (base === 0 || base === -1 || current === -1) return 0;
+  return Math.round(((current - base) / base) * 100);
 }
 
 const LEGACY_PLANS = ["free", "basic", "pro", "enterprise"];
@@ -250,6 +284,8 @@ export function SubscriptionCard({
     );
   }
 
+  const freePlan = activePlans.find(p => p.slug === 'free');
+
   return (
     <>
       <div className="space-y-6">
@@ -285,85 +321,231 @@ export function SubscriptionCard({
                 ? "$0"
                 : plan.pricing.monthly > 0
                   ? `$${plan.pricing.monthly}`
-                  : t("custom");
+                  : locale === 'ar' ? 'مخصص' : 'Custom';
+
+            const maxChats = plan.limits.chats?.maxActive || 0;
+            const maxMessages = plan.limits.messages?.maxPerMonth || 0;
+            const maxMCP = plan.features.mcpServers?.maxServers || 0;
+            const maxWorkflows = plan.features.workflows?.maxWorkflows || 0;
+            const maxImages = (plan.limits.images?.maxPerDay || 0);
+            const maxImagesMonth = (plan.limits.images?.maxPerMonth || 0);
+            const maxStorage = (plan.limits.files?.maxSize || 0) / 1024;
+
+            const baseChats = freePlan?.limits.chats?.maxActive || 2;
+            const baseMessages = freePlan?.limits.messages?.maxPerMonth || 50000;
+
+            const chatsIncrease = calculatePercentageIncrease(maxChats, baseChats);
+            const messagesIncrease = calculatePercentageIncrease(maxMessages, baseMessages);
 
             return (
               <Card
                 key={plan.id}
-                className={`relative ${
+                className={`relative flex flex-col ${
                   isFeatured ? "border-primary shadow-lg" : ""
                 }`}
               >
                 {isFeatured && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
                     <Badge className="gap-1">
                       <Sparkles className="h-3 w-3" />
-                      {t("popular")}
+                      {locale === 'ar' ? 'الأكثر شعبية' : 'Most Popular'}
                     </Badge>
                   </div>
                 )}
 
-                <CardHeader>
-                  <CardTitle>{displayName}</CardTitle>
-                  <div className="text-3xl font-bold">
-                    {priceDisplay}
-                    {plan.pricing.monthly > 0 && (
-                      <span className="text-sm font-normal text-muted-foreground">
-                        /{t("month")}
-                      </span>
+                <CardHeader className="pb-4">
+                  <div className="space-y-1">
+                    <CardTitle className="text-xl">{displayName}</CardTitle>
+                    <div className="text-3xl font-bold">
+                      {priceDisplay}
+                      {plan.pricing.monthly > 0 && (
+                        <span className="text-sm font-normal text-muted-foreground">
+                          /{locale === 'ar' ? 'شهر' : 'month'}
+                        </span>
+                      )}
+                    </div>
+                    {plan.pricing.monthly === 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        {locale === 'ar' ? 'مثالي لتجربة HebronAI' : 'Perfect for trying HebronAI'}
+                      </p>
+                    )}
+                    {plan.pricing.monthly > 0 && plan.slug !== 'enterprise' && (
+                      <p className="text-xs text-muted-foreground">
+                        {locale === 'ar' 
+                          ? plan.slug === 'basic' ? 'للمستخدمين المبتدئين' : 'للمحترفين والمستخدمين المتقدمين'
+                          : plan.slug === 'basic' ? 'For beginners' : 'For professionals'
+                        }
+                      </p>
+                    )}
+                    {plan.slug === 'enterprise' && (
+                      <p className="text-xs text-muted-foreground">
+                        {locale === 'ar' ? 'حلول متكاملة للفرق والشركات' : 'Complete solutions for teams'}
+                      </p>
                     )}
                   </div>
                 </CardHeader>
 
-                <CardContent className="space-y-4">
-                  <ul className="space-y-2">
-                    <li className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">
-                        {plan.limits.chats?.maxActive === -1
-                          ? t("unlimited")
-                          : plan.limits.chats?.maxActive || 0}{" "}
-                        {t("chats")}
-                      </span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">
-                        {plan.limits.messages?.maxPerMonth === -1
-                          ? t("unlimited")
-                          : plan.limits.messages?.maxPerMonth || 0}{" "}
-                        {t("messages")}
-                      </span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">
-                        {plan.features.mcpServers?.enabled
-                          ? `${plan.features.mcpServers.maxServers === -1 ? t("unlimited") : plan.features.mcpServers.maxServers} ${t("mcpServers")}`
-                          : t("noMcpServers")}
-                      </span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">
-                        {plan.features.workflows?.enabled
-                          ? `${plan.features.workflows.maxWorkflows === -1 ? t("unlimited") : plan.features.workflows.maxWorkflows} ${t("workflows")}`
-                          : t("noWorkflows")}
-                      </span>
-                    </li>
-                  </ul>
+                <CardContent className="space-y-4 flex-1 flex flex-col">
+                  <div className="space-y-3 flex-1">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                        <Bot className="h-4 w-4" />
+                        {locale === 'ar' ? 'النماذج المتاحة' : 'Available Models'}
+                      </div>
+                      <div className="pl-6 space-y-1">
+                        <div className="text-sm">
+                          {(plan as any).modelsCount || 0} {locale === 'ar' ? 'نموذج AI' : 'AI models'}
+                        </div>
+                        {(plan as any).featuredModels && (plan as any).featuredModels.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {(plan as any).featuredModels.slice(0, 2).map((model: string) => (
+                              <Badge key={model} variant="outline" className="text-xs px-1.5 py-0">
+                                {model}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                        <MessageSquare className="h-4 w-4" />
+                        {locale === 'ar' ? 'المحادثات والرسائل' : 'Chats & Messages'}
+                      </div>
+                      <div className="pl-6 space-y-1.5">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Check className="h-3.5 w-3.5 text-primary" />
+                          <span>
+                            {maxChats === -1 ? (
+                              <span className="flex items-center gap-1">
+                                <Infinity className="h-3.5 w-3.5" />
+                                {locale === 'ar' ? 'محادثات' : 'chats'}
+                              </span>
+                            ) : (
+                              <>
+                                {maxChats} {locale === 'ar' ? 'محادثة' : 'chats'}
+                                {chatsIncrease > 0 && !isCurrent && (
+                                  <span className="text-xs text-primary ml-1">
+                                    (+{chatsIncrease}%)
+                                  </span>
+                                )}
+                              </>
+                            )}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Check className="h-3.5 w-3.5 text-primary" />
+                          <span>
+                            {maxMessages === -1 ? (
+                              <span className="flex items-center gap-1">
+                                <Infinity className="h-3.5 w-3.5" />
+                                {locale === 'ar' ? 'رسائل' : 'messages'}
+                              </span>
+                            ) : (
+                              <>
+                                {formatNumber(maxMessages, locale)} {locale === 'ar' ? 'رسالة/شهر' : 'messages/month'}
+                                {messagesIncrease > 0 && !isCurrent && (
+                                  <span className="text-xs text-primary ml-1">
+                                    (+{messagesIncrease}%)
+                                  </span>
+                                )}
+                              </>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                        <Zap className="h-4 w-4" />
+                        {locale === 'ar' ? 'الأدوات والإمكانيات' : 'Tools & Capabilities'}
+                      </div>
+                      <div className="pl-6 space-y-1.5">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Check className="h-3.5 w-3.5 text-primary" />
+                          <span>
+                            {maxMCP === -1 ? (
+                              <span className="flex items-center gap-1">
+                                <Infinity className="h-3.5 w-3.5" />
+                                MCP Servers
+                              </span>
+                            ) : maxMCP === 0 ? (
+                              locale === 'ar' ? 'لا يوجد MCP' : 'No MCP'
+                            ) : (
+                              `${maxMCP} MCP ${maxMCP === 1 ? 'Server' : 'Servers'}`
+                            )}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Check className="h-3.5 w-3.5 text-primary" />
+                          <span>
+                            {maxWorkflows === -1 ? (
+                              <span className="flex items-center gap-1">
+                                <Infinity className="h-3.5 w-3.5" />
+                                Workflows
+                              </span>
+                            ) : maxWorkflows === 0 ? (
+                              locale === 'ar' ? 'لا يوجد Workflows' : 'No Workflows'
+                            ) : (
+                              `${maxWorkflows} ${maxWorkflows === 1 ? 'Workflow' : 'Workflows'}`
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                        <ImageIcon className="h-4 w-4" />
+                        {locale === 'ar' ? 'الوسائط والتخزين' : 'Media & Storage'}
+                      </div>
+                      <div className="pl-6 space-y-1.5">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Check className="h-3.5 w-3.5 text-primary" />
+                          <span>
+                            {maxImages === -1 ? (
+                              <span className="flex items-center gap-1">
+                                <Infinity className="h-3.5 w-3.5" />
+                                {locale === 'ar' ? 'توليد صور' : 'Image generation'}
+                              </span>
+                            ) : maxImages === 0 ? (
+                              <span className="text-muted-foreground">
+                                {locale === 'ar' ? '✗ لا يوجد توليد صور' : '✗ No images'}
+                              </span>
+                            ) : (
+                              `${maxImages} ${locale === 'ar' ? 'صورة/يوم' : 'images/day'} (${maxImagesMonth}/${locale === 'ar' ? 'شهر' : 'month'})`
+                            )}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <HardDrive className="h-3.5 w-3.5 text-primary" />
+                          <span>
+                            {formatStorage(maxStorage, locale)} {locale === 'ar' ? 'تخزين' : 'storage'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
                   <Button
-                    className="w-full"
+                    className="w-full mt-4"
                     variant={isCurrent ? "outline" : "default"}
                     disabled={isCurrent || loading || pendingRequest !== null}
                     onClick={() => handleUpgradeClick(plan.slug)}
                   >
                     {isCurrent
-                      ? t("currentPlan")
+                      ? (locale === 'ar' ? 'الخطة الحالية' : 'Current Plan')
                       : plan.slug === "enterprise"
-                        ? t("contactUs")
-                        : t("upgrade")}
+                        ? (locale === 'ar' ? 'تواصل معنا' : 'Contact Us')
+                        : (locale === 'ar' ? 'ترقية الآن' : 'Upgrade')}
                   </Button>
                 </CardContent>
               </Card>
