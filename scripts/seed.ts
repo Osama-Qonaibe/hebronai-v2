@@ -62,7 +62,7 @@ async function seed() {
       adminUser = newAdmin;
     }
 
-    console.log("\n📦 Creating subscription plans...");
+    console.log("\n📦 Creating built-in subscription plans...");
 
     const plans = [
       {
@@ -80,7 +80,7 @@ async function seed() {
           currency: "USD",
         },
         models: {
-          allowed: ["groq-llama-3.3-70b", "ollama-models"],
+          allowed: ["groq-models", "ollama-models"],
           default: "groq-llama-3.3-70b",
           limits: {
             "groq-models": {
@@ -93,7 +93,11 @@ async function seed() {
         limits: {
           chats: { maxActive: 2, maxHistory: 20 },
           messages: { maxPerChat: 50, maxPerDay: 100, maxPerMonth: 1500 },
-          files: { maxSize: 0.5, maxCount: 5, allowedTypes: ["pdf", "txt", "md"] },
+          files: {
+            maxSize: 0.5,
+            maxCount: 5,
+            allowedTypes: ["pdf", "txt", "md"],
+          },
           api: { rateLimit: 100, burstLimit: 150 },
         },
         features: {
@@ -101,7 +105,7 @@ async function seed() {
           workflows: { enabled: true, maxWorkflows: 1 },
           agents: { enabled: true, maxCustomAgents: 2, shareAgents: false },
           advanced: {
-            codeInterpreter: true,
+            codeInterpreter: false,
             imageGeneration: false,
             voiceChat: false,
             documentAnalysis: false,
@@ -123,7 +127,6 @@ async function seed() {
           order: 1,
           color: "#6B7280",
           icon: "Zap",
-          modelsCount: 12,
         },
         createdBy: adminUser.id,
       },
@@ -143,7 +146,13 @@ async function seed() {
           discount: { yearly: 16.75 },
         },
         models: {
-          allowed: ["gpt-5-nano", "gemini-2.5-flash-lite", "deepseek-v3", "groq-models", "ollama-models"],
+          allowed: [
+            "gpt-5-nano",
+            "gemini-2.5-flash-lite",
+            "deepseek-v3",
+            "groq-models",
+            "ollama-models",
+          ],
           default: "gpt-5-nano",
           limits: {
             "gpt-5-nano": {
@@ -151,12 +160,21 @@ async function seed() {
               maxRequestsPerDay: 150,
               maxTokensPerMonth: 400000,
             },
+            "gemini-2.5-flash-lite": {
+              maxTokensPerRequest: 32000,
+              maxRequestsPerDay: 100,
+              maxTokensPerMonth: 400000,
+            },
           },
         },
         limits: {
           chats: { maxActive: 5, maxHistory: 50 },
-          messages: { maxPerChat: 100, maxPerDay: 500, maxPerMonth: 12000 },
-          files: { maxSize: 2, maxCount: 20, allowedTypes: ["pdf", "txt", "md", "docx"] },
+          messages: { maxPerChat: 100, maxPerDay: 150, maxPerMonth: 4500 },
+          files: {
+            maxSize: 2,
+            maxCount: 20,
+            allowedTypes: ["pdf", "txt", "md", "docx"],
+          },
           api: { rateLimit: 500, burstLimit: 750 },
         },
         features: {
@@ -186,7 +204,6 @@ async function seed() {
           order: 2,
           color: "#3B82F6",
           icon: "Rocket",
-          modelsCount: 17,
         },
         createdBy: adminUser.id,
       },
@@ -225,12 +242,26 @@ async function seed() {
               maxRequestsPerDay: 500,
               maxTokensPerMonth: 2500000,
             },
+            "gemini-2.5-pro": {
+              maxTokensPerRequest: 64000,
+              maxRequestsPerDay: 400,
+              maxTokensPerMonth: 2500000,
+            },
+            "claude-haiku-4.5": {
+              maxTokensPerRequest: 48000,
+              maxRequestsPerDay: 350,
+              maxTokensPerMonth: 2500000,
+            },
           },
         },
         limits: {
           chats: { maxActive: 20, maxHistory: 200 },
           messages: { maxPerChat: 500, maxPerDay: 2000, maxPerMonth: 60000 },
-          files: { maxSize: 10, maxCount: 100, allowedTypes: ["*"] },
+          files: {
+            maxSize: 10,
+            maxCount: 100,
+            allowedTypes: ["*"],
+          },
           api: { rateLimit: 2000, burstLimit: 3000 },
         },
         features: {
@@ -261,7 +292,6 @@ async function seed() {
           badge: "Most Popular",
           color: "#8B5CF6",
           icon: "Sparkles",
-          modelsCount: 25,
         },
         createdBy: adminUser.id,
       },
@@ -294,7 +324,11 @@ async function seed() {
         limits: {
           chats: { maxActive: -1, maxHistory: -1 },
           messages: { maxPerChat: -1, maxPerDay: -1, maxPerMonth: -1 },
-          files: { maxSize: -1, maxCount: -1, allowedTypes: ["*"] },
+          files: {
+            maxSize: -1,
+            maxCount: -1,
+            allowedTypes: ["*"],
+          },
           api: { rateLimit: -1, burstLimit: -1 },
         },
         features: {
@@ -325,7 +359,6 @@ async function seed() {
           badge: "Custom",
           color: "#F59E0B",
           icon: "Crown",
-          modelsCount: 45,
         },
         createdBy: adminUser.id,
       },
@@ -358,18 +391,35 @@ async function seed() {
     console.log(
       "\n============================================================================",
     );
-    console.log("✅ Seeding completed!");
+    console.log("✅ Seeding completed successfully!");
     console.log(
       "============================================================================\n",
     );
     console.log("📊 Summary:");
-    console.log("  - Admin: admin@hebronai.net");
-    console.log("  - Plans: 4 (Free, Basic, Pro, Enterprise)");
-    console.log("\n📊 Details:");
-    console.log("  1. Free: 12 models, 2 agents, 1 workflow, 50K tokens/mo");
-    console.log("  2. Basic ($9.99): 17 models, 5 agents, 3 workflows, 400K tokens/mo");
-    console.log("  3. Pro ($24.99): 25 models, 20 agents, 10 workflows, 2.5M tokens/mo");
-    console.log("  4. Enterprise: 45+ models, unlimited everything");
+    console.log("  Admin: admin@hebronai.net");
+    console.log("  Built-in Plans: 4\n");
+    console.log("📊 Plans Details:");
+    console.log("  1. Free ($0):");
+    console.log("     - Models: 12 (Groq, Ollama)");
+    console.log("     - Agents: 2 | Workflows: 1 | MCP: 1");
+    console.log("     - Tokens: 50K/month | Storage: 512MB");
+    console.log("     - Messages: 1,500/month | Chats: 2 active\n");
+    console.log("  2. Basic ($9.99/month):");
+    console.log("     - Models: 17 (GPT-5 Nano, Gemini 2.5 Flash Lite, DeepSeek v3)");
+    console.log("     - Agents: 5 | Workflows: 3 | MCP: 2");
+    console.log("     - Tokens: 400K/month | Storage: 2GB");
+    console.log("     - Images: 3/day (90/month) | API: 500 calls/day");
+    console.log("     - Messages: 4,500/month | Chats: 5 active\n");
+    console.log("  3. Pro ($24.99/month):");
+    console.log("     - Models: 25 (GPT-5 Mini, Gemini 2.5 Pro, Grok, Claude Haiku)");
+    console.log("     - Agents: 20 | Workflows: 10 | MCP: 5");
+    console.log("     - Tokens: 2.5M/month | Storage: 10GB");
+    console.log("     - Images: 6/day (180/month) | API: 2,000 calls/day");
+    console.log("     - Voice: 20 min/month | Messages: 60K/month\n");
+    console.log("  4. Enterprise (Custom Pricing):");
+    console.log("     - Models: 45+ (GPT-5.2 Pro, Claude Opus 4.5, Sora 2 Pro)");
+    console.log("     - Everything unlimited");
+    console.log("     - Team workspace, SSO, dedicated support");
 
     process.exit(0);
   } catch (error: any) {
