@@ -3,7 +3,6 @@
 import { useSidebar } from "ui/sidebar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "ui/tooltip";
 import {
-  AudioWaveformIcon,
   ChevronDown,
   MessageCircleDashed,
   PanelLeft,
