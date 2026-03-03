@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  AudioWaveformIcon,
   ChevronDown,
   CornerRightUp,
   FileIcon,
@@ -607,48 +606,25 @@ export default function PromptInput({
                     <ChevronDown className="size-3 flex-shrink-0" />
                   </Button>
                 </SelectModel>
-                {!isLoading && !input.length && !voiceDisabled ? (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        size={"sm"}
-                        onClick={() => {
-                          appStoreMutate((state) => ({
-                            voiceChat: {
-                              ...state.voiceChat,
-                              isOpen: true,
-                              agentId: undefined,
-                            },
-                          }));
-                        }}
-                        className="rounded-full p-2!"
-                      >
-                        <AudioWaveformIcon size={16} />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>{t("VoiceChat.title")}</TooltipContent>
-                  </Tooltip>
-                ) : (
-                  <div
-                    onClick={() => {
-                      if (isLoading) {
-                        onStop();
-                      } else {
-                        submit();
-                      }
-                    }}
-                    className="fade-in animate-in cursor-pointer text-muted-foreground rounded-full p-2 bg-secondary hover:bg-accent-foreground hover:text-accent transition-all duration-200"
-                  >
-                    {isLoading ? (
-                      <Square
-                        size={16}
-                        className="fill-muted-foreground text-muted-foreground"
-                      />
-                    ) : (
-                      <CornerRightUp size={16} />
-                    )}
-                  </div>
-                )}
+                <div
+                  onClick={() => {
+                    if (isLoading) {
+                      onStop();
+                    } else {
+                      submit();
+                    }
+                  }}
+                  className="fade-in animate-in cursor-pointer text-muted-foreground rounded-full p-2 bg-secondary hover:bg-accent-foreground hover:text-accent transition-all duration-200"
+                >
+                  {isLoading ? (
+                    <Square
+                      size={16}
+                      className="fill-muted-foreground text-muted-foreground"
+                    />
+                  ) : (
+                    <CornerRightUp size={16} />
+                  )}
+                </div>
               </div>
 
               {uploadedFiles.length > 0 && (
