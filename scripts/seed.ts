@@ -58,7 +58,7 @@ async function seed() {
       });
     } else {
       console.log(
-        `⚠️  Expected 4 built-in plans, found ${builtInPlans.length}",
+        `⚠️  Expected 4 built-in plans, found ${builtInPlans.length}`,
       );
       console.log(
         "   Run migration to create built-in plans: pnpm drizzle-kit push",
