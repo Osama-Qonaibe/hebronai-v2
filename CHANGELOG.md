@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.5](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.1.4...hebronai-v2-v5.1.5) (2026-03-03)
+
+
+### Bug Fixes
+
+* Make seed script smart - update built-in plans instead of creating duplicates ([5de452b](https://github.com/Osama-Qonaibe/hebronai-v2/commit/5de452ba744073b8078e1ac91f9990dda286c499))
+
 ## [5.1.4](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.1.3...hebronai-v2-v5.1.4) (2026-03-03)
 
 
