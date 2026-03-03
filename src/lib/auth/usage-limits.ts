@@ -406,6 +406,193 @@ export async function checkTotalTokenLimit(
   };
 }
 
+export async function checkStorageLimit(
+  userId: string,
+  fileSizeMB: number,
+): Promise<LimitCheckResult> {
+  const plan = await getUserPlan(userId);
+
+  if (!plan || !plan.isActive) {
+    return {
+      allowed: false,
+      reason: "No active subscription found",
+    };
+  }
+
+  const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
+  if (!planLimits) {
+    return {
+      allowed: false,
+      reason: `Unknown plan: ${plan.slug}`,
+    };
+  }
+
+  const maxStorageGB = planLimits.maxStorageGB;
+
+  if (isUnlimited(maxStorageGB)) {
+    return { allowed: true };
+  }
+
+  const [result] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(CAST(${UsageTable.amount} AS NUMERIC)), 0)`,
+    })
+    .from(UsageTable)
+    .where(
+      and(
+        eq(UsageTable.userId, userId),
+        eq(UsageTable.resourceType, "storage"),
+      ),
+    );
+
+  const currentUsageMB = Number(result?.total || 0);
+  const currentUsageGB = currentUsageMB / 1024;
+  const afterUsageGB = (currentUsageMB + fileSizeMB) / 1024;
+
+  if (afterUsageGB > maxStorageGB) {
+    return {
+      allowed: false,
+      reason: `This upload would exceed your storage limit (${maxStorageGB} GB). Current usage: ${currentUsageGB.toFixed(2)} GB. Upgrade for more storage.`,
+      current: Math.round(currentUsageGB * 100) / 100,
+      max: maxStorageGB,
+    };
+  }
+
+  return {
+    allowed: true,
+    current: Math.round(currentUsageGB * 100) / 100,
+    max: maxStorageGB,
+  };
+}
+
+export async function checkAPICallLimit(
+  userId: string,
+): Promise<LimitCheckResult> {
+  const plan = await getUserPlan(userId);
+
+  if (!plan || !plan.isActive) {
+    return {
+      allowed: false,
+      reason: "No active subscription found",
+    };
+  }
+
+  const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
+  if (!planLimits) {
+    return {
+      allowed: false,
+      reason: `Unknown plan: ${plan.slug}`,
+    };
+  }
+
+  const maxCallsPerDay = planLimits.maxAPICallsPerDay;
+
+  if (isUnlimited(maxCallsPerDay)) {
+    return { allowed: true };
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const [result] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(CAST(${UsageTable.amount} AS NUMERIC)), 0)`,
+    })
+    .from(UsageTable)
+    .where(
+      and(
+        eq(UsageTable.userId, userId),
+        eq(UsageTable.resourceType, "api_calls"),
+        gte(UsageTable.periodStart, today),
+        lt(UsageTable.periodStart, tomorrow),
+      ),
+    );
+
+  const currentCalls = Number(result?.total || 0);
+
+  if (currentCalls >= maxCallsPerDay) {
+    return {
+      allowed: false,
+      reason: `Daily API call limit (${maxCallsPerDay}) reached. Resets at midnight. Current: ${currentCalls}/${maxCallsPerDay}`,
+      current: currentCalls,
+      max: maxCallsPerDay,
+    };
+  }
+
+  return {
+    allowed: true,
+    current: currentCalls,
+    max: maxCallsPerDay,
+  };
+}
+
+export async function checkDocumentLimit(
+  userId: string,
+): Promise<LimitCheckResult> {
+  const plan = await getUserPlan(userId);
+
+  if (!plan || !plan.isActive) {
+    return {
+      allowed: false,
+      reason: "No active subscription found",
+    };
+  }
+
+  const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
+  if (!planLimits) {
+    return {
+      allowed: false,
+      reason: `Unknown plan: ${plan.slug}`,
+    };
+  }
+
+  const maxDocsPerMonth = planLimits.maxDocumentsPerMonth;
+
+  if (isUnlimited(maxDocsPerMonth)) {
+    return { allowed: true };
+  }
+
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const endOfMonth = new Date(startOfMonth);
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+
+  const [result] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(CAST(${UsageTable.amount} AS NUMERIC)), 0)`,
+    })
+    .from(UsageTable)
+    .where(
+      and(
+        eq(UsageTable.userId, userId),
+        eq(UsageTable.resourceType, "documents"),
+        gte(UsageTable.periodStart, startOfMonth),
+        lt(UsageTable.periodStart, endOfMonth),
+      ),
+    );
+
+  const currentDocs = Number(result?.total || 0);
+
+  if (currentDocs >= maxDocsPerMonth) {
+    return {
+      allowed: false,
+      reason: `Monthly document limit (${maxDocsPerMonth}) reached. Resets next month. Current: ${currentDocs}/${maxDocsPerMonth}`,
+      current: currentDocs,
+      max: maxDocsPerMonth,
+    };
+  }
+
+  return {
+    allowed: true,
+    current: currentDocs,
+    max: maxDocsPerMonth,
+  };
+}
+
 export async function checkTokenLimit(
   userId: string,
   modelName: string,
@@ -604,6 +791,46 @@ export async function getUserUsageLimits(userId: string) {
       ),
     );
 
+  const [storageResult] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(CAST(${UsageTable.amount} AS NUMERIC)), 0)`,
+    })
+    .from(UsageTable)
+    .where(
+      and(
+        eq(UsageTable.userId, userId),
+        eq(UsageTable.resourceType, "storage"),
+      ),
+    );
+
+  const [dailyAPICallsResult] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(CAST(${UsageTable.amount} AS NUMERIC)), 0)`,
+    })
+    .from(UsageTable)
+    .where(
+      and(
+        eq(UsageTable.userId, userId),
+        eq(UsageTable.resourceType, "api_calls"),
+        gte(UsageTable.periodStart, today),
+        lt(UsageTable.periodStart, tomorrow),
+      ),
+    );
+
+  const [monthlyDocumentsResult] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(CAST(${UsageTable.amount} AS NUMERIC)), 0)`,
+    })
+    .from(UsageTable)
+    .where(
+      and(
+        eq(UsageTable.userId, userId),
+        eq(UsageTable.resourceType, "documents"),
+        gte(UsageTable.periodStart, startOfMonth),
+        lt(UsageTable.periodStart, endOfMonth),
+      ),
+    );
+
   return {
     plan: {
       id: plan.id,
@@ -667,6 +894,30 @@ export async function getUserUsageLimits(userId: string) {
         percentage: calculatePercentage(
           Number(monthlyTokensResult?.total || 0),
           planLimits?.maxTokensPerMonth || 0,
+        ),
+      },
+      storage: {
+        current: Math.round((Number(storageResult?.total || 0) / 1024) * 100) / 100,
+        max: planLimits?.maxStorageGB || 0,
+        percentage: calculatePercentage(
+          Number(storageResult?.total || 0) / 1024,
+          planLimits?.maxStorageGB || 0,
+        ),
+      },
+      apiCallsDaily: {
+        current: Number(dailyAPICallsResult?.total || 0),
+        max: planLimits?.maxAPICallsPerDay || 0,
+        percentage: calculatePercentage(
+          Number(dailyAPICallsResult?.total || 0),
+          planLimits?.maxAPICallsPerDay || 0,
+        ),
+      },
+      documentsMonthly: {
+        current: Number(monthlyDocumentsResult?.total || 0),
+        max: planLimits?.maxDocumentsPerMonth || 0,
+        percentage: calculatePercentage(
+          Number(monthlyDocumentsResult?.total || 0),
+          planLimits?.maxDocumentsPerMonth || 0,
         ),
       },
       models: plan.limits.models,
