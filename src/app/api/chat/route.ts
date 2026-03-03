@@ -53,6 +53,7 @@ import { nanoBananaTool, openaiImageTool } from "lib/ai/tools/image";
 import { ImageToolName } from "lib/ai/tools";
 import { buildCsvIngestionPreviewParts } from "@/lib/ai/ingest/csv-ingest";
 import { serverFileStorage } from "lib/file-storage";
+import { checkImageGenerationLimit, checkImageGenerationMonthlyLimit } from "lib/auth/usage-limits";
 
 const logger = globalLogger.withDefaults({
   message: colorize("blackBright", `Chat API: `),
@@ -111,6 +112,37 @@ export async function POST(request: Request) {
             currentPlan: subscription.plan,
           },
           { status: 403 },
+        );
+      }
+    }
+
+    const useImageTool = Boolean(imageTool?.model);
+
+    // Check image generation limits
+    if (useImageTool) {
+      const dailyLimit = await checkImageGenerationLimit(session.user.id);
+      if (!dailyLimit.allowed) {
+        return Response.json(
+          {
+            error: dailyLimit.reason,
+            current: dailyLimit.current,
+            max: dailyLimit.max,
+            limitType: "daily",
+          },
+          { status: 429 },
+        );
+      }
+
+      const monthlyLimit = await checkImageGenerationMonthlyLimit(session.user.id);
+      if (!monthlyLimit.allowed) {
+        return Response.json(
+          {
+            error: monthlyLimit.reason,
+            current: monthlyLimit.current,
+            max: monthlyLimit.max,
+            limitType: "monthly",
+          },
+          { status: 429 },
         );
       }
     }
@@ -225,8 +257,6 @@ export async function POST(request: Request) {
     if (agent?.instructions?.mentions) {
       mentions.push(...agent.instructions.mentions);
     }
-
-    const useImageTool = Boolean(imageTool?.model);
 
     const isToolCallAllowed =
       supportToolCall &&
