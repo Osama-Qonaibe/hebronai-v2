@@ -29,6 +29,8 @@ export interface SubscriptionPlan {
       };
     };
   };
+  modelsCount?: number;
+  featuredModels?: string[];
   limits: {
     chats: { maxActive: number; maxHistory: number };
     messages: {
