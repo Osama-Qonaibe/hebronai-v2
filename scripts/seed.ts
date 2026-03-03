@@ -1,15 +1,5 @@
 #!/usr/bin/env tsx
 
-/**
- * Database Seed Script
- *
- * This script seeds the database with initial data:
- * - Admin user
- * - Subscription plans
- *
- * Usage: pnpm tsx scripts/seed.ts
- */
-
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "../src/lib/db/pg/schema.pg";
@@ -40,7 +30,6 @@ async function seed() {
 
     console.log("✅ Connected to database\n");
 
-    // 1. Create Admin User
     console.log("👤 Creating admin user...");
 
     const existingAdmin = await db
@@ -63,7 +52,7 @@ async function seed() {
           role: "admin",
           plan: "enterprise",
           planStatus: "active",
-          planExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
+          planExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
         })
         .returning();
 
@@ -73,13 +62,13 @@ async function seed() {
       adminUser = newAdmin;
     }
 
-    // 2. Create Subscription Plans
     console.log("\n📦 Creating subscription plans...");
 
     const plans = [
       {
-        name: "Free Plan",
+        name: "Free",
         slug: "free",
+        isBuiltIn: true,
         displayName: { en: "Free", ar: "مجاني" },
         description: {
           en: "Perfect for trying out HebronAI",
@@ -91,30 +80,30 @@ async function seed() {
           currency: "USD",
         },
         models: {
-          allowed: ["gpt-4.1-nano", "gemini-2.5-flash"],
-          default: "gpt-4.1-nano",
+          allowed: ["groq-models", "ollama-models"],
+          default: "groq-llama-3.3-70b",
           limits: {
-            "gpt-4.1-nano": {
-              maxTokensPerRequest: 4000,
-              maxRequestsPerDay: 50,
-              maxTokensPerMonth: 100000,
+            "groq-models": {
+              maxTokensPerRequest: 8000,
+              maxRequestsPerDay: 100,
+              maxTokensPerMonth: 50000,
             },
           },
         },
         limits: {
-          chats: { maxActive: 5, maxHistory: 10 },
-          messages: { maxPerChat: 50, maxPerDay: 100, maxPerMonth: 1000 },
+          chats: { maxActive: 2, maxHistory: 10 },
+          messages: { maxPerChat: 25, maxPerDay: 50, maxPerMonth: 1500 },
           files: {
-            maxSize: 5,
-            maxCount: 10,
+            maxSize: 0.5,
+            maxCount: 5,
             allowedTypes: ["pdf", "txt", "md"],
           },
-          api: { rateLimit: 10, burstLimit: 20 },
+          api: { rateLimit: 100, burstLimit: 150 },
         },
         features: {
-          mcpServers: { enabled: false, maxServers: 0, customServers: false },
-          workflows: { enabled: false, maxWorkflows: 0 },
-          agents: { enabled: false, maxCustomAgents: 0, shareAgents: false },
+          mcpServers: { enabled: true, maxServers: 1, customServers: false },
+          workflows: { enabled: true, maxWorkflows: 1 },
+          agents: { enabled: true, maxCustomAgents: 2, shareAgents: false },
           advanced: {
             codeInterpreter: false,
             imageGeneration: false,
@@ -132,54 +121,153 @@ async function seed() {
           isFeatured: false,
           allowSignup: true,
           maxUsers: null,
-          trialDays: 30,
+          trialDays: 0,
         },
         metadata: {
           order: 1,
-          color: "#gray",
-          icon: "🆓",
+          color: "#6B7280",
+          icon: "Zap",
         },
         createdBy: adminUser.id,
       },
       {
-        name: "Pro Plan",
-        slug: "pro",
-        displayName: { en: "Pro", ar: "احترافي" },
+        name: "Basic",
+        slug: "basic",
+        isBuiltIn: true,
+        displayName: { en: "Basic", ar: "مبتدئ" },
         description: {
-          en: "For professionals and power users",
-          ar: "للمحترفين والمستخدمين المتقدمين",
+          en: "For beginners and advanced users",
+          ar: "للمبتدئين والمستخدمين المتقدمين",
         },
         pricing: {
-          monthly: 29,
-          yearly: 290,
+          monthly: 9.99,
+          yearly: 99.9,
           currency: "USD",
-          discount: { yearly: 20 },
+          discount: { yearly: 16.75 },
         },
         models: {
-          allowed: ["gpt-4.1-mini", "gpt-4.1-nano", "gemini-2.5-flash"],
-          default: "gpt-4.1-mini",
+          allowed: [
+            "gpt-5-nano",
+            "gemini-2.5-flash-lite",
+            "deepseek-v3",
+            "groq-models",
+            "ollama-models",
+          ],
+          default: "gpt-5-nano",
           limits: {
-            "gpt-4.1-mini": {
+            "gpt-5-nano": {
               maxTokensPerRequest: 16000,
-              maxRequestsPerDay: 500,
-              maxTokensPerMonth: 2000000,
+              maxRequestsPerDay: 150,
+              maxTokensPerMonth: 400000,
+            },
+            "gemini-2.5-flash-lite": {
+              maxTokensPerRequest: 32000,
+              maxRequestsPerDay: 100,
+              maxTokensPerMonth: 400000,
             },
           },
         },
         limits: {
-          chats: { maxActive: 50, maxHistory: 100 },
-          messages: { maxPerChat: 500, maxPerDay: 1000, maxPerMonth: 20000 },
+          chats: { maxActive: 5, maxHistory: 50 },
+          messages: { maxPerChat: 100, maxPerDay: 150, maxPerMonth: 4500 },
           files: {
-            maxSize: 50,
-            maxCount: 100,
-            allowedTypes: ["pdf", "txt", "md", "docx", "xlsx"],
+            maxSize: 2,
+            maxCount: 20,
+            allowedTypes: ["pdf", "txt", "md", "docx"],
           },
-          api: { rateLimit: 100, burstLimit: 200 },
+          api: { rateLimit: 500, burstLimit: 750 },
+        },
+        features: {
+          mcpServers: { enabled: true, maxServers: 2, customServers: true },
+          workflows: { enabled: true, maxWorkflows: 3 },
+          agents: { enabled: true, maxCustomAgents: 5, shareAgents: true },
+          advanced: {
+            codeInterpreter: true,
+            imageGeneration: true,
+            voiceChat: false,
+            documentAnalysis: true,
+            apiAccess: true,
+            prioritySupport: false,
+            teamWorkspace: false,
+            exportData: true,
+          },
+        },
+        adminSettings: {
+          isActive: true,
+          isVisible: true,
+          isFeatured: false,
+          allowSignup: true,
+          maxUsers: null,
+          trialDays: 7,
+        },
+        metadata: {
+          order: 2,
+          color: "#3B82F6",
+          icon: "Rocket",
+        },
+        createdBy: adminUser.id,
+      },
+      {
+        name: "Pro",
+        slug: "pro",
+        isBuiltIn: true,
+        displayName: { en: "Pro", ar: "محترف" },
+        description: {
+          en: "For professionals and advanced users",
+          ar: "للمحترفين والمستخدمين المتقدمين",
+        },
+        pricing: {
+          monthly: 24.99,
+          yearly: 249.9,
+          currency: "USD",
+          discount: { yearly: 16.67 },
+        },
+        models: {
+          allowed: [
+            "gpt-5-mini",
+            "gemini-2.5-pro",
+            "grok-4.1-fast",
+            "claude-haiku-4.5",
+            "llama-4-405b",
+            "gpt-5-nano",
+            "gemini-2.5-flash-lite",
+            "deepseek-v3",
+            "groq-models",
+            "ollama-models",
+          ],
+          default: "gpt-5-mini",
+          limits: {
+            "gpt-5-mini": {
+              maxTokensPerRequest: 32000,
+              maxRequestsPerDay: 500,
+              maxTokensPerMonth: 2500000,
+            },
+            "gemini-2.5-pro": {
+              maxTokensPerRequest: 64000,
+              maxRequestsPerDay: 400,
+              maxTokensPerMonth: 2500000,
+            },
+            "claude-haiku-4.5": {
+              maxTokensPerRequest: 48000,
+              maxRequestsPerDay: 350,
+              maxTokensPerMonth: 2500000,
+            },
+          },
+        },
+        limits: {
+          chats: { maxActive: 20, maxHistory: 200 },
+          messages: { maxPerChat: 500, maxPerDay: 900, maxPerMonth: 27000 },
+          files: {
+            maxSize: 10,
+            maxCount: 100,
+            allowedTypes: ["*"],
+          },
+          api: { rateLimit: 2000, burstLimit: 3000 },
         },
         features: {
           mcpServers: { enabled: true, maxServers: 5, customServers: true },
           workflows: { enabled: true, maxWorkflows: 10 },
-          agents: { enabled: true, maxCustomAgents: 5, shareAgents: true },
+          agents: { enabled: true, maxCustomAgents: 20, shareAgents: true },
           advanced: {
             codeInterpreter: true,
             imageGeneration: true,
@@ -200,10 +288,77 @@ async function seed() {
           trialDays: 14,
         },
         metadata: {
-          order: 2,
-          badge: "Popular",
-          color: "#blue",
-          icon: "⭐",
+          order: 3,
+          badge: "Most Popular",
+          color: "#8B5CF6",
+          icon: "Sparkles",
+        },
+        createdBy: adminUser.id,
+      },
+      {
+        name: "Enterprise",
+        slug: "enterprise",
+        isBuiltIn: true,
+        displayName: { en: "Enterprise", ar: "للشركات" },
+        description: {
+          en: "Custom solutions for teams and organizations",
+          ar: "حلول مخصصة للفرق والشركات",
+        },
+        pricing: {
+          monthly: 0,
+          yearly: 0,
+          currency: "USD",
+          custom: true,
+        },
+        models: {
+          allowed: ["*"],
+          default: "gpt-5.2-pro",
+          limits: {
+            "*": {
+              maxTokensPerRequest: -1,
+              maxRequestsPerDay: -1,
+              maxTokensPerMonth: -1,
+            },
+          },
+        },
+        limits: {
+          chats: { maxActive: -1, maxHistory: -1 },
+          messages: { maxPerChat: -1, maxPerDay: -1, maxPerMonth: -1 },
+          files: {
+            maxSize: -1,
+            maxCount: -1,
+            allowedTypes: ["*"],
+          },
+          api: { rateLimit: -1, burstLimit: -1 },
+        },
+        features: {
+          mcpServers: { enabled: true, maxServers: -1, customServers: true },
+          workflows: { enabled: true, maxWorkflows: -1 },
+          agents: { enabled: true, maxCustomAgents: -1, shareAgents: true },
+          advanced: {
+            codeInterpreter: true,
+            imageGeneration: true,
+            voiceChat: true,
+            documentAnalysis: true,
+            apiAccess: true,
+            prioritySupport: true,
+            teamWorkspace: true,
+            exportData: true,
+          },
+        },
+        adminSettings: {
+          isActive: true,
+          isVisible: true,
+          isFeatured: false,
+          allowSignup: false,
+          maxUsers: null,
+          trialDays: 30,
+        },
+        metadata: {
+          order: 4,
+          badge: "Custom",
+          color: "#F59E0B",
+          icon: "Crown",
         },
         createdBy: adminUser.id,
       },
@@ -217,9 +372,16 @@ async function seed() {
         .limit(1);
 
       if (existing.length > 0) {
-        console.log(`ℹ️  Plan "${plan.name}" already exists`);
+        await db
+          .update(schema.SubscriptionPlanTable)
+          .set({
+            ...plan,
+            updatedAt: new Date(),
+          } as any)
+          .where(eq(schema.SubscriptionPlanTable.slug, plan.slug));
+        console.log(`🔄 Updated plan: ${plan.name}`);
       } else {
-        await db.insert(schema.SubscriptionPlanTable).values(plan);
+        await db.insert(schema.SubscriptionPlanTable).values(plan as any);
         console.log(`✅ Created plan: ${plan.name}`);
       }
     }
@@ -235,11 +397,12 @@ async function seed() {
     );
     console.log("📊 Summary:");
     console.log("  - Admin user: admin@hebronai.net");
-    console.log("  - Subscription plans: 2 (Free, Pro)");
-    console.log("\n🎯 Next steps:");
-    console.log("  1. Set admin password (if using email/password auth)");
-    console.log("  2. Test login with admin account");
-    console.log("  3. Configure additional settings in admin panel");
+    console.log("  - Subscription plans: 4 (Free, Basic, Pro, Enterprise)");
+    console.log("\n🎯 Plans:");
+    console.log("  1. Free ($0) - 12 models, 2 chats, 50K tokens/month");
+    console.log("  2. Basic ($9.99) - 17 models, 5 chats, 400K tokens/month");
+    console.log("  3. Pro ($24.99) - 25 models, 20 chats, 2.5M tokens/month");
+    console.log("  4. Enterprise (Custom) - Unlimited everything");
 
     process.exit(0);
   } catch (error: any) {
