@@ -5,8 +5,6 @@ import { User } from "better-auth";
 import { createMCPToolId } from "./mcp/mcp-tool-id";
 import { format } from "date-fns";
 import { Agent } from "app-types/agent";
-import { readFileSync } from "fs";
-import { join } from "path";
 
 const HEBRONAI_INFO_EN = `
 ## About HebronAI Platform
