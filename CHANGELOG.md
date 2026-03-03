@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.2.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.1.5...hebronai-v2-v5.2.0) (2026-03-03)
+
+
+### Features
+
+* Add migration for built-in subscription plans ([7d28e19](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7d28e198b0133d68bbd6c5033f42611d62f86ad8))
+
+
+### Bug Fixes
+
+* Correct template string syntax in seed.ts ([42a8696](https://github.com/Osama-Qonaibe/hebronai-v2/commit/42a86961ab1b4c93997a2cebf45e1cb83089539d))
+
 ## [5.1.5](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.1.4...hebronai-v2-v5.1.5) (2026-03-03)
 
 
