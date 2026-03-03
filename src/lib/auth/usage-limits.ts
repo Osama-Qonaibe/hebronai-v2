@@ -20,9 +20,6 @@ export interface LimitCheckResult {
   max?: number;
 }
 
-/**
- * ✅ Agents Limit
- */
 export async function checkAgentCreationLimit(
   userId: string,
 ): Promise<LimitCheckResult> {
@@ -64,9 +61,6 @@ export async function checkAgentCreationLimit(
   };
 }
 
-/**
- * ✅ Workflows Limit
- */
 export async function checkWorkflowCreationLimit(
   userId: string,
 ): Promise<LimitCheckResult> {
@@ -108,9 +102,6 @@ export async function checkWorkflowCreationLimit(
   };
 }
 
-/**
- * ✅ MCP Servers Limit
- */
 export async function checkMCPServerCreationLimit(
   userId: string,
 ): Promise<LimitCheckResult> {
@@ -152,9 +143,6 @@ export async function checkMCPServerCreationLimit(
   };
 }
 
-/**
- * ✅ Messages Per Day Limit
- */
 export async function checkDailyMessageLimit(
   userId: string,
 ): Promise<LimitCheckResult> {
@@ -211,9 +199,6 @@ export async function checkDailyMessageLimit(
   };
 }
 
-/**
- * ✅ Image Generation Daily Limit (FIXED)
- */
 export async function checkImageGenerationLimit(
   userId: string,
 ): Promise<LimitCheckResult> {
@@ -284,9 +269,6 @@ export async function checkImageGenerationLimit(
   };
 }
 
-/**
- * ✅ Image Generation Monthly Limit (NEW - Safety Check)
- */
 export async function checkImageGenerationMonthlyLimit(
   userId: string,
 ): Promise<LimitCheckResult> {
@@ -357,9 +339,73 @@ export async function checkImageGenerationMonthlyLimit(
   };
 }
 
-/**
- * ✅ Token Limit للـ Model المحدد
- */
+export async function checkTotalTokenLimit(
+  userId: string,
+  tokensToUse: number,
+): Promise<LimitCheckResult> {
+  const plan = await getUserPlan(userId);
+
+  if (!plan || !plan.isActive) {
+    return {
+      allowed: false,
+      reason: "No active subscription found",
+    };
+  }
+
+  const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
+  if (!planLimits) {
+    return {
+      allowed: false,
+      reason: `Unknown plan: ${plan.slug}`,
+    };
+  }
+
+  const maxTokensPerMonth = planLimits.maxTokensPerMonth;
+
+  if (isUnlimited(maxTokensPerMonth)) {
+    return { allowed: true };
+  }
+
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const endOfMonth = new Date(startOfMonth);
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+
+  const [result] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(CAST(${UsageTable.amount} AS NUMERIC)), 0)`,
+    })
+    .from(UsageTable)
+    .where(
+      and(
+        eq(UsageTable.userId, userId),
+        eq(UsageTable.resourceType, "tokens"),
+        gte(UsageTable.periodStart, startOfMonth),
+        lt(UsageTable.periodStart, endOfMonth),
+      ),
+    );
+
+  const currentUsage = Number(result?.total || 0);
+  const afterUsage = currentUsage + tokensToUse;
+
+  if (afterUsage > maxTokensPerMonth) {
+    return {
+      allowed: false,
+      reason: `This request would exceed your total monthly token limit (${maxTokensPerMonth.toLocaleString()}) across all models. Current usage: ${currentUsage.toLocaleString()}, Requested: ${tokensToUse.toLocaleString()}. Upgrade your plan for more tokens.`,
+      current: currentUsage,
+      max: maxTokensPerMonth,
+    };
+  }
+
+  return {
+    allowed: true,
+    current: currentUsage,
+    max: maxTokensPerMonth,
+  };
+}
+
 export async function checkTokenLimit(
   userId: string,
   modelName: string,
@@ -436,9 +482,6 @@ export async function checkTokenLimit(
   };
 }
 
-/**
- * ✅ File Upload Limit
- */
 export async function checkFileUploadLimit(
   userId: string,
   fileSizeMB: number,
@@ -473,9 +516,6 @@ export async function checkFileUploadLimit(
   return { allowed: true };
 }
 
-/**
- * ✅ الحصول على جميع الحدود والاستخدام الحالي
- */
 export async function getUserUsageLimits(userId: string) {
   const plan = await getUserPlan(userId);
 
@@ -550,6 +590,20 @@ export async function getUserUsageLimits(userId: string) {
       ),
     );
 
+  const [monthlyTokensResult] = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(CAST(${UsageTable.amount} AS NUMERIC)), 0)`,
+    })
+    .from(UsageTable)
+    .where(
+      and(
+        eq(UsageTable.userId, userId),
+        eq(UsageTable.resourceType, "tokens"),
+        gte(UsageTable.periodStart, startOfMonth),
+        lt(UsageTable.periodStart, endOfMonth),
+      ),
+    );
+
   return {
     plan: {
       id: plan.id,
@@ -605,6 +659,14 @@ export async function getUserUsageLimits(userId: string) {
         percentage: calculatePercentage(
           monthlyImagesCount?.count || 0,
           planLimits?.maxImagesPerMonth || 0,
+        ),
+      },
+      tokensMonthly: {
+        current: Number(monthlyTokensResult?.total || 0),
+        max: planLimits?.maxTokensPerMonth || 0,
+        percentage: calculatePercentage(
+          Number(monthlyTokensResult?.total || 0),
+          planLimits?.maxTokensPerMonth || 0,
         ),
       },
       models: plan.limits.models,
