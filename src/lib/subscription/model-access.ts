@@ -9,17 +9,7 @@ export interface ModelAccessRule {
   costPerMillionTokens?: number;
 }
 
-// Define all models with their access tier
 export const MODEL_ACCESS_RULES: ModelAccessRule[] = [
-  // ============================================
-  // FREE TIER - Free models only
-  // ============================================
-  {
-    provider: "google",
-    models: ["gemini-2.5-flash-lite"],
-    tier: "free",
-    costPerMillionTokens: 0.075,
-  },
   {
     provider: "groq",
     models: [
@@ -47,65 +37,53 @@ export const MODEL_ACCESS_RULES: ModelAccessRule[] = [
     costPerMillionTokens: 0,
   },
   {
-    provider: "openRouter",
-    models: ["deepseek-chat-v3", "mixtral-8x22b"],
-    tier: "free",
-    costPerMillionTokens: 0.14,
-  },
-
-  // ============================================
-  // BASIC TIER - Affordable models
-  // ============================================
-  {
     provider: "openai",
-    models: ["gpt-4.1-nano", "gpt-4.1-mini"],
+    models: ["gpt-5-nano"],
     tier: "basic",
-    costPerMillionTokens: 0.5,
+    costPerMillionTokens: 0.4,
   },
   {
     provider: "google",
-    models: ["gemini-2.5-flash"],
+    models: ["gemini-2.5-flash-lite"],
     tier: "basic",
-    costPerMillionTokens: 0.15,
+    costPerMillionTokens: 0.075,
+  },
+  {
+    provider: "openRouter",
+    models: ["deepseek-chat-v3"],
+    tier: "basic",
+    costPerMillionTokens: 0.14,
+  },
+  {
+    provider: "openai",
+    models: ["gpt-5-mini", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano"],
+    tier: "pro",
+    costPerMillionTokens: 2,
+  },
+  {
+    provider: "google",
+    models: ["gemini-2.5-flash", "gemini-2.5-pro"],
+    tier: "pro",
+    costPerMillionTokens: 1.5,
   },
   {
     provider: "anthropic",
     models: ["haiku-4.5"],
-    tier: "basic",
+    tier: "pro",
     costPerMillionTokens: 0.75,
-  },
-  {
-    provider: "openRouter",
-    models: ["llama-3.1-405b"],
-    tier: "basic",
-    costPerMillionTokens: 2.7,
-  },
-
-  // ============================================
-  // PRO TIER - Powerful models
-  // ============================================
-  {
-    provider: "openai",
-    models: ["gpt-5-nano", "gpt-5-mini", "gpt-4.1"],
-    tier: "pro",
-    costPerMillionTokens: 5,
-  },
-  {
-    provider: "google",
-    models: ["gemini-2.5-pro"],
-    tier: "pro",
-    costPerMillionTokens: 3,
   },
   {
     provider: "xai",
     models: ["grok-3-mini", "grok-4-1-fast"],
     tier: "pro",
-    costPerMillionTokens: 5,
+    costPerMillionTokens: 3.5,
   },
-
-  // ============================================
-  // ENTERPRISE TIER - All models
-  // ============================================
+  {
+    provider: "openRouter",
+    models: ["llama-3.1-405b", "mixtral-8x22b"],
+    tier: "pro",
+    costPerMillionTokens: 2,
+  },
   {
     provider: "openai",
     models: [
@@ -129,7 +107,7 @@ export const MODEL_ACCESS_RULES: ModelAccessRule[] = [
       "tts-1",
     ],
     tier: "enterprise",
-    costPerMillionTokens: 15,
+    costPerMillionTokens: 12,
   },
   {
     provider: "google",
@@ -157,7 +135,6 @@ export const MODEL_ACCESS_RULES: ModelAccessRule[] = [
   },
 ];
 
-// Map for quick access
 const modelAccessMap = new Map<string, ModelTier>();
 MODEL_ACCESS_RULES.forEach((rule) => {
   rule.models.forEach((model) => {
@@ -166,7 +143,6 @@ MODEL_ACCESS_RULES.forEach((rule) => {
   });
 });
 
-// Convert Plan to Tier
 const PLAN_TO_TIER: Record<SubscriptionPlan, ModelTier> = {
   free: "free",
   basic: "basic",
@@ -174,12 +150,8 @@ const PLAN_TO_TIER: Record<SubscriptionPlan, ModelTier> = {
   enterprise: "enterprise",
 };
 
-// Tier hierarchy
 const TIER_HIERARCHY: ModelTier[] = ["free", "basic", "pro", "enterprise"];
 
-/**
- * Check if a user can access a specific model based on their subscription plan
- */
 export function canAccessModel(
   userPlan: SubscriptionPlan,
   provider: string,
@@ -188,10 +160,9 @@ export function canAccessModel(
   const key = `${provider}:${model}`;
   const requiredTier = modelAccessMap.get(key);
 
-  // If model not defined, allow access (for compatibility with new models)
   if (!requiredTier) {
-    console.warn(`Model ${key} not found in access rules, allowing access`);
-    return true;
+    console.warn(`Model ${key} not found in access rules, denying access`);
+    return false;
   }
 
   const userTier = PLAN_TO_TIER[userPlan];
@@ -201,9 +172,6 @@ export function canAccessModel(
   return userTierIndex >= requiredTierIndex;
 }
 
-/**
- * Get all accessible models for a user's plan
- */
 export function getAccessibleModels(
   userPlan: SubscriptionPlan,
 ): ModelAccessRule[] {
@@ -216,9 +184,6 @@ export function getAccessibleModels(
   });
 }
 
-/**
- * Get the cost per million tokens for a specific model
- */
 export function getModelCost(provider: string, model: string): number {
   const rule = MODEL_ACCESS_RULES.find(
     (r) => r.provider === provider && r.models.includes(model),
@@ -226,9 +191,6 @@ export function getModelCost(provider: string, model: string): number {
   return rule?.costPerMillionTokens || 0;
 }
 
-/**
- * Get the required tier for a model
- */
 export function getRequiredTier(
   provider: string,
   model: string,
@@ -237,9 +199,6 @@ export function getRequiredTier(
   return modelAccessMap.get(key) || null;
 }
 
-/**
- * Get the minimum plan required for a model
- */
 export function getRequiredPlan(
   provider: string,
   model: string,
