@@ -100,7 +100,7 @@ const staticModels = {
     "claude-3.5-sonnet": openrouter("anthropic/claude-3.5-sonnet"),
     "llama-3.1-405b": openrouter("meta-llama/llama-3.1-405b-instruct"),
     "mixtral-8x22b": openrouter("mistralai/mixtral-8x22b-instruct"),
-    "deepseek-chat-v3": openrouter("deepseek/deepseek-chat"),
+    "deepseek-chat-v3": openrouter("deepseek/deepseek-chat-v3-0324:free"),
   },
 };
 
