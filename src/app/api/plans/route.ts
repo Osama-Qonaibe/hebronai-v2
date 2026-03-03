@@ -44,7 +44,7 @@ function convertStaticPlansToSubscriptionPlans(): StaticPlan[] {
         maxPerMonth: plan.limits.maxTokensPerMonth
       },
       files: {
-        maxSize: 10,
+        maxSize: plan.limits.maxStorageGB * 1024,
         maxCount: 100,
         allowedTypes: []
       },
@@ -98,10 +98,12 @@ function convertStaticPlansToSubscriptionPlans(): StaticPlan[] {
       color: "#3B82F6",
       icon: "package"
     },
+    modelsCount: plan.modelsCount,
+    featuredModels: plan.featuredModels,
     createdBy: "system",
     createdAt: new Date(),
     updatedAt: new Date()
-  }));
+  } as any));
 }
 
 export async function GET() {
