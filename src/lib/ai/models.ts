@@ -20,12 +20,10 @@ import {
   ANTHROPIC_FILE_MIME_TYPES,
   XAI_FILE_MIME_TYPES,
 } from "./file-support";
-// Ollama configuration with Cloud support
 const ollamaConfig: Parameters<typeof createOllama>[0] = {
   baseURL: process.env.OLLAMA_BASE_URL || "http://localhost:11434/api",
 };
 
-// Add authentication header if API key is provided (for Ollama Cloud)
 if (process.env.OLLAMA_API_KEY) {
   ollamaConfig.headers = {
     Authorization: `Bearer ${process.env.OLLAMA_API_KEY}`,
@@ -41,54 +39,29 @@ const groq = createGroq({
 
 const staticModels = {
   openai: {
-    // ============================================
-    // GPT-5 Series (Latest - 2026)
-    // ============================================
-    "gpt-5.2-pro": openai("gpt-5.2-pro"), // Latest & most capable
-    "gpt-5.2": openai("gpt-5.2"), // Latest general purpose
-    "gpt-5.2-chat": openai("gpt-5.2-chat-latest"), // Latest chat
-    "gpt-5.2-codex": openai("gpt-5.2-codex"), // Latest coding
-    "gpt-5-nano": openai("gpt-5-nano"), // Fastest & cheapest GPT-5
-    "gpt-5-mini": openai("gpt-5-mini"), // Fast & affordable
-
-    // GPT-5.1 Series
+    "gpt-5.2-pro": openai("gpt-5.2-pro"),
+    "gpt-5.2": openai("gpt-5.2"),
+    "gpt-5.2-chat": openai("gpt-5.2-chat-latest"),
+    "gpt-5.2-codex": openai("gpt-5.2-codex"),
+    "gpt-5-nano": openai("gpt-5-nano"),
+    "gpt-5-mini": openai("gpt-5-mini"),
     "gpt-5.1": openai("gpt-5.1"),
     "gpt-5.1-chat": openai("gpt-5.1-chat-latest"),
     "gpt-5.1-codex": openai("gpt-5.1-codex"),
     "gpt-5.1-codex-mini": openai("gpt-5.1-codex-mini"),
-
-    // ============================================
-    // GPT-4 Series
-    // ============================================
     "gpt-4.1": openai("gpt-4.1"),
     "gpt-4.1-mini": openai("gpt-4.1-mini"),
-    "gpt-4.1-nano": openai("gpt-4.1-nano"), // Cheapest GPT-4
-
-    // ============================================
-    // Reasoning Models (o-series)
-    // ============================================
+    "gpt-4.1-nano": openai("gpt-4.1-nano"),
     "o4-mini": openai("o4-mini"),
     o3: openai("o3"),
-
-    // ============================================
-    // Image Generation Models
-    // ============================================
-    "gpt-image-1.5": openai("gpt-image-1.5"), // Latest image generation
-    "dall-e-3": openai("dall-e-3"), // DALL-E 3
-
-    // ============================================
-    // Video Generation Models (Sora)
-    // ============================================
-    "sora-2-pro": openai("sora-2-pro"), // 4K video with audio sync
-    "sora-2": openai("sora-2"), // 1080p video generation
-
-    // ============================================
-    // Audio Models
-    // ============================================
-    "gpt-audio": openai("gpt-audio"), // Advanced audio I/O
-    whisper: openai("whisper"), // Speech-to-text (best accuracy)
-    "tts-1-hd": openai("tts-1-hd"), // Text-to-speech HD quality
-    "tts-1": openai("tts-1"), // Text-to-speech standard
+    "gpt-image-1.5": openai("gpt-image-1.5"),
+    "dall-e-3": openai("dall-e-3"),
+    "sora-2-pro": openai("sora-2-pro"),
+    "sora-2": openai("sora-2"),
+    "gpt-audio": openai("gpt-audio"),
+    whisper: openai("whisper"),
+    "tts-1-hd": openai("tts-1-hd"),
+    "tts-1": openai("tts-1"),
   },
   google: {
     "gemini-2.5-flash-lite": google("gemini-2.5-flash-lite"),
@@ -107,16 +80,13 @@ const staticModels = {
     "grok-3-mini": xai("grok-3-mini"),
   },
   ollama: {
-    // Official Ollama Cloud models (all end with -cloud suffix)
-    // Core models
     "deepseek-v3.1:671b-cloud": ollama("deepseek-v3.1:671b-cloud"),
     "qwen3-coder:480b-cloud": ollama("qwen3-coder:480b-cloud"),
     "gpt-oss:120b-cloud": ollama("gpt-oss:120b-cloud"),
     "gpt-oss:20b-cloud": ollama("gpt-oss:20b-cloud"),
-    // Advanced models
-    "kimi-k2:1t-cloud": ollama("kimi-k2:1t-cloud"), // 1 Trillion parameters!
+    "kimi-k2:1t-cloud": ollama("kimi-k2:1t-cloud"),
     "glm-4.6:cloud": ollama("glm-4.6:cloud"),
-    "qwen3-vl:235b-cloud": ollama("qwen3-vl:235b-cloud"), // Vision support
+    "qwen3-vl:235b-cloud": ollama("qwen3-vl:235b-cloud"),
   },
   groq: {
     "kimi-k2-instruct": groq("moonshotai/kimi-k2-instruct"),
@@ -126,28 +96,11 @@ const staticModels = {
     "qwen3-32b": groq("qwen/qwen3-32b"),
   },
   openRouter: {
-    // ============================================
-    // Auto Router (Smart Model Selection)
-    // ============================================
-    // Routes to best model automatically based on task
-    // Configure allowed models at: https://openrouter.ai/settings/preferences
     auto: openrouter("openrouter/auto"),
-
-    // ============================================
-    // OpenRouter Premium Models (Verified Working)
-    // Models not available via direct API keys
-    // No duplicates with OpenAI/Anthropic/Google providers
-    // ============================================
-
-    // Balanced Performance
-    "claude-3.5-sonnet": openrouter("anthropic/claude-3.5-sonnet"), // $3/$15 per 1M tokens
-
-    // Large Scale Open Models
-    "llama-3.1-405b": openrouter("meta-llama/llama-3.1-405b-instruct"), // $2.70/$2.70 per 1M tokens
-    "mixtral-8x22b": openrouter("mistralai/mixtral-8x22b-instruct"), // $0.65/$0.65 per 1M tokens
-
-    // Most Cost-Effective
-    "deepseek-chat-v3": openrouter("deepseek/deepseek-chat"), // $0.14/$0.28 per 1M tokens - Best value!
+    "claude-3.5-sonnet": openrouter("anthropic/claude-3.5-sonnet"),
+    "llama-3.1-405b": openrouter("meta-llama/llama-3.1-405b-instruct"),
+    "mixtral-8x22b": openrouter("mistralai/mixtral-8x22b-instruct"),
+    "deepseek-chat-v3": openrouter("deepseek/deepseek-chat"),
   },
 };
 
@@ -173,7 +126,6 @@ const registerFileSupport = (
   staticFilePartSupportByModel.set(model, Array.from(mimeTypes));
 };
 
-// OpenAI GPT-5 series support
 registerFileSupport(staticModels.openai["gpt-5.2-pro"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.openai["gpt-5.2"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(
@@ -187,8 +139,6 @@ registerFileSupport(
   staticModels.openai["gpt-5.1-chat"],
   OPENAI_FILE_MIME_TYPES,
 );
-
-// OpenAI GPT-4 series support
 registerFileSupport(staticModels.openai["gpt-4.1"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(
   staticModels.openai["gpt-4.1-mini"],
@@ -198,8 +148,6 @@ registerFileSupport(
   staticModels.openai["gpt-4.1-nano"],
   OPENAI_FILE_MIME_TYPES,
 );
-
-// Google Gemini support
 registerFileSupport(
   staticModels.google["gemini-2.5-flash-lite"],
   GEMINI_FILE_MIME_TYPES,
@@ -212,8 +160,6 @@ registerFileSupport(
   staticModels.google["gemini-2.5-pro"],
   GEMINI_FILE_MIME_TYPES,
 );
-
-// Anthropic Claude support
 registerFileSupport(
   staticModels.anthropic["sonnet-4.5"],
   ANTHROPIC_FILE_MIME_TYPES,
@@ -222,14 +168,10 @@ registerFileSupport(
   staticModels.anthropic["opus-4.1"],
   ANTHROPIC_FILE_MIME_TYPES,
 );
-
-// XAI Grok support
 registerFileSupport(staticModels.xai["grok-4-fast"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-4"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-3"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-3-mini"], XAI_FILE_MIME_TYPES);
-
-// OpenRouter Claude support
 registerFileSupport(
   staticModels.openRouter["claude-3.5-sonnet"],
   ANTHROPIC_FILE_MIME_TYPES,
@@ -304,11 +246,10 @@ function checkProviderAPIKey(provider: keyof typeof staticModels) {
       key = process.env.OPENROUTER_API_KEY;
       break;
     case "ollama":
-      // For Ollama: either API key (cloud) or assume local setup is available
       key = process.env.OLLAMA_API_KEY || "local";
       break;
     default:
-      return true; // assume the provider has an API key
+      return true;
   }
   return !!key && key != "****";
 }
