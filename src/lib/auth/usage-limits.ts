@@ -345,7 +345,7 @@ export async function checkTotalTokenLimit(
 ): Promise<LimitCheckResult> {
   const plan = await getUserPlan(userId);
 
-  if (!plan || !plan.isActive) {
+  if (!plan || (plan.isActive !== undefined && !plan.isActive)) {
     return {
       allowed: false,
       reason: "No active subscription found",
@@ -412,7 +412,7 @@ export async function checkStorageLimit(
 ): Promise<LimitCheckResult> {
   const plan = await getUserPlan(userId);
 
-  if (!plan || !plan.isActive) {
+  if (!plan || (plan.isActive !== undefined && !plan.isActive)) {
     return {
       allowed: false,
       reason: "No active subscription found",
@@ -470,7 +470,7 @@ export async function checkAPICallLimit(
 ): Promise<LimitCheckResult> {
   const plan = await getUserPlan(userId);
 
-  if (!plan || !plan.isActive) {
+  if (!plan || (plan.isActive !== undefined && !plan.isActive)) {
     return {
       allowed: false,
       reason: "No active subscription found",
@@ -533,7 +533,7 @@ export async function checkDocumentLimit(
 ): Promise<LimitCheckResult> {
   const plan = await getUserPlan(userId);
 
-  if (!plan || !plan.isActive) {
+  if (!plan || (plan.isActive !== undefined && !plan.isActive)) {
     return {
       allowed: false,
       reason: "No active subscription found",
