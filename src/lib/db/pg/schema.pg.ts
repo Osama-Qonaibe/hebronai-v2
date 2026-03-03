@@ -544,7 +544,7 @@ export const UsageTable = pgTable(
       .notNull()
       .references(() => UserTable.id, { onDelete: "cascade" }),
     resourceType: varchar("resource_type", {
-      enum: ["tokens", "api_calls", "storage", "images"],
+      enum: ["tokens", "api_calls", "storage", "images", "documents"],
     }).notNull(),
     amount: numeric("amount", { precision: 15, scale: 2 }).notNull(),
     metadata: json("metadata").$type<{
