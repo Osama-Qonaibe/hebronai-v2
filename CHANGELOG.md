@@ -5,7 +5,7 @@
 
 ### Bug Fixes
 
-* enable agent creation for user role ([b7d3be7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b7d3be7dedd1617cd7536568c7e525e80d6f86c0))
+* enable agent creation for user role ([b7d3be7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b7d3be7dedd1617cd7536568c7e525e80d6f86c0)) by @Osama-Qonaibe
 
 ## [5.1.2](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.1.1...hebronai-v2-v5.1.2) (2026-03-03)
 
