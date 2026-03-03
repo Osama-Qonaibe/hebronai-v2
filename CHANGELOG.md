@@ -5,7 +5,7 @@
 
 ### Bug Fixes
 
-* Add user subscription isActive to getUserPlan ([9f09106](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9f09106b525da9047650e28374ee7d7164c6a2b0))
+* Add user subscription isActive to getUserPlan ([9f09106](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9f09106b525da9047650e28374ee7d7164c6a2b0)) by @Osama-Qonaibe
 
 ## [5.2.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.1.5...hebronai-v2-v5.2.0) (2026-03-03)
 
