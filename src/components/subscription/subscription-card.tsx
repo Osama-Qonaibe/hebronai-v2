@@ -364,11 +364,6 @@ export function SubscriptionCard({
                         </span>
                       )}
                     </div>
-                    {plan.pricing.monthly === 0 && (
-                      <p className="text-xs text-muted-foreground">
-                        {locale === 'ar' ? 'مثالي لتجربة HebronAI' : 'Perfect for trying HebronAI'}
-                      </p>
-                    )}
                     {plan.pricing.monthly > 0 && plan.slug !== 'enterprise' && (
                       <p className="text-xs text-muted-foreground">
                         {locale === 'ar' 
