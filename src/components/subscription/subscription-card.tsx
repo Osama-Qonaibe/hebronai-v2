@@ -364,6 +364,24 @@ export function SubscriptionCard({
                         </span>
                       )}
                     </div>
+                    {plan.pricing.monthly === 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        {locale === 'ar' ? 'مثالي لتجربة HebronAI' : 'Perfect for trying HebronAI'}
+                      </p>
+                    )}
+                    {plan.pricing.monthly > 0 && plan.slug !== 'enterprise' && (
+                      <p className="text-xs text-muted-foreground">
+                        {locale === 'ar' 
+                          ? plan.slug === 'basic' ? 'للمستخدمين المبتدئين' : 'للمحترفين والمستخدمين المتقدمين'
+                          : plan.slug === 'basic' ? 'For beginners' : 'For professionals'
+                        }
+                      </p>
+                    )}
+                    {plan.slug === 'enterprise' && (
+                      <p className="text-xs text-muted-foreground">
+                        {locale === 'ar' ? 'حلول متكاملة للفرق والشركات' : 'Complete solutions for teams'}
+                      </p>
+                    )}
                   </div>
                 </CardHeader>
 
