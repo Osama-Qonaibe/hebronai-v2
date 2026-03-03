@@ -1,5 +1,6 @@
 import "server-only";
 import { getUserPlan, isUnlimited } from "../subscription/plan-service";
+import { PLAN_LIMITS } from "../subscription/plans";
 import { pgDb as db } from "lib/db/pg/db.pg";
 import {
   AgentTable,
@@ -225,9 +226,16 @@ export async function checkImageGenerationLimit(
     };
   }
 
-  const maxPerDay = plan.limits.images?.maxPerDay || 0;
+  const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
+  if (!planLimits) {
+    return {
+      allowed: false,
+      reason: `Unknown plan: ${plan.slug}`,
+    };
+  }
 
-  // ✅ منع Free plan من الصور تماماً
+  const maxPerDay = planLimits.maxImagesPerDay || 0;
+
   if (maxPerDay === 0) {
     return {
       allowed: false,
@@ -237,7 +245,6 @@ export async function checkImageGenerationLimit(
     };
   }
 
-  // ✅ Enterprise فقط unlimited
   if (isUnlimited(maxPerDay)) {
     return { allowed: true };
   }
@@ -261,7 +268,6 @@ export async function checkImageGenerationLimit(
 
   const currentCount = result?.count || 0;
 
-  // ✅ تطبيق الحد اليومي
   if (currentCount >= maxPerDay) {
     return {
       allowed: false,
@@ -293,7 +299,15 @@ export async function checkImageGenerationMonthlyLimit(
     };
   }
 
-  const maxPerMonth = plan.limits.images?.maxPerMonth || 0;
+  const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
+  if (!planLimits) {
+    return {
+      allowed: false,
+      reason: `Unknown plan: ${plan.slug}`,
+    };
+  }
+
+  const maxPerMonth = planLimits.maxImagesPerMonth || 0;
 
   if (maxPerMonth === 0) {
     return {
@@ -360,7 +374,6 @@ export async function checkTokenLimit(
     };
   }
 
-  // تحقق من السماح بالـ Model
   if (!plan.limits.models.allowed.includes(modelName)) {
     return {
       allowed: false,
@@ -382,7 +395,6 @@ export async function checkTokenLimit(
     return { allowed: true };
   }
 
-  // حساب الاستخدام الشهري
   const startOfMonth = new Date();
   startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
@@ -443,7 +455,6 @@ export async function checkFileUploadLimit(
 
   const { maxSize, allowedTypes } = plan.limits.files;
 
-  // تحقق من الحجم
   if (fileSizeMB > maxSize) {
     return {
       allowed: false,
@@ -452,7 +463,6 @@ export async function checkFileUploadLimit(
     };
   }
 
-  // تحقق من النوع
   if (!allowedTypes.includes("*") && !allowedTypes.includes(fileType)) {
     return {
       allowed: false,
@@ -473,7 +483,8 @@ export async function getUserUsageLimits(userId: string) {
     return null;
   }
 
-  // جلب الاستخدام الفعلي
+  const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
+
   const [agentsCount] = await db
     .select({ count: count() })
     .from(AgentTable)
@@ -582,18 +593,18 @@ export async function getUserUsageLimits(userId: string) {
       },
       imagesDaily: {
         current: dailyImagesCount?.count || 0,
-        max: plan.limits.images?.maxPerDay || 0,
+        max: planLimits?.maxImagesPerDay || 0,
         percentage: calculatePercentage(
           dailyImagesCount?.count || 0,
-          plan.limits.images?.maxPerDay || 0,
+          planLimits?.maxImagesPerDay || 0,
         ),
       },
       imagesMonthly: {
         current: monthlyImagesCount?.count || 0,
-        max: plan.limits.images?.maxPerMonth || 0,
+        max: planLimits?.maxImagesPerMonth || 0,
         percentage: calculatePercentage(
           monthlyImagesCount?.count || 0,
-          plan.limits.images?.maxPerMonth || 0,
+          planLimits?.maxImagesPerMonth || 0,
         ),
       },
       models: plan.limits.models,
@@ -602,7 +613,7 @@ export async function getUserUsageLimits(userId: string) {
 }
 
 function calculatePercentage(current: number, max: number): number {
-  if (max === -1) return 0; // unlimited
+  if (max === -1) return 0;
   if (max === 0) return 100;
   return Math.min((current / max) * 100, 100);
 }
