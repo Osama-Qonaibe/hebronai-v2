@@ -263,27 +263,6 @@ export function ChatBotVoice() {
     }
   }, [error]);
 
-  useEffect(() => {
-    if (voiceChat.isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const isVoiceChatEvent = isShortcutEvent(e, Shortcuts.toggleVoiceChat);
-      if (isVoiceChatEvent) {
-        e.preventDefault();
-        e.stopPropagation();
-        appStoreMutate((prev) => ({
-          voiceChat: {
-            ...prev.voiceChat,
-            isOpen: true,
-            agentId: undefined,
-          },
-        }));
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [voiceChat.isOpen]);
-
   return (
     <Drawer dismissible={false} open={voiceChat.isOpen} direction="top">
       <DrawerPortal>
