@@ -5,19 +5,19 @@
 
 ### Features
 
-* add @radix-ui/react-progress dependency ([58f1b62](https://github.com/Osama-Qonaibe/hebronai-v2/commit/58f1b62bf6fd97505fae642178aa2489784d962e))
-* add Progress UI component ([1c8eaef](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1c8eaefcb154955a4ff31115afdda235ca62f7bd))
-* add usage limits API endpoint ([8603b72](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8603b729d6c4362537c213d2966c9eb2e7c81960))
-* add usage limits card component ([d5e8aac](https://github.com/Osama-Qonaibe/hebronai-v2/commit/d5e8aacd65fd8797d06491f29b40d432816ae336))
-* add usage limits translations (EN/AR) ([a16791d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a16791d169e5494a80dfa31229d7e7103b8b5a1c))
-* add UsageLimitsCard to sidebar footer ([18564aa](https://github.com/Osama-Qonaibe/hebronai-v2/commit/18564aad1b2992a753bfdfe564be141605b69825))
+* add @radix-ui/react-progress dependency ([58f1b62](https://github.com/Osama-Qonaibe/hebronai-v2/commit/58f1b62bf6fd97505fae642178aa2489784d962e)) by @Osama-Qonaibe
+* add Progress UI component ([1c8eaef](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1c8eaefcb154955a4ff31115afdda235ca62f7bd)) by @Osama-Qonaibe
+* add usage limits API endpoint ([8603b72](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8603b729d6c4362537c213d2966c9eb2e7c81960)) by @Osama-Qonaibe
+* add usage limits card component ([d5e8aac](https://github.com/Osama-Qonaibe/hebronai-v2/commit/d5e8aacd65fd8797d06491f29b40d432816ae336)) by @Osama-Qonaibe
+* add usage limits translations (EN/AR) ([a16791d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a16791d169e5494a80dfa31229d7e7103b8b5a1c)) by @Osama-Qonaibe
+* add UsageLimitsCard to sidebar footer ([18564aa](https://github.com/Osama-Qonaibe/hebronai-v2/commit/18564aad1b2992a753bfdfe564be141605b69825)) by @Osama-Qonaibe
 
 
 ### Bug Fixes
 
-* add Usage translations to complete en.json ([79ceb66](https://github.com/Osama-Qonaibe/hebronai-v2/commit/79ceb66580ca69dfc98de2d77416e79fa83c0442))
-* handle null daysLeft in TypeScript ([fa2bd37](https://github.com/Osama-Qonaibe/hebronai-v2/commit/fa2bd37a9c90ce42dfad7326436ffb64f5c5544c))
-* restore full en.json with Usage keys ([079c381](https://github.com/Osama-Qonaibe/hebronai-v2/commit/079c381e6cf121e13bb6e84a660cc67ecad66db5))
+* add Usage translations to complete en.json ([79ceb66](https://github.com/Osama-Qonaibe/hebronai-v2/commit/79ceb66580ca69dfc98de2d77416e79fa83c0442)) by @Osama-Qonaibe
+* handle null daysLeft in TypeScript ([fa2bd37](https://github.com/Osama-Qonaibe/hebronai-v2/commit/fa2bd37a9c90ce42dfad7326436ffb64f5c5544c)) by @Osama-Qonaibe
+* restore full en.json with Usage keys ([079c381](https://github.com/Osama-Qonaibe/hebronai-v2/commit/079c381e6cf121e13bb6e84a660cc67ecad66db5)) by @Osama-Qonaibe
 
 ## [5.2.2](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.2.1...hebronai-v2-v5.2.2) (2026-03-03)
 
