@@ -116,7 +116,7 @@ export function UsageLimitsCard() {
         <Progress value={highestUsage.percent} className="h-1.5" />
       </div>
 
-      {(isNearLimit || daysLeft !== null && daysLeft <= 7) && (
+      {(isNearLimit || (daysLeft !== null && daysLeft <= 7)) && (
         <div className="flex items-start gap-2 p-2 rounded-md bg-warning/10 border border-warning/20">
           <AlertCircle className="h-3.5 w-3.5 text-warning mt-0.5 flex-shrink-0" />
           <p className="text-xs text-warning">
@@ -124,7 +124,7 @@ export function UsageLimitsCard() {
               ? t("Usage.limitReached")
               : isNearLimit
               ? t("Usage.nearLimit")
-              : t("Usage.planExpiring", { days: daysLeft })}
+              : t("Usage.planExpiring", { days: daysLeft ?? 0 })}
           </p>
         </div>
       )}
