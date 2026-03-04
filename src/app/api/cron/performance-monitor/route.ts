@@ -60,21 +60,11 @@ export async function POST(request: NextRequest) {
       logger.error("Database monitoring error:", dbError);
     }
 
-    try {
-      const redis = (await import("@/lib/redis")).default;
-      const info = await redis.info("memory");
-      const usedMemoryMatch = info.match(/used_memory_human:(\S+)/);
-      if (usedMemoryMatch) {
-        metrics.memory.used = parseFloat(usedMemoryMatch[1]);
-      }
-    } catch (redisError) {
-      logger.warn("Redis monitoring skipped:", redisError);
-    }
-
     if (process.memoryUsage) {
       const memUsage = process.memoryUsage();
       const heapUsedMB = Math.round(memUsage.heapUsed / 1024 / 1024);
       const heapTotalMB = Math.round(memUsage.heapTotal / 1024 / 1024);
+      metrics.memory.used = heapUsedMB;
       metrics.memory.percentage = Math.round((heapUsedMB / heapTotalMB) * 100);
       
       if (metrics.memory.percentage > 85) {
