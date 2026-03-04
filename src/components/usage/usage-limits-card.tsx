@@ -64,24 +64,40 @@ export function UsageLimitsCard() {
     return Math.min((used / limit) * 100, 100);
   };
 
+  const formatNumber = (num: number) => {
+    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+    return num.toString();
+  };
+
   const resources = [
     {
       name: t("Layout.agents"),
       used: limits.agents.used,
       limit: limits.agents.limit,
       percent: getUsagePercent(limits.agents.used, limits.agents.limit),
+      format: false,
     },
     {
       name: t("Subscription.workflows"),
       used: limits.workflows.used,
       limit: limits.workflows.limit,
       percent: getUsagePercent(limits.workflows.used, limits.workflows.limit),
+      format: false,
     },
     {
       name: "MCP Servers",
       used: limits.mcpServers.used,
       limit: limits.mcpServers.limit,
       percent: getUsagePercent(limits.mcpServers.used, limits.mcpServers.limit),
+      format: false,
+    },
+    {
+      name: t("Subscription.tokensPerMonth"),
+      used: limits.tokens.used,
+      limit: limits.tokens.limit,
+      percent: getUsagePercent(limits.tokens.used, limits.tokens.limit),
+      format: true,
     },
   ];
 
@@ -119,9 +135,14 @@ export function UsageLimitsCard() {
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">{resource.name}</span>
               <span className="font-medium tabular-nums">
-                {resource.used}
+                {resource.format ? formatNumber(resource.used) : resource.used}
                 <span className="text-muted-foreground">
-                  /{resource.limit === null ? "∞" : resource.limit}
+                  /
+                  {resource.limit === null
+                    ? "∞"
+                    : resource.format
+                    ? formatNumber(resource.limit)
+                    : resource.limit}
                 </span>
               </span>
             </div>
