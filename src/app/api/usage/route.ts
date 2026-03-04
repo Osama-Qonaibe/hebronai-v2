@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSession } from "lib/auth/server";
 import { pgDb } from "@/lib/db/pg/db.pg";
-import { UserTable } from "@/lib/db/pg/schema.pg";
-import { eq } from "drizzle-orm";
+import { UserTable, ImageGenerationTable } from "@/lib/db/pg/schema.pg";
+import { eq, and, gte, sql } from "drizzle-orm";
 
 export async function GET() {
   try {
@@ -36,6 +36,8 @@ export async function GET() {
         workflows: number | null;
         mcpServers: number | null;
         tokens: number | null;
+        imagesDaily: number | null;
+        imagesMonthly: number | null;
         models: number;
       }
     > = {
@@ -44,6 +46,8 @@ export async function GET() {
         workflows: 1, 
         mcpServers: 1, 
         tokens: 50000,
+        imagesDaily: 5,
+        imagesMonthly: 50,
         models: 12,
       },
       basic: { 
@@ -51,6 +55,8 @@ export async function GET() {
         workflows: 3, 
         mcpServers: 3, 
         tokens: 200000,
+        imagesDaily: 20,
+        imagesMonthly: 300,
         models: 17,
       },
       pro: { 
@@ -58,6 +64,8 @@ export async function GET() {
         workflows: 10, 
         mcpServers: 10, 
         tokens: 1000000,
+        imagesDaily: 50,
+        imagesMonthly: 1000,
         models: 25,
       },
       enterprise: { 
@@ -65,6 +73,8 @@ export async function GET() {
         workflows: null, 
         mcpServers: null, 
         tokens: null,
+        imagesDaily: null,
+        imagesMonthly: null,
         models: 45,
       },
     };
@@ -85,6 +95,40 @@ export async function GET() {
       (await pgDb.query.McpServerTable?.findMany({
         where: (mcpServers, { eq }) => eq(mcpServers.userId, session.user.id),
       })) || [];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let imagesDaily = [{ count: 0 }];
+    let imagesMonthly = [{ count: 0 }];
+
+    try {
+      imagesDaily = await pgDb
+        .select({ count: sql<number>`count(*)::int` })
+        .from(ImageGenerationTable)
+        .where(
+          and(
+            eq(ImageGenerationTable.userId, session.user.id),
+            gte(ImageGenerationTable.createdAt, today),
+            eq(ImageGenerationTable.status, "completed")
+          )
+        );
+
+      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      
+      imagesMonthly = await pgDb
+        .select({ count: sql<number>`count(*)::int` })
+        .from(ImageGenerationTable)
+        .where(
+          and(
+            eq(ImageGenerationTable.userId, session.user.id),
+            gte(ImageGenerationTable.createdAt, firstDayOfMonth),
+            eq(ImageGenerationTable.status, "completed")
+          )
+        );
+    } catch (imageError) {
+      console.warn("Image tracking not yet available:", imageError);
+    }
 
     return NextResponse.json({
       plan: {
@@ -108,6 +152,16 @@ export async function GET() {
       tokens: {
         used: 0,
         limit: limits.tokens,
+      },
+      images: {
+        daily: {
+          used: imagesDaily[0]?.count || 0,
+          limit: limits.imagesDaily,
+        },
+        monthly: {
+          used: imagesMonthly[0]?.count || 0,
+          limit: limits.imagesMonthly,
+        },
       },
     });
   } catch (error) {
