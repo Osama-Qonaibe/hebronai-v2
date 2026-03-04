@@ -134,8 +134,7 @@ export function UsageLimitsCard() {
     : null;
   const isNearLimit = highestUsage ? highestUsage.percent >= 80 : false;
   const isAtLimit = highestUsage ? highestUsage.percent >= 100 : false;
-  const isPremiumPlan =
-    limits?.plan.name !== "Free" && limits?.plan.name !== "Basic";
+  const isEnterprise = limits?.plan.name === "Enterprise";
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -148,7 +147,7 @@ export function UsageLimitsCard() {
         >
           <Crown
             className={`h-4 w-4 ${
-              isPremiumPlan ? "text-primary" : "text-muted-foreground"
+              limits?.plan.name !== "Free" ? "text-primary" : "text-muted-foreground"
             }`}
           />
           <span className="flex-1 text-left truncate">
@@ -232,11 +231,11 @@ export function UsageLimitsCard() {
 
             <Link href="/subscription" onClick={() => setOpen(false)}>
               <Button
-                variant={isPremiumPlan ? "outline" : "default"}
+                variant={isEnterprise ? "outline" : "default"}
                 className="w-full gap-2"
               >
                 <Crown className="h-4 w-4" />
-                {isPremiumPlan
+                {isEnterprise
                   ? t("Subscription.manageSubscription")
                   : t("Subscription.upgrade")}
               </Button>
