@@ -4,6 +4,14 @@
 
 Replace `YOUR_CRON_SECRET` and `yourdomain.com` with your actual values.
 
+### ⚠️ CRITICAL - Daily Reset Usage Limits (Midnight)
+```bash
+0 0 * * * curl -X POST "https://yourdomain.com/api/cron/reset-usage-limits?secret=YOUR_CRON_SECRET"
+```
+**Why Critical:** Prevents financial losses by downgrading expired users and enforcing limits!
+
+---
+
 ### Daily - Check Expiring Subscriptions (9 AM)
 ```bash
 0 9 * * * curl -X POST "https://yourdomain.com/api/cron/check-expiring-subscriptions?secret=YOUR_CRON_SECRET"
@@ -38,6 +46,9 @@ CRON_SECRET=your-super-secret-key-change-this
 ## ✅ Test Commands
 
 ```bash
+# Test reset limits (CRITICAL)
+curl -X POST "https://yourdomain.com/api/cron/reset-usage-limits?secret=YOUR_CRON_SECRET"
+
 # Test health check
 curl -X POST "https://yourdomain.com/api/cron/health-check?secret=YOUR_CRON_SECRET"
 
@@ -55,12 +66,28 @@ curl -X POST "https://yourdomain.com/api/cron/check-expiring-subscriptions?secre
 
 ## 📊 What Each Job Does
 
-| Job | Frequency | Purpose |
-|-----|-----------|----------|
-| **Subscriptions** | Daily 9 AM | Send expiration warnings (7, 3, 1 days) |
-| **Clear Cache** | Every 3 hours | Remove temporary data from Redis |
-| **Health Check** | Every 15 min | Monitor database & services |
-| **Performance** | Every 30 min | Track resource usage & slow queries |
+| Job | Frequency | Purpose | Priority |
+|-----|-----------|---------|----------|
+| **Reset Limits** ⚠️ | Daily 00:00 | Downgrade expired users, clean old data, **prevent losses** | **CRITICAL** |
+| **Subscriptions** | Daily 9 AM | Send expiration warnings (7, 3, 1 days) | High |
+| **Clear Cache** | Every 3 hours | Remove temporary data, improve performance | Medium |
+| **Health Check** | Every 15 min | Monitor database & services | Medium |
+| **Performance** | Every 30 min | Track resource usage & slow queries | Normal |
+
+---
+
+## ⚠️ Why Reset Limits is Critical
+
+### Without it:
+- ❌ Expired users continue using paid services
+- ❌ You pay API costs for non-subscribers
+- ❌ No usage enforcement = **potential large bills**
+
+### With it:
+- ✅ Automatic downgrade to free plan
+- ✅ Enforces usage limits immediately
+- ✅ Cleans old data (images > 30 days, summaries > 90 days)
+- ✅ **Protects your budget!**
 
 ---
 
