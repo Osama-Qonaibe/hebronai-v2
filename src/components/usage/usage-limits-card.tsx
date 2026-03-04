@@ -23,7 +23,7 @@ interface UsageLimits {
 
 export function UsageLimitsCard() {
   const t = useTranslations();
-  const { open } = useSidebar();
+  const { state } = useSidebar();
   const [limits, setLimits] = useState<UsageLimits | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -110,7 +110,7 @@ export function UsageLimitsCard() {
   const isAtLimit = highestUsage.percent >= 100;
   const isPremiumPlan = limits.plan.name !== "Free" && limits.plan.name !== "Basic";
 
-  if (!open) {
+  if (state === "collapsed") {
     return (
       <Link href="/subscription">
         <Button
