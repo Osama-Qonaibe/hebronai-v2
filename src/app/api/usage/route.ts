@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "lib/auth/server";
-import { db } from "@/lib/db";
-import { users } from "@/lib/db/pg/schema.pg";
+import { pgDb } from "@/lib/db/pg/db.pg";
+import { UserTable } from "@/lib/db/pg/schema.pg";
 import { eq } from "drizzle-orm";
 
 export async function GET() {
@@ -11,8 +11,8 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await db.query.users.findFirst({
-      where: eq(users.id, session.user.id),
+    const user = await pgDb.query.UserTable.findFirst({
+      where: eq(UserTable.id, session.user.id),
       with: {
         subscription: true,
       },
@@ -33,15 +33,15 @@ export async function GET() {
 
     const limits = planLimits[plan] || planLimits.free;
 
-    const agentsCount = await db.query.agents.findMany({
+    const agentsCount = await pgDb.query.AgentTable?.findMany({
       where: (agents, { eq }) => eq(agents.userId, session.user.id),
-    });
+    }) || [];
 
-    const workflowsCount = await db.query.workflows?.findMany({
+    const workflowsCount = await pgDb.query.WorkflowTable?.findMany({
       where: (workflows, { eq }) => eq(workflows.userId, session.user.id),
     }) || [];
 
-    const mcpServersCount = await db.query.mcpServers?.findMany({
+    const mcpServersCount = await pgDb.query.McpServerTable?.findMany({
       where: (mcpServers, { eq }) => eq(mcpServers.userId, session.user.id),
     }) || [];
 
