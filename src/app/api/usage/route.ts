@@ -3,7 +3,7 @@ import { getSession } from "lib/auth/server";
 import { pgDb } from "@/lib/db/pg/db.pg";
 import { UserTable, ImageGenerationTable } from "@/lib/db/pg/schema.pg";
 import { eq, and, gte, sql } from "drizzle-orm";
-import { getAvailableModels } from "@/lib/ai/models";
+import { customModelProvider } from "@/lib/ai/models";
 
 export async function GET() {
   try {
@@ -95,8 +95,6 @@ export async function GET() {
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
 
     const imagesDaily = await pgDb
       .select({ count: sql<number>`count(*)::int` })
@@ -122,8 +120,10 @@ export async function GET() {
         )
       );
 
-    const availableModels = await getAvailableModels();
-    const modelsCount = availableModels.length;
+    const modelsCount = customModelProvider.modelsInfo.reduce(
+      (total, provider) => total + provider.models.length,
+      0
+    );
 
     return NextResponse.json({
       plan: {
