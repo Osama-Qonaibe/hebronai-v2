@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card } from "ui/card";
 import { Progress } from "ui/progress";
 import { Button } from "ui/button";
-import { AlertCircle, TrendingUp, Calendar, Zap } from "lucide-react";
+import { AlertCircle, Calendar, Zap } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
