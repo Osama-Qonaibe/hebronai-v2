@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "ui/button";
 import { AlertCircle, Calendar, Zap, Crown } from "lucide-react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -31,8 +31,24 @@ interface UsageLimits {
   };
 }
 
+const planNamesAr: Record<string, string> = {
+  Free: "مجاني",
+  Basic: "مبتدئ",
+  Pro: "محترف",
+  Enterprise: "للشركات"
+};
+
+const statusNamesAr: Record<string, string> = {
+  active: "مُفعّل",
+  inactive: "غير مُفعّل",
+  expired: "منتهي",
+  cancelled: "ملغي"
+};
+
 export function UsageLimitsCard() {
   const t = useTranslations();
+  const locale = useLocale();
+  const isArabic = locale === "ar";
   const [limits, setLimits] = useState<UsageLimits | null>(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -72,6 +88,14 @@ export function UsageLimitsCard() {
     return num.toString();
   };
 
+  const getPlanName = (name: string) => {
+    return isArabic ? (planNamesAr[name] || name) : name;
+  };
+
+  const getStatusName = (status: string) => {
+    return isArabic ? (statusNamesAr[status] || status) : status;
+  };
+
   const resources = limits
     ? [
         {
@@ -105,7 +129,7 @@ export function UsageLimitsCard() {
         ...(limits.images
           ? [
               {
-                name: "Images Today",
+                name: isArabic ? "صور اليوم" : "Images Today",
                 used: limits.images.daily.used,
                 limit: limits.images.daily.limit,
                 percent: getUsagePercent(
@@ -115,7 +139,7 @@ export function UsageLimitsCard() {
                 format: false,
               },
               {
-                name: "Images/Month",
+                name: isArabic ? "صور/شهر" : "Images/Month",
                 used: limits.images.monthly.used,
                 limit: limits.images.monthly.limit,
                 percent: getUsagePercent(
@@ -151,7 +175,7 @@ export function UsageLimitsCard() {
             }`}
           />
           <span className="flex-1 text-left truncate">
-            {loading ? "..." : limits?.plan.name || "Plan"}
+            {loading ? "..." : getPlanName(limits?.plan.name || "Plan")}
           </span>
           {isNearLimit && (
             <span className="h-2 w-2 bg-warning rounded-full animate-pulse" />
@@ -164,9 +188,11 @@ export function UsageLimitsCard() {
           <DialogTitle className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-primary" />
             <span>
-              {limits?.plan.name} Plan
+              {isArabic ? "خطة" : ""} {getPlanName(limits?.plan.name || "Plan")} {!isArabic && "Plan"}
               {limits?.plan.modelsCount && (
-                <span className="text-muted-foreground font-normal"> • {limits.plan.modelsCount} Models</span>
+                <span className="text-muted-foreground font-normal">
+                  {" "}• {limits.plan.modelsCount} {isArabic ? "نموذج" : "Models"}
+                </span>
               )}
             </span>
           </DialogTitle>
@@ -177,15 +203,17 @@ export function UsageLimitsCard() {
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
                 {limits.plan.status && (
-                  <span className="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium capitalize">
-                    {limits.plan.status}
+                  <span className="px-2 py-1 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-medium">
+                    {getStatusName(limits.plan.status)}
                   </span>
                 )}
               </div>
               {daysLeft !== null && (
                 <div className="flex items-center gap-1 text-muted-foreground">
                   <Calendar className="h-4 w-4" />
-                  <span>{daysLeft} days left</span>
+                  <span>
+                    {isArabic ? `${daysLeft} يوم متبقي` : `${daysLeft} days left`}
+                  </span>
                 </div>
               )}
             </div>
