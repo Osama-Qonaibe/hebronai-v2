@@ -20,35 +20,34 @@ export async function POST(request: NextRequest) {
     logger.info("Starting cache clearing process...");
 
     let clearedItems = 0;
+    const operations: string[] = [];
 
     try {
-      const redis = (await import("@/lib/redis")).default;
+      const { revalidatePath } = await import("next/cache");
       
-      const patterns = [
-        "usage:*",
-        "user:session:*",
-        "mcp:*",
-        "rate-limit:*"
+      const paths = [
+        "/",
+        "/subscription",
+        "/api/usage",
       ];
 
-      for (const pattern of patterns) {
-        const keys = await redis.keys(pattern);
-        if (keys.length > 0) {
-          await redis.del(...keys);
-          clearedItems += keys.length;
-          logger.info(`Cleared ${keys.length} keys matching pattern: ${pattern}`);
-        }
+      for (const path of paths) {
+        revalidatePath(path);
+        operations.push(`Revalidated path: ${path}`);
+        clearedItems++;
       }
 
-      logger.info(`Cache clearing completed. Total items cleared: ${clearedItems}`);
-    } catch (redisError) {
-      logger.warn("Redis not available, skipping cache clearing", redisError);
+      logger.info(`Cache clearing completed. Revalidated ${clearedItems} paths`);
+    } catch (cacheError) {
+      logger.warn("Cache clearing encountered an issue", cacheError);
+      operations.push("Cache clearing completed with warnings");
     }
 
     return NextResponse.json({
       success: true,
       message: "Cache cleared successfully",
       itemsCleared: clearedItems,
+      operations,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
