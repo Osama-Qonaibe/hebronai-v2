@@ -1,13 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card } from "ui/card";
-import { Progress } from "ui/progress";
 import { Button } from "ui/button";
-import { AlertCircle, Calendar, Zap, Crown } from "lucide-react";
+import { AlertCircle, Calendar, Zap, Crown, X } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useSidebar } from "ui/sidebar";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "ui/dialog";
+import { Progress } from "ui/progress";
 
 interface UsageLimits {
   plan: {
@@ -23,9 +28,9 @@ interface UsageLimits {
 
 export function UsageLimitsCard() {
   const t = useTranslations();
-  const { state } = useSidebar();
   const [limits, setLimits] = useState<UsageLimits | null>(null);
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     async function fetchLimits() {
@@ -44,17 +49,7 @@ export function UsageLimitsCard() {
     fetchLimits();
   }, []);
 
-  if (loading || !limits) {
-    return (
-      <Card className="p-4 space-y-3">
-        <div className="h-4 bg-muted animate-pulse rounded" />
-        <div className="h-2 bg-muted animate-pulse rounded" />
-        <div className="h-2 bg-muted animate-pulse rounded" />
-      </Card>
-    );
-  }
-
-  const daysLeft = limits.plan.expiresAt
+  const daysLeft = limits?.plan.expiresAt
     ? Math.ceil(
         (new Date(limits.plan.expiresAt).getTime() - Date.now()) /
           (1000 * 60 * 60 * 24)
@@ -72,131 +67,149 @@ export function UsageLimitsCard() {
     return num.toString();
   };
 
-  const resources = [
-    {
-      name: t("Layout.agents"),
-      used: limits.agents.used,
-      limit: limits.agents.limit,
-      percent: getUsagePercent(limits.agents.used, limits.agents.limit),
-      format: false,
-    },
-    {
-      name: t("Subscription.workflows"),
-      used: limits.workflows.used,
-      limit: limits.workflows.limit,
-      percent: getUsagePercent(limits.workflows.used, limits.workflows.limit),
-      format: false,
-    },
-    {
-      name: "MCP Servers",
-      used: limits.mcpServers.used,
-      limit: limits.mcpServers.limit,
-      percent: getUsagePercent(limits.mcpServers.used, limits.mcpServers.limit),
-      format: false,
-    },
-    {
-      name: t("Subscription.tokensPerMonth"),
-      used: limits.tokens.used,
-      limit: limits.tokens.limit,
-      percent: getUsagePercent(limits.tokens.used, limits.tokens.limit),
-      format: true,
-    },
-  ];
+  const resources = limits
+    ? [
+        {
+          name: t("Layout.agents"),
+          used: limits.agents.used,
+          limit: limits.agents.limit,
+          percent: getUsagePercent(limits.agents.used, limits.agents.limit),
+          format: false,
+        },
+        {
+          name: t("Subscription.workflows"),
+          used: limits.workflows.used,
+          limit: limits.workflows.limit,
+          percent: getUsagePercent(limits.workflows.used, limits.workflows.limit),
+          format: false,
+        },
+        {
+          name: "MCP Servers",
+          used: limits.mcpServers.used,
+          limit: limits.mcpServers.limit,
+          percent: getUsagePercent(limits.mcpServers.used, limits.mcpServers.limit),
+          format: false,
+        },
+        {
+          name: t("Subscription.tokensPerMonth"),
+          used: limits.tokens.used,
+          limit: limits.tokens.limit,
+          percent: getUsagePercent(limits.tokens.used, limits.tokens.limit),
+          format: true,
+        },
+      ]
+    : [];
 
-  const highestUsage = resources.reduce((max, curr) =>
-    curr.percent > max.percent ? curr : max
-  );
-  const isNearLimit = highestUsage.percent >= 80;
-  const isAtLimit = highestUsage.percent >= 100;
-  const isPremiumPlan = limits.plan.name !== "Free" && limits.plan.name !== "Basic";
-
-  if (state === "collapsed") {
-    return (
-      <Link href="/subscription">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="w-full h-10 relative group"
-          title={isPremiumPlan ? t("Subscription.manageSubscription") : t("Subscription.upgrade")}
-        >
-          <Crown className={`h-5 w-5 ${isPremiumPlan ? "text-primary" : "text-muted-foreground"}`} />
-          {isNearLimit && (
-            <span className="absolute top-1 right-1 h-2 w-2 bg-warning rounded-full animate-pulse" />
-          )}
-        </Button>
-      </Link>
-    );
-  }
+  const highestUsage = resources.length
+    ? resources.reduce((max, curr) => (curr.percent > max.percent ? curr : max))
+    : null;
+  const isNearLimit = highestUsage ? highestUsage.percent >= 80 : false;
+  const isAtLimit = highestUsage ? highestUsage.percent >= 100 : false;
+  const isPremiumPlan =
+    limits?.plan.name !== "Free" && limits?.plan.name !== "Basic";
 
   return (
-    <Card className="p-3 space-y-3 border-sidebar-border bg-sidebar">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Zap className="h-4 w-4 text-primary" />
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold">{limits.plan.name}</span>
-            {limits.plan.status && (
-              <span className="text-[10px] text-muted-foreground capitalize">
-                {limits.plan.status}
-              </span>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="w-full justify-start gap-2 relative"
+          disabled={loading}
+        >
+          <Crown
+            className={`h-4 w-4 ${
+              isPremiumPlan ? "text-primary" : "text-muted-foreground"
+            }`}
+          />
+          <span className="flex-1 text-left truncate">
+            {loading ? "..." : limits?.plan.name || "Plan"}
+          </span>
+          {isNearLimit && (
+            <span className="h-2 w-2 bg-warning rounded-full animate-pulse" />
+          )}
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-primary" />
+            {limits?.plan.name} Plan
+          </DialogTitle>
+        </DialogHeader>
+
+        {limits && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2">
+                {limits.plan.status && (
+                  <span className="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium capitalize">
+                    {limits.plan.status}
+                  </span>
+                )}
+              </div>
+              {daysLeft !== null && (
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  <span>{daysLeft} days left</span>
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              {resources.map((resource) => (
+                <div key={resource.name} className="space-y-1.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      {resource.name}
+                    </span>
+                    <span className="font-medium tabular-nums">
+                      {resource.format
+                        ? formatNumber(resource.used)
+                        : resource.used}
+                      <span className="text-muted-foreground">
+                        /
+                        {resource.limit === null
+                          ? "∞"
+                          : resource.format
+                          ? formatNumber(resource.limit)
+                          : resource.limit}
+                      </span>
+                    </span>
+                  </div>
+                  <Progress value={resource.percent} className="h-2" />
+                </div>
+              ))}
+            </div>
+
+            {(isNearLimit || (daysLeft !== null && daysLeft <= 7)) && (
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-warning/10 border border-warning/20">
+                <AlertCircle className="h-4 w-4 text-warning mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-warning">
+                  {isAtLimit
+                    ? t("Usage.limitReached")
+                    : isNearLimit
+                    ? t("Usage.nearLimit")
+                    : t("Usage.planExpiring", { days: daysLeft ?? 0 })}
+                </p>
+              </div>
             )}
-          </div>
-        </div>
-        {daysLeft !== null && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Calendar className="h-3 w-3" />
-            <span>{daysLeft}d</span>
+
+            <Link href="/subscription" onClick={() => setOpen(false)}>
+              <Button
+                variant={isPremiumPlan ? "outline" : "default"}
+                className="w-full gap-2"
+              >
+                <Crown className="h-4 w-4" />
+                {isPremiumPlan
+                  ? t("Subscription.manageSubscription")
+                  : t("Subscription.upgrade")}
+              </Button>
+            </Link>
           </div>
         )}
-      </div>
-
-      <div className="space-y-2.5">
-        {resources.map((resource) => (
-          <div key={resource.name} className="space-y-1">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">{resource.name}</span>
-              <span className="font-medium tabular-nums">
-                {resource.format ? formatNumber(resource.used) : resource.used}
-                <span className="text-muted-foreground">
-                  /
-                  {resource.limit === null
-                    ? "∞"
-                    : resource.format
-                    ? formatNumber(resource.limit)
-                    : resource.limit}
-                </span>
-              </span>
-            </div>
-            <Progress value={resource.percent} className="h-1.5" />
-          </div>
-        ))}
-      </div>
-
-      {(isNearLimit || (daysLeft !== null && daysLeft <= 7)) && (
-        <div className="flex items-start gap-2 p-2 rounded-md bg-warning/10 border border-warning/20">
-          <AlertCircle className="h-3.5 w-3.5 text-warning mt-0.5 flex-shrink-0" />
-          <p className="text-[11px] leading-tight text-warning">
-            {isAtLimit
-              ? t("Usage.limitReached")
-              : isNearLimit
-              ? t("Usage.nearLimit")
-              : t("Usage.planExpiring", { days: daysLeft ?? 0 })}
-          </p>
-        </div>
-      )}
-
-      <Link href="/subscription" className="block">
-        <Button
-          variant={isPremiumPlan ? "outline" : "default"}
-          size="sm"
-          className="w-full h-8 text-xs gap-2"
-        >
-          <Crown className="h-3.5 w-3.5" />
-          {isPremiumPlan
-            ? t("Subscription.manageSubscription")
-            : t("Subscription.upgrade")}
-        </Button>
-      </Link>
-    </Card>
+      </DialogContent>
+    </Dialog>
   );
 }
