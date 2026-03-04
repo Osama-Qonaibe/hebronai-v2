@@ -3,7 +3,6 @@ import { getSession } from "lib/auth/server";
 import { pgDb } from "@/lib/db/pg/db.pg";
 import { UserTable, ImageGenerationTable } from "@/lib/db/pg/schema.pg";
 import { eq, and, gte, sql } from "drizzle-orm";
-import { customModelProvider } from "@/lib/ai/models";
 
 export async function GET() {
   try {
@@ -17,7 +16,6 @@ export async function GET() {
         plan: UserTable.plan,
         planStatus: UserTable.planStatus,
         planExpiresAt: UserTable.planExpiresAt,
-        planId: UserTable.planId,
       })
       .from(UserTable)
       .where(eq(UserTable.id, session.user.id))
@@ -40,6 +38,7 @@ export async function GET() {
         tokens: number | null;
         imagesDaily: number | null;
         imagesMonthly: number | null;
+        models: number;
       }
     > = {
       free: { 
@@ -49,6 +48,7 @@ export async function GET() {
         tokens: 50000,
         imagesDaily: 5,
         imagesMonthly: 50,
+        models: 3,
       },
       basic: { 
         agents: 5, 
@@ -57,6 +57,7 @@ export async function GET() {
         tokens: 200000,
         imagesDaily: 20,
         imagesMonthly: 300,
+        models: 8,
       },
       pro: { 
         agents: 10, 
@@ -65,6 +66,7 @@ export async function GET() {
         tokens: 1000000,
         imagesDaily: 50,
         imagesMonthly: 1000,
+        models: 15,
       },
       enterprise: { 
         agents: null, 
@@ -73,6 +75,7 @@ export async function GET() {
         tokens: null,
         imagesDaily: null,
         imagesMonthly: null,
+        models: 999,
       },
     };
 
@@ -120,17 +123,12 @@ export async function GET() {
         )
       );
 
-    const modelsCount = customModelProvider.modelsInfo.reduce(
-      (total, provider) => total + provider.models.length,
-      0
-    );
-
     return NextResponse.json({
       plan: {
         name: userPlan.charAt(0).toUpperCase() + userPlan.slice(1),
         status: planStatus,
         expiresAt: expiresAt?.toISOString() || null,
-        modelsCount,
+        modelsCount: limits.models,
       },
       agents: {
         used: agentsCount.length,
