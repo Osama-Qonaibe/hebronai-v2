@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "lib/auth/server";
 import { pgDb } from "@/lib/db/pg/db.pg";
 import { UserTable } from "@/lib/db/pg/schema.pg";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export async function GET() {
   try {
@@ -11,27 +11,13 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await pgDb.query.UserTable.findFirst({
-      where: eq(UserTable.id, session.user.id),
-      with: {
-        subscription: true,
-      },
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const subscription = user.subscription;
-    const plan = subscription?.plan || "free";
-
     const planLimits: Record<string, { agents: number | null; workflows: number | null; mcpServers: number | null; tokens: number | null }> = {
       free: { agents: 2, workflows: 1, mcpServers: 1, tokens: 50000 },
       pro: { agents: 10, workflows: 5, mcpServers: 5, tokens: 500000 },
       enterprise: { agents: null, workflows: null, mcpServers: null, tokens: null },
     };
 
-    const limits = planLimits[plan] || planLimits.free;
+    const limits = planLimits.free;
 
     const agentsCount = await pgDb.query.AgentTable?.findMany({
       where: (agents, { eq }) => eq(agents.userId, session.user.id),
@@ -47,8 +33,8 @@ export async function GET() {
 
     return NextResponse.json({
       plan: {
-        name: plan.charAt(0).toUpperCase() + plan.slice(1),
-        expiresAt: subscription?.currentPeriodEnd || null,
+        name: "Free",
+        expiresAt: null,
       },
       agents: {
         used: agentsCount.length,
