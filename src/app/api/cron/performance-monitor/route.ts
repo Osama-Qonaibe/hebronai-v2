@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
     const metrics = {
       timestamp: new Date().toISOString(),
-      database: { avgQueryTime: 0, slowQueries: 0, activeConnections: 0 },
+      database: { avgQueryTime: 0, slowQueries: 0 },
       memory: { used: 0, percentage: 0 },
       activeUsers: 0,
       errors: [] as string[],
@@ -29,25 +29,20 @@ export async function POST(request: NextRequest) {
 
     try {
       const { pgDb } = await import("lib/db/pg/db.pg");
-      const { UserTable, ChatThreadTable } = await import("lib/db/pg/schema.pg");
+      const { ChatThreadTable } = await import("lib/db/pg/schema.pg");
       const { sql, gte } = await import("drizzle-orm");
 
       const dbStart = Date.now();
       
-      const [userCount] = await pgDb
-        .select({ count: sql<number>`count(*)::int` })
-        .from(UserTable);
-      
-      const queryTime = Date.now() - dbStart;
-      metrics.database.avgQueryTime = queryTime;
-      metrics.database.slowQueries = queryTime > 1000 ? 1 : 0;
-
       const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
       const [activeThreads] = await pgDb
         .select({ count: sql<number>`count(*)::int` })
         .from(ChatThreadTable)
         .where(gte(ChatThreadTable.createdAt, oneDayAgo));
-
+      
+      const queryTime = Date.now() - dbStart;
+      metrics.database.avgQueryTime = queryTime;
+      metrics.database.slowQueries = queryTime > 1000 ? 1 : 0;
       metrics.activeUsers = activeThreads?.count || 0;
 
       if (queryTime > 2000) {
