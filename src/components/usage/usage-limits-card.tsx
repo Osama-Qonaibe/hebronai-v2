@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { Card } from "ui/card";
 import { Progress } from "ui/progress";
 import { Button } from "ui/button";
-import { AlertCircle, TrendingUp, Calendar } from "lucide-react";
+import { AlertCircle, TrendingUp, Calendar, Zap } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 interface UsageLimits {
   plan: {
     name: string;
+    status?: string;
     expiresAt: string | null;
   };
   agents: { used: number; limit: number | null };
@@ -63,42 +64,48 @@ export function UsageLimitsCard() {
     return Math.min((used / limit) * 100, 100);
   };
 
-  const getHighestUsage = () => {
-    const usages = [
-      {
-        name: t("Layout.agents"),
-        percent: getUsagePercent(limits.agents.used, limits.agents.limit),
-        used: limits.agents.used,
-        limit: limits.agents.limit,
-      },
-      {
-        name: t("Subscription.workflows"),
-        percent: getUsagePercent(limits.workflows.used, limits.workflows.limit),
-        used: limits.workflows.used,
-        limit: limits.workflows.limit,
-      },
-      {
-        name: t("Subscription.tokensPerMonth"),
-        percent: getUsagePercent(limits.tokens.used, limits.tokens.limit),
-        used: limits.tokens.used,
-        limit: limits.tokens.limit,
-      },
-    ];
-    return usages.reduce((max, curr) => (curr.percent > max.percent ? curr : max));
-  };
+  const resources = [
+    {
+      name: t("Layout.agents"),
+      used: limits.agents.used,
+      limit: limits.agents.limit,
+      percent: getUsagePercent(limits.agents.used, limits.agents.limit),
+    },
+    {
+      name: t("Subscription.workflows"),
+      used: limits.workflows.used,
+      limit: limits.workflows.limit,
+      percent: getUsagePercent(limits.workflows.used, limits.workflows.limit),
+    },
+    {
+      name: "MCP Servers",
+      used: limits.mcpServers.used,
+      limit: limits.mcpServers.limit,
+      percent: getUsagePercent(limits.mcpServers.used, limits.mcpServers.limit),
+    },
+  ];
 
-  const highestUsage = getHighestUsage();
+  const highestUsage = resources.reduce((max, curr) =>
+    curr.percent > max.percent ? curr : max
+  );
   const isNearLimit = highestUsage.percent >= 80;
   const isAtLimit = highestUsage.percent >= 100;
 
   return (
-    <Card className="p-4 space-y-3 border-sidebar-border bg-sidebar">
+    <Card className="p-3 space-y-3 border-sidebar-border bg-sidebar">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium">{limits.plan.name}</span>
+          <Zap className="h-4 w-4 text-primary" />
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold">{limits.plan.name}</span>
+            {limits.plan.status && (
+              <span className="text-[10px] text-muted-foreground capitalize">
+                {limits.plan.status}
+              </span>
+            )}
+          </div>
         </div>
-        {daysLeft !== null && daysLeft <= 15 && (
+        {daysLeft !== null && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Calendar className="h-3 w-3" />
             <span>{daysLeft}d</span>
@@ -106,20 +113,37 @@ export function UsageLimitsCard() {
         )}
       </div>
 
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-muted-foreground">{highestUsage.name}</span>
-          <span className="font-medium">
-            {highestUsage.used}/{highestUsage.limit || "∞"}
-          </span>
-        </div>
-        <Progress value={highestUsage.percent} className="h-1.5" />
+      <div className="space-y-2.5">
+        {resources.map((resource) => (
+          <div key={resource.name} className="space-y-1">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">{resource.name}</span>
+              <span className="font-medium tabular-nums">
+                {resource.used}
+                <span className="text-muted-foreground">
+                  /{resource.limit === null ? "∞" : resource.limit}
+                </span>
+              </span>
+            </div>
+            <Progress
+              value={resource.percent}
+              className="h-1.5"
+              indicatorClassName={
+                resource.percent >= 90
+                  ? "bg-destructive"
+                  : resource.percent >= 70
+                  ? "bg-warning"
+                  : "bg-primary"
+              }
+            />
+          </div>
+        ))}
       </div>
 
       {(isNearLimit || (daysLeft !== null && daysLeft <= 7)) && (
         <div className="flex items-start gap-2 p-2 rounded-md bg-warning/10 border border-warning/20">
           <AlertCircle className="h-3.5 w-3.5 text-warning mt-0.5 flex-shrink-0" />
-          <p className="text-xs text-warning">
+          <p className="text-[11px] leading-tight text-warning">
             {isAtLimit
               ? t("Usage.limitReached")
               : isNearLimit
@@ -130,8 +154,10 @@ export function UsageLimitsCard() {
       )}
 
       <Link href="/subscription" className="block">
-        <Button variant="outline" size="sm" className="w-full">
-          {t("Subscription.upgrade")}
+        <Button variant="outline" size="sm" className="w-full h-8 text-xs">
+          {limits.plan.name === "Free" || limits.plan.name === "Basic"
+            ? t("Subscription.upgrade")
+            : t("Subscription.manageSubscription")}
         </Button>
       </Link>
     </Card>
