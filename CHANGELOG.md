@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.6.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.5.0...hebronai-v2-v5.6.0) (2026-03-04)
+
+
+### Features
+
+* add Arabic translations for usage card ([c54efc4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c54efc484416964905e283dbfa6f0440408f61d0))
+
+
+### Bug Fixes
+
+* show upgrade button for all plans except enterprise ([6e60762](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6e60762047f101509a8b5032cc1e5b833bd2c5ae))
+
 ## [5.5.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.4.0...hebronai-v2-v5.5.0) (2026-03-04)
 
 
