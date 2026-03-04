@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { Card } from "ui/card";
 import { Progress } from "ui/progress";
 import { Button } from "ui/button";
-import { AlertCircle, Calendar, Zap } from "lucide-react";
+import { AlertCircle, Calendar, Zap, Crown } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useSidebar } from "ui/sidebar";
 
 interface UsageLimits {
   plan: {
@@ -22,6 +23,7 @@ interface UsageLimits {
 
 export function UsageLimitsCard() {
   const t = useTranslations();
+  const { open } = useSidebar();
   const [limits, setLimits] = useState<UsageLimits | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -106,6 +108,25 @@ export function UsageLimitsCard() {
   );
   const isNearLimit = highestUsage.percent >= 80;
   const isAtLimit = highestUsage.percent >= 100;
+  const isPremiumPlan = limits.plan.name !== "Free" && limits.plan.name !== "Basic";
+
+  if (!open) {
+    return (
+      <Link href="/subscription">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="w-full h-10 relative group"
+          title={isPremiumPlan ? t("Subscription.manageSubscription") : t("Subscription.upgrade")}
+        >
+          <Crown className={`h-5 w-5 ${isPremiumPlan ? "text-primary" : "text-muted-foreground"}`} />
+          {isNearLimit && (
+            <span className="absolute top-1 right-1 h-2 w-2 bg-warning rounded-full animate-pulse" />
+          )}
+        </Button>
+      </Link>
+    );
+  }
 
   return (
     <Card className="p-3 space-y-3 border-sidebar-border bg-sidebar">
@@ -165,10 +186,15 @@ export function UsageLimitsCard() {
       )}
 
       <Link href="/subscription" className="block">
-        <Button variant="outline" size="sm" className="w-full h-8 text-xs">
-          {limits.plan.name === "Free" || limits.plan.name === "Basic"
-            ? t("Subscription.upgrade")
-            : t("Subscription.manageSubscription")}
+        <Button
+          variant={isPremiumPlan ? "outline" : "default"}
+          size="sm"
+          className="w-full h-8 text-xs gap-2"
+        >
+          <Crown className="h-3.5 w-3.5" />
+          {isPremiumPlan
+            ? t("Subscription.manageSubscription")
+            : t("Subscription.upgrade")}
         </Button>
       </Link>
     </Card>
