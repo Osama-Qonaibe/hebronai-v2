@@ -47,23 +47,6 @@ export async function POST(request: NextRequest) {
       healthStatus.status = "degraded";
     }
 
-    try {
-      const redis = (await import("@/lib/redis")).default;
-      const redisStart = Date.now();
-      await redis.ping();
-      const redisTime = Date.now() - redisStart;
-      
-      healthStatus.checks.redis = {
-        status: redisTime < 500 ? "healthy" : "slow",
-        responseTime: redisTime,
-      };
-    } catch (redisError) {
-      healthStatus.checks.redis = {
-        status: "unavailable",
-        error: redisError instanceof Error ? redisError.message : "Unknown error",
-      };
-    }
-
     const totalTime = Date.now() - startTime;
     healthStatus.checks.overall = {
       status: healthStatus.status,
