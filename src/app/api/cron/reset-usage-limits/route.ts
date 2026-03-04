@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
     const { pgDb } = await import("lib/db/pg/db.pg");
     const { UserTable, ImageGenerationTable, DailyUsageSummaryTable } = await import("lib/db/pg/schema.pg");
-    const { sql, lte, eq, and } = await import("drizzle-orm");
+    const { lte, eq, and } = await import("drizzle-orm");
 
     const results = {
       expiredPlans: 0,
