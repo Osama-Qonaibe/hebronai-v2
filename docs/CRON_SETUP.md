@@ -2,12 +2,13 @@
 
 ## 📋 نظرة عامة
 
-المشروع يحتوي على 4 وظائف Cron Jobs لصيانة التطبيق تلقائياً:
+المشروع يحتوي على 5 وظائف Cron Jobs لصيانة التطبيق تلقائياً:
 
 1. **فحص الاشتراكات المنتهية** - إرسال تنبيهات للمستخدمين
-2. **تنظيف الكاش** - مسح البيانات المؤقتة كل 3 ساعات
-3. **فحص صحة التطبيق** - مراقبة قاعدة البيانات والخدمات
-4. **مراقبة الأداء** - تتبع استخدام الموارد والأداء
+2. **إعادة ضبط حدود الاستخدام** - تطبيق الحدود ومنع الخسائر ⚠️ **مهم جداً**
+3. **تنظيف الكاش** - مسح البيانات المؤقتة كل 3 ساعات
+4. **فحص صحة التطبيق** - مراقبة قاعدة البيانات والخدمات
+5. **مراقبة الأداء** - تتبع استخدام الموارد والأداء
 
 ---
 
@@ -39,58 +40,54 @@ CRON_SECRET=your-super-secret-key-here-change-this
 **الوقت:** يومياً الساعة 9 صباحاً
 
 ```bash
-# دقيقة: 0 | ساعة: 9 | يوم: * | شهر: * | يوم الأسبوع: *
-0 9 * * * curl -X POST "https://yourdomain.com/api/cron/check-expiring-subscriptions?secret=YOUR_CRON_SECRET" -H "Content-Type: application/json"
-```
-
-**البديل (wget):**
-```bash
-0 9 * * * wget -q -O - "https://yourdomain.com/api/cron/check-expiring-subscriptions?secret=YOUR_CRON_SECRET"
+0 9 * * * curl -X POST "https://yourdomain.com/api/cron/check-expiring-subscriptions?secret=YOUR_CRON_SECRET"
 ```
 
 ---
 
-### 2️⃣ تنظيف الكاش
+### 2️⃣ إعادة ضبط حدود الاستخدام ⚠️ **حرج - لا تنسى هذا!**
+**الوقت:** يومياً الساعة 12 منتصف الليل (00:00)
+
+```bash
+0 0 * * * curl -X POST "https://yourdomain.com/api/cron/reset-usage-limits?secret=YOUR_CRON_SECRET"
+```
+
+**ما يفعله:**
+- ✅ يخفّض رتبة المستخدمين المنتهية اشتراكاتهم إلى Free
+- ✅ يحذف الصور الفاشلة القديمة (30+ يوم)
+- ✅ ينظف ملخصات الاستخدام القديمة (90+ يوم)
+- ✅ يمنع تجاوز الحدود = **يحميك من الخسائر المالية!**
+
+⚠️ **مهم جداً:** هذا Cron يحميك من:
+- استخدام غير مصرح به
+- تجاوز حدود API المدفوعة
+- المستخدمين المنتهية اشتراكاتهم يستخدمون خدمات مدفوعة
+
+---
+
+### 3️⃣ تنظيف الكاش
 **الوقت:** كل 3 ساعات
 
 ```bash
-# دقيقة: 0 | ساعة: */3 | يوم: * | شهر: * | يوم الأسبوع: *
-0 */3 * * * curl -X POST "https://yourdomain.com/api/cron/clear-cache?secret=YOUR_CRON_SECRET" -H "Content-Type: application/json"
-```
-
-**البديل (wget):**
-```bash
-0 */3 * * * wget -q -O - "https://yourdomain.com/api/cron/clear-cache?secret=YOUR_CRON_SECRET"
+0 */3 * * * curl -X POST "https://yourdomain.com/api/cron/clear-cache?secret=YOUR_CRON_SECRET"
 ```
 
 ---
 
-### 3️⃣ فحص صحة التطبيق
+### 4️⃣ فحص صحة التطبيق
 **الوقت:** كل 15 دقيقة
 
 ```bash
-# دقيقة: */15 | ساعة: * | يوم: * | شهر: * | يوم الأسبوع: *
-*/15 * * * * curl -X POST "https://yourdomain.com/api/cron/health-check?secret=YOUR_CRON_SECRET" -H "Content-Type: application/json"
-```
-
-**البديل (wget):**
-```bash
-*/15 * * * * wget -q -O - "https://yourdomain.com/api/cron/health-check?secret=YOUR_CRON_SECRET"
+*/15 * * * * curl -X POST "https://yourdomain.com/api/cron/health-check?secret=YOUR_CRON_SECRET"
 ```
 
 ---
 
-### 4️⃣ مراقبة الأداء
+### 5️⃣ مراقبة الأداء
 **الوقت:** كل 30 دقيقة
 
 ```bash
-# دقيقة: */30 | ساعة: * | يوم: * | شهر: * | يوم الأسبوع: *
-*/30 * * * * curl -X POST "https://yourdomain.com/api/cron/performance-monitor?secret=YOUR_CRON_SECRET" -H "Content-Type: application/json"
-```
-
-**البديل (wget):**
-```bash
-*/30 * * * * wget -q -O - "https://yourdomain.com/api/cron/performance-monitor?secret=YOUR_CRON_SECRET"
+*/30 * * * * curl -X POST "https://yourdomain.com/api/cron/performance-monitor?secret=YOUR_CRON_SECRET"
 ```
 
 ---
@@ -99,46 +96,86 @@ CRON_SECRET=your-super-secret-key-here-change-this
 
 في واجهة cPanel Cron Jobs:
 
-| الوظيفة | Minute | Hour | Day | Month | Weekday | الأمر |
-|---------|--------|------|-----|-------|---------|-------|
-| Subscriptions | 0 | 9 | * | * | * | curl command above |
-| Clear Cache | 0 | */3 | * | * | * | curl command above |
-| Health Check | */15 | * | * | * | * | curl command above |
-| Performance | */30 | * | * | * | * | curl command above |
-
----
-
-## 📧 إعداد الإشعارات (اختياري)
-
-يمكنك إضافة بريد إلكتروني لاستقبال نتائج Cron Jobs:
-
-```bash
-MAILTO="your-email@example.com"
-0 9 * * * curl ...
-```
+| الوظيفة | Minute | Hour | Day | Month | Weekday | الأولوية |
+|---------|--------|------|-----|-------|---------|----------|
+| **Reset Limits** ⚠️ | 0 | 0 | * | * | * | **حرج** |
+| Subscriptions | 0 | 9 | * | * | * | عالي |
+| Clear Cache | 0 | */3 | * | * | * | متوسط |
+| Health Check | */15 | * | * | * | * | متوسط |
+| Performance | */30 | * | * | * | * | عادي |
 
 ---
 
 ## ✅ التحقق من التشغيل
 
-### 1. اختبار يدوي:
+### اختبار Reset Usage Limits:
 ```bash
-curl -X POST "https://yourdomain.com/api/cron/health-check?secret=YOUR_CRON_SECRET"
+curl -X POST "https://yourdomain.com/api/cron/reset-usage-limits?secret=YOUR_CRON_SECRET"
 ```
 
-### 2. فحص السجلات:
-تحقق من ملفات logs في `/var/log/` أو عبر cPanel logs
-
-### 3. مراقبة النتائج:
-كل endpoint يرجع JSON response:
-
+**النتيجة المتوقعة:**
 ```json
 {
   "success": true,
-  "message": "Operation completed",
-  "timestamp": "2026-03-04T18:50:00.000Z"
+  "message": "Usage limits reset completed",
+  "results": {
+    "expiredPlans": 2,
+    "downgradedUsers": 2,
+    "deletedOldImages": 15,
+    "cleanedSummaries": 30,
+    "errors": []
+  },
+  "timestamp": "2026-03-04T19:00:00.000Z"
 }
 ```
+
+---
+
+## 📊 ما تفعله كل وظيفة
+
+### إعادة ضبط حدود الاستخدام (الأهم!):
+- ✅ يخفّض المستخدمين منتهي الاشتراك إلى Free
+- ✅ يمنع استخدام الخدمات المدفوعة بعد انتهاء الاشتراك
+- ✅ ينظف البيانات القديمة (صور فاشلة > 30 يوم)
+- ✅ يحذف ملخصات الاستخدام القديمة (> 90 يوم)
+- 💰 **يحميك من الخسائر المالية!**
+
+### فحص الاشتراكات:
+- يفحص الاشتراكات النشطة
+- يرسل إشعارات عند 7، 3، 1 يوم قبل الانتهاء
+- يدعم العربية والإنجليزية
+
+### تنظيف الكاش:
+- ينظف Next.js cache
+- يعيد التحقق من المسارات الهامة
+- يحسّن الأداء
+
+### فحص الصحة:
+- يختبر قاعدة البيانات (PostgreSQL)
+- يقيس وقت الاستجابة
+- يسجل أي مشاكل
+
+### مراقبة الأداء:
+- يراقب زمن الاستعلامات
+- يراقب استخدام الذاكرة
+- يحسب المستخدمين النشطين
+- ينبه عند تباطؤ النظام
+
+---
+
+## ⚠️ تحذيرات مهمة
+
+### ❌ لا تنسى Reset Usage Limits!
+بدون هذا Cron:
+- ❌ المستخدمين المنتهية اشتراكاتهم سيستمرون باستخدام الخدمات المدفوعة
+- ❌ ستدفع تكاليف API لمستخدمين غير مشتركين
+- ❌ لا يوجد حد لاستهلاكهم = **خسائر كبيرة محتملة!**
+
+### ✅ مع Reset Usage Limits:
+- ✅ تطبيق فوري للحدود
+- ✅ تخفيض تلقائي للمستخدمين المنتهية اشتراكاتهم
+- ✅ حماية من الاستخدام الزائد
+- ✅ **وفر في التكاليف!**
 
 ---
 
@@ -153,43 +190,19 @@ curl -X POST "https://yourdomain.com/api/cron/health-check?secret=YOUR_CRON_SECR
 
 ---
 
-## 📊 ما تفعله كل وظيفة
-
-### فحص الاشتراكات:
-- يفحص الاشتراكات النشطة
-- يرسل إشعارات عند 7، 3، 1 يوم قبل الانتهاء
-- يدعم العربية والإنجليزية
-
-### تنظيف الكاش:
-- يمسح `usage:*`
-- يمسح `user:session:*`
-- يمسح `mcp:*`
-- يمسح `rate-limit:*`
-
-### فحص الصحة:
-- يختبر قاعدة البيانات (PostgreSQL)
-- يختبر Redis
-- يقيس وقت الاستجابة
-- يسجل أي مشاكل
-
-### مراقبة الأداء:
-- يراقب زمن الاستعلامات
-- يراقب استخدام الذاكرة
-- يحسب المستخدمين النشطين
-- ينبه عند تباطؤ النظام
-
----
-
 ## ❓ استكشاف الأخطاء
 
 ### المشكلة: "Unauthorized"
 **الحل:** تأكد من `CRON_SECRET` في `.env` يطابق المستخدم في الأمر
 
+### المشكلة: Reset Limits لا يعمل
+**الحل:** 
+1. تحقق من الأمر في cPanel
+2. اختبر يدوياً: `curl -X POST "https://yourdomain.com/api/cron/reset-usage-limits?secret=YOUR_SECRET"`
+3. راجع logs التطبيق
+
 ### المشكلة: "Connection refused"
 **الحل:** تأكد من أن الـ domain صحيح والتطبيق يعمل
-
-### المشكلة: لا توجد نتائج
-**الحل:** تحقق من cPanel Cron Job Logs
 
 ---
 
