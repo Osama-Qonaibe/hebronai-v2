@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { getSession } from "lib/auth/server";
 import { pgDb } from "@/lib/db/pg/db.pg";
-import { UserTable, ImageGenerationTable, DailyUsageSummaryTable } from "@/lib/db/pg/schema.pg";
+import { UserTable, ImageGenerationTable } from "@/lib/db/pg/schema.pg";
 import { eq, and, gte, sql } from "drizzle-orm";
-import { getAvailableModels } from "lib/model";
+import { getAvailableModels } from "@/lib/ai/models";
 
 export async function GET() {
   try {
