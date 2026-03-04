@@ -5,21 +5,21 @@
 
 ### Features
 
-* add comprehensive usage tracking tables ([51d6c50](https://github.com/Osama-Qonaibe/hebronai-v2/commit/51d6c50c97faedb06a5f28b90dd0a5a0bf69725f))
-* add images and models count to usage API ([ffdcbbf](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ffdcbbf745e868b693448325ac0861d98628b853))
-* add images and models counters to usage card ([8516ee7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8516ee78c44bd95b75585b304be54735e1019201))
-* enable images tracking after migration ([b5fca72](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b5fca72238d69b54d6d3dd3ae6a303bf87dedafb))
-* usage card as dialog instead of permanent sidebar space ([bf61403](https://github.com/Osama-Qonaibe/hebronai-v2/commit/bf614030d417aec09e47e0aa43c52b7fc17e95d8))
+* add comprehensive usage tracking tables ([51d6c50](https://github.com/Osama-Qonaibe/hebronai-v2/commit/51d6c50c97faedb06a5f28b90dd0a5a0bf69725f)) by @Osama-Qonaibe
+* add images and models count to usage API ([ffdcbbf](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ffdcbbf745e868b693448325ac0861d98628b853)) by @Osama-Qonaibe
+* add images and models counters to usage card ([8516ee7](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8516ee78c44bd95b75585b304be54735e1019201)) by @Osama-Qonaibe
+* enable images tracking after migration ([b5fca72](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b5fca72238d69b54d6d3dd3ae6a303bf87dedafb)) by @Osama-Qonaibe
+* usage card as dialog instead of permanent sidebar space ([bf61403](https://github.com/Osama-Qonaibe/hebronai-v2/commit/bf614030d417aec09e47e0aa43c52b7fc17e95d8)) by @Osama-Qonaibe
 
 
 ### Bug Fixes
 
-* correct import path for getAvailableModels ([eadbab5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/eadbab55badc500403e03cb1a24a5ebd7ccc1a85))
-* correct models count from subscription cards ([a50e14c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a50e14c849c525140a86637664424f76dc7a5500))
-* remove images tracking until table exists ([aa466c9](https://github.com/Osama-Qonaibe/hebronai-v2/commit/aa466c991b434325048a0f53ddc24701b3539546))
-* remove unused X import ([01f5013](https://github.com/Osama-Qonaibe/hebronai-v2/commit/01f50139a2293badc3fa46f46d7d67f852cab0b0))
-* set static models count per plan ([0d99625](https://github.com/Osama-Qonaibe/hebronai-v2/commit/0d996253e3ccdf28d2ff76339bd51d66e0053a60))
-* use customModelProvider for models count ([f3d45ab](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f3d45abdc78fb2cebe70d4683a13123493bef950))
+* correct import path for getAvailableModels ([eadbab5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/eadbab55badc500403e03cb1a24a5ebd7ccc1a85)) by @Osama-Qonaibe
+* correct models count from subscription cards ([a50e14c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a50e14c849c525140a86637664424f76dc7a5500)) by @Osama-Qonaibe
+* remove images tracking until table exists ([aa466c9](https://github.com/Osama-Qonaibe/hebronai-v2/commit/aa466c991b434325048a0f53ddc24701b3539546)) by @Osama-Qonaibe
+* remove unused X import ([01f5013](https://github.com/Osama-Qonaibe/hebronai-v2/commit/01f50139a2293badc3fa46f46d7d67f852cab0b0)) by @Osama-Qonaibe
+* set static models count per plan ([0d99625](https://github.com/Osama-Qonaibe/hebronai-v2/commit/0d996253e3ccdf28d2ff76339bd51d66e0053a60)) by @Osama-Qonaibe
+* use customModelProvider for models count ([f3d45ab](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f3d45abdc78fb2cebe70d4683a13123493bef950)) by @Osama-Qonaibe
 
 ## [5.4.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.3.0...hebronai-v2-v5.4.0) (2026-03-04)
 
