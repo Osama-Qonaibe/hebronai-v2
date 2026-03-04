@@ -5,19 +5,19 @@
 
 ### Features
 
-* add cache clearing cron job ([96ab620](https://github.com/Osama-Qonaibe/hebronai-v2/commit/96ab62041d8e412caf5cfbfcddeb5f1e459fc484))
-* add health check monitoring cron job ([592533f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/592533f2035a86679a78479d52d5b6c37adef004))
-* add performance monitoring cron job ([4bbe213](https://github.com/Osama-Qonaibe/hebronai-v2/commit/4bbe2138a463f1ba8da509823a1615ccec7aa0e3))
-* add usage limits reset cron job ([ce2fdfc](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ce2fdfcfef02a1fd4b9be43e34e75c2391c4d491))
+* add cache clearing cron job ([96ab620](https://github.com/Osama-Qonaibe/hebronai-v2/commit/96ab62041d8e412caf5cfbfcddeb5f1e459fc484)) by @Osama-Qonaibe
+* add health check monitoring cron job ([592533f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/592533f2035a86679a78479d52d5b6c37adef004)) by @Osama-Qonaibe
+* add performance monitoring cron job ([4bbe213](https://github.com/Osama-Qonaibe/hebronai-v2/commit/4bbe2138a463f1ba8da509823a1615ccec7aa0e3)) by @Osama-Qonaibe
+* add usage limits reset cron job ([ce2fdfc](https://github.com/Osama-Qonaibe/hebronai-v2/commit/ce2fdfcfef02a1fd4b9be43e34e75c2391c4d491)) by @Osama-Qonaibe
 
 
 ### Bug Fixes
 
-* remove redis dependency from clear-cache ([e7c1935](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e7c1935317bf780e0d0ec93f67cbf6a908d49b56))
-* remove redis dependency from health-check ([460adfd](https://github.com/Osama-Qonaibe/hebronai-v2/commit/460adfd50577aa8ab6d63556556da8df66e25764))
-* remove redis dependency from performance-monitor ([bbfcc1f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/bbfcc1f78cd01ea5271ff9b50237f0fcc83b997b))
-* remove unused sql import ([8e2d268](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8e2d268f104de3373f8b41f4ce5367e370d6307f))
-* remove unused variable ([f74ebeb](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f74ebeb22c8fb88d1634f835b13d5dc7621712c4))
+* remove redis dependency from clear-cache ([e7c1935](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e7c1935317bf780e0d0ec93f67cbf6a908d49b56)) by @Osama-Qonaibe
+* remove redis dependency from health-check ([460adfd](https://github.com/Osama-Qonaibe/hebronai-v2/commit/460adfd50577aa8ab6d63556556da8df66e25764)) by @Osama-Qonaibe
+* remove redis dependency from performance-monitor ([bbfcc1f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/bbfcc1f78cd01ea5271ff9b50237f0fcc83b997b)) by @Osama-Qonaibe
+* remove unused sql import ([8e2d268](https://github.com/Osama-Qonaibe/hebronai-v2/commit/8e2d268f104de3373f8b41f4ce5367e370d6307f)) by @Osama-Qonaibe
+* remove unused variable ([f74ebeb](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f74ebeb22c8fb88d1634f835b13d5dc7621712c4)) by @Osama-Qonaibe
 
 ## [5.6.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.5.0...hebronai-v2-v5.6.0) (2026-03-04)
 
