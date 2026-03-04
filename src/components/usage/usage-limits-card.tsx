@@ -125,17 +125,7 @@ export function UsageLimitsCard() {
                 </span>
               </span>
             </div>
-            <Progress
-              value={resource.percent}
-              className="h-1.5"
-              indicatorClassName={
-                resource.percent >= 90
-                  ? "bg-destructive"
-                  : resource.percent >= 70
-                  ? "bg-warning"
-                  : "bg-primary"
-              }
-            />
+            <Progress value={resource.percent} className="h-1.5" />
           </div>
         ))}
       </div>
