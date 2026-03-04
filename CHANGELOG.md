@@ -5,21 +5,21 @@
 
 ### Features
 
-* add tokens usage to card ([2c4f0f8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2c4f0f83cd9238b2a53f5fae847d9c385f5ffa0b))
-* add usage API endpoint ([7a72d25](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7a72d256857dc766c89b2389cb38a43dc072ce5e))
-* improve usage card with full details ([a98c678](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a98c678dd6994b9b632219dafe079a7f811f9db8))
-* make usage card responsive to sidebar state ([e52b050](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e52b050c59c78dee97192a115ff32c2f071f9c81))
-* read actual plan from user table ([9ec1a29](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9ec1a29ced3bd7e990dbdc0c6d6cd38f87ba0cc2))
+* add tokens usage to card ([2c4f0f8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2c4f0f83cd9238b2a53f5fae847d9c385f5ffa0b)) by @Osama-Qonaibe
+* add usage API endpoint ([7a72d25](https://github.com/Osama-Qonaibe/hebronai-v2/commit/7a72d256857dc766c89b2389cb38a43dc072ce5e)) by @Osama-Qonaibe
+* improve usage card with full details ([a98c678](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a98c678dd6994b9b632219dafe079a7f811f9db8)) by @Osama-Qonaibe
+* make usage card responsive to sidebar state ([e52b050](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e52b050c59c78dee97192a115ff32c2f071f9c81)) by @Osama-Qonaibe
+* read actual plan from user table ([9ec1a29](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9ec1a29ced3bd7e990dbdc0c6d6cd38f87ba0cc2)) by @Osama-Qonaibe
 
 
 ### Bug Fixes
 
-* correct imports for usage API ([3691ddb](https://github.com/Osama-Qonaibe/hebronai-v2/commit/3691ddbc9e2ec013b4e287639cff8f8938f48f6c))
-* remove unsupported indicatorClassName prop ([71132e4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/71132e482ba5417b4323902e9535fa8c6033731a))
-* remove unused imports ([a568a31](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a568a318f2f1a5fc9838db4e37700862e94335a7))
-* remove unused TrendingUp import ([b1eeb06](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b1eeb0663db0d066a2b7a846a3c957879e1efd20))
-* simplify usage API without relations ([2932558](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2932558348d8d421263ca6b71a117f563b0773a9))
-* use correct sidebar state property ([cd52d48](https://github.com/Osama-Qonaibe/hebronai-v2/commit/cd52d487d1d807043ff9a6e058d4cc83263db38b))
+* correct imports for usage API ([3691ddb](https://github.com/Osama-Qonaibe/hebronai-v2/commit/3691ddbc9e2ec013b4e287639cff8f8938f48f6c)) by @Osama-Qonaibe
+* remove unsupported indicatorClassName prop ([71132e4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/71132e482ba5417b4323902e9535fa8c6033731a)) by @Osama-Qonaibe
+* remove unused imports ([a568a31](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a568a318f2f1a5fc9838db4e37700862e94335a7)) by @Osama-Qonaibe
+* remove unused TrendingUp import ([b1eeb06](https://github.com/Osama-Qonaibe/hebronai-v2/commit/b1eeb0663db0d066a2b7a846a3c957879e1efd20)) by @Osama-Qonaibe
+* simplify usage API without relations ([2932558](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2932558348d8d421263ca6b71a117f563b0773a9)) by @Osama-Qonaibe
+* use correct sidebar state property ([cd52d48](https://github.com/Osama-Qonaibe/hebronai-v2/commit/cd52d487d1d807043ff9a6e058d4cc83263db38b)) by @Osama-Qonaibe
 
 ## [5.3.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.2.2...hebronai-v2-v5.3.0) (2026-03-04)
 
