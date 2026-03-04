@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "ui/button";
-import { AlertCircle, Calendar, Zap, Crown, X } from "lucide-react";
+import { AlertCircle, Calendar, Zap, Crown } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
