@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { getSession } from "lib/auth/server";
 import { pgDb } from "@/lib/db/pg/db.pg";
-import { UserTable } from "@/lib/db/pg/schema.pg";
-import { eq } from "drizzle-orm";
+import { UserTable, ImageGenerationTable, DailyUsageSummaryTable } from "@/lib/db/pg/schema.pg";
+import { eq, and, gte, sql } from "drizzle-orm";
+import { getAvailableModels } from "lib/model";
 
 export async function GET() {
   try {
@@ -16,6 +17,7 @@ export async function GET() {
         plan: UserTable.plan,
         planStatus: UserTable.planStatus,
         planExpiresAt: UserTable.planExpiresAt,
+        planId: UserTable.planId,
       })
       .from(UserTable)
       .where(eq(UserTable.id, session.user.id))
@@ -36,12 +38,42 @@ export async function GET() {
         workflows: number | null;
         mcpServers: number | null;
         tokens: number | null;
+        imagesDaily: number | null;
+        imagesMonthly: number | null;
       }
     > = {
-      free: { agents: 2, workflows: 1, mcpServers: 1, tokens: 50000 },
-      basic: { agents: 5, workflows: 3, mcpServers: 3, tokens: 200000 },
-      pro: { agents: 10, workflows: 10, mcpServers: 10, tokens: 1000000 },
-      enterprise: { agents: null, workflows: null, mcpServers: null, tokens: null },
+      free: { 
+        agents: 2, 
+        workflows: 1, 
+        mcpServers: 1, 
+        tokens: 50000,
+        imagesDaily: 5,
+        imagesMonthly: 50,
+      },
+      basic: { 
+        agents: 5, 
+        workflows: 3, 
+        mcpServers: 3, 
+        tokens: 200000,
+        imagesDaily: 20,
+        imagesMonthly: 300,
+      },
+      pro: { 
+        agents: 10, 
+        workflows: 10, 
+        mcpServers: 10, 
+        tokens: 1000000,
+        imagesDaily: 50,
+        imagesMonthly: 1000,
+      },
+      enterprise: { 
+        agents: null, 
+        workflows: null, 
+        mcpServers: null, 
+        tokens: null,
+        imagesDaily: null,
+        imagesMonthly: null,
+      },
     };
 
     const limits = planLimits[userPlan] || planLimits.free;
@@ -61,11 +93,44 @@ export async function GET() {
         where: (mcpServers, { eq }) => eq(mcpServers.userId, session.user.id),
       })) || [];
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const imagesDaily = await pgDb
+      .select({ count: sql<number>`count(*)::int` })
+      .from(ImageGenerationTable)
+      .where(
+        and(
+          eq(ImageGenerationTable.userId, session.user.id),
+          gte(ImageGenerationTable.createdAt, today),
+          eq(ImageGenerationTable.status, "completed")
+        )
+      );
+
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    
+    const imagesMonthly = await pgDb
+      .select({ count: sql<number>`count(*)::int` })
+      .from(ImageGenerationTable)
+      .where(
+        and(
+          eq(ImageGenerationTable.userId, session.user.id),
+          gte(ImageGenerationTable.createdAt, firstDayOfMonth),
+          eq(ImageGenerationTable.status, "completed")
+        )
+      );
+
+    const availableModels = await getAvailableModels();
+    const modelsCount = availableModels.length;
+
     return NextResponse.json({
       plan: {
         name: userPlan.charAt(0).toUpperCase() + userPlan.slice(1),
         status: planStatus,
         expiresAt: expiresAt?.toISOString() || null,
+        modelsCount,
       },
       agents: {
         used: agentsCount.length,
@@ -82,6 +147,16 @@ export async function GET() {
       tokens: {
         used: 0,
         limit: limits.tokens,
+      },
+      images: {
+        daily: {
+          used: imagesDaily[0]?.count || 0,
+          limit: limits.imagesDaily,
+        },
+        monthly: {
+          used: imagesMonthly[0]?.count || 0,
+          limit: limits.imagesMonthly,
+        },
       },
     });
   } catch (error) {
