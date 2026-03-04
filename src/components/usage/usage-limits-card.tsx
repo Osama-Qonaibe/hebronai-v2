@@ -19,11 +19,16 @@ interface UsageLimits {
     name: string;
     status?: string;
     expiresAt: string | null;
+    modelsCount?: number;
   };
   agents: { used: number; limit: number | null };
   workflows: { used: number; limit: number | null };
   mcpServers: { used: number; limit: number | null };
   tokens: { used: number; limit: number | null };
+  images?: {
+    daily: { used: number; limit: number | null };
+    monthly: { used: number; limit: number | null };
+  };
 }
 
 export function UsageLimitsCard() {
@@ -97,6 +102,30 @@ export function UsageLimitsCard() {
           percent: getUsagePercent(limits.tokens.used, limits.tokens.limit),
           format: true,
         },
+        ...(limits.images
+          ? [
+              {
+                name: "Images Today",
+                used: limits.images.daily.used,
+                limit: limits.images.daily.limit,
+                percent: getUsagePercent(
+                  limits.images.daily.used,
+                  limits.images.daily.limit
+                ),
+                format: false,
+              },
+              {
+                name: "Images/Month",
+                used: limits.images.monthly.used,
+                limit: limits.images.monthly.limit,
+                percent: getUsagePercent(
+                  limits.images.monthly.used,
+                  limits.images.monthly.limit
+                ),
+                format: false,
+              },
+            ]
+          : []),
       ]
     : [];
 
@@ -135,7 +164,12 @@ export function UsageLimitsCard() {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-primary" />
-            {limits?.plan.name} Plan
+            <span>
+              {limits?.plan.name} Plan
+              {limits?.plan.modelsCount && (
+                <span className="text-muted-foreground font-normal"> • {limits.plan.modelsCount} Models</span>
+              )}
+            </span>
           </DialogTitle>
         </DialogHeader>
 
