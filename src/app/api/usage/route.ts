@@ -48,7 +48,7 @@ export async function GET() {
         tokens: 50000,
         imagesDaily: 5,
         imagesMonthly: 50,
-        models: 3,
+        models: 12,
       },
       basic: { 
         agents: 5, 
@@ -57,7 +57,7 @@ export async function GET() {
         tokens: 200000,
         imagesDaily: 20,
         imagesMonthly: 300,
-        models: 8,
+        models: 17,
       },
       pro: { 
         agents: 10, 
@@ -66,7 +66,7 @@ export async function GET() {
         tokens: 1000000,
         imagesDaily: 50,
         imagesMonthly: 1000,
-        models: 15,
+        models: 25,
       },
       enterprise: { 
         agents: null, 
@@ -75,7 +75,7 @@ export async function GET() {
         tokens: null,
         imagesDaily: null,
         imagesMonthly: null,
-        models: 999,
+        models: 45,
       },
     };
 
