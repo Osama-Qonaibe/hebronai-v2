@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     logger.info("Starting daily usage tracking...");
 
     const { pgDb } = await import("lib/db/pg/db.pg");
-    const { UsageTable, ChatMessageTable, ImageGenerationTable, UserTable } =
+    const { UsageTable, ChatMessageTable, ImageGenerationTable } =
       await import("lib/db/pg/schema.pg");
     const { sql, and, gte, lt, eq } = await import("drizzle-orm");
 
