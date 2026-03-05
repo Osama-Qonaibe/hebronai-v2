@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.7.4](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.7.3...hebronai-v2-v5.7.4) (2026-03-05)
+
+
+### Bug Fixes
+
+* Remove unused UserTable import ([6f41ab5](https://github.com/Osama-Qonaibe/hebronai-v2/commit/6f41ab5bf4723fe717bf1d246382b869efdb993f))
+
 ## [5.7.3](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.7.2...hebronai-v2-v5.7.3) (2026-03-05)
 
 
