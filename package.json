@@ -93,7 +93,7 @@
     "@xyflow/react": "^12.10.0",
     "ai": "^5.0.116",
     "bcrypt-ts": "^7.1.0",
-    "better-auth": "^1.5.3",
+    "better-auth": "^1.4.9",
     "chokidar": "^4.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -142,7 +142,6 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
-    "@better-auth-kit/seed": "^1.0.12",
     "@biomejs/biome": "^2.4.0",
     "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.1.18",
