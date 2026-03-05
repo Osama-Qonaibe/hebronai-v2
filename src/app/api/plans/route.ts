@@ -119,7 +119,7 @@ export async function GET() {
       .orderBy(sql`(metadata->>'order')::integer`);
 
     return NextResponse.json({ 
-      plans: [...staticPlans, ...adminPlans] 
+      plans: adminPlans.length > 0 ? adminPlans : staticPlans
     });
   } catch (error) {
     console.warn("Admin plans not available, using static plans only:", error);
