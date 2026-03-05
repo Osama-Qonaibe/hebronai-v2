@@ -14,7 +14,7 @@ import { ImageToolName } from "..";
 import logger from "logger";
 import { openai } from "@ai-sdk/openai";
 import { toAny } from "lib/utils";
-import { checkImageGenerationLimit, recordImageGeneration } from "@/lib/subscription/image-limits";
+import { recordImageGeneration } from "@/lib/subscription/image-limits";
 
 export type ImageToolResult = {
   images: {
@@ -24,8 +24,13 @@ export type ImageToolResult = {
   mode?: "create" | "edit" | "composite";
   guide?: string;
   model: string;
-  limitError?: string;
 };
+
+let currentUserId: string | undefined;
+
+export function setImageToolUserId(userId: string) {
+  currentUserId = userId;
+}
 
 export const nanoBananaTool = createTool({
   name: ImageToolName,
@@ -39,34 +44,8 @@ export const nanoBananaTool = createTool({
         "Image generation mode: 'create' for new images, 'edit' for modifying existing images, 'composite' for combining multiple images",
       ),
   }),
-  execute: async ({ mode }, { messages, abortSignal, context }) => {
+  execute: async ({ mode }, { messages, abortSignal }) => {
     try {
-      const userId = (context as any)?.userId;
-      
-      if (!userId) {
-        logger.warn("Image generation attempted without userId");
-        return {
-          images: [],
-          mode,
-          model: "gemini-2.5-flash-image",
-          limitError: "User authentication required",
-          guide: "I apologize, but I couldn't verify your account. Please make sure you're logged in and try again.",
-        };
-      }
-
-      const limitCheck = await checkImageGenerationLimit(userId);
-      
-      if (!limitCheck.allowed) {
-        logger.info(`Image generation blocked for user ${userId}: ${limitCheck.reason}`);
-        return {
-          images: [],
-          mode,
-          model: "gemini-2.5-flash-image",
-          limitError: limitCheck.reason,
-          guide: `I apologize, but ${limitCheck.reason}.\n\nCurrent usage:\n• Daily: ${limitCheck.dailyUsed}/${limitCheck.dailyLimit === -1 ? 'Unlimited' : limitCheck.dailyLimit} images\n• Monthly: ${limitCheck.monthlyUsed}/${limitCheck.monthlyLimit === -1 ? 'Unlimited' : limitCheck.monthlyLimit} images\n\nTo generate more images, please upgrade your plan or wait for your limits to reset.`,
-        };
-      }
-
       let hasFoundImage = false;
 
       const latestMessages = messages
@@ -123,7 +102,7 @@ export const nanoBananaTool = createTool({
         })
         .unwrap();
 
-      if (resultImages.length > 0) {
+      if (resultImages.length > 0 && currentUserId) {
         const promptText = latestMessages
           .filter(m => m.role === 'user')
           .map(m => m.content)
@@ -134,8 +113,8 @@ export const nanoBananaTool = createTool({
           .slice(0, 500);
 
         await recordImageGeneration(
-          userId,
-          promptText || "Image generated via tool",
+          currentUserId,
+          promptText || "Image generated via Gemini tool",
           "gemini-2.5-flash-image",
         ).catch((error) => {
           logger.error("Failed to record image generation:", error);
@@ -170,36 +149,10 @@ export const openaiImageTool = createTool({
         "Image generation mode: 'create' for new images, 'edit' for modifying existing images, 'composite' for combining multiple images",
       ),
   }),
-  execute: async ({ mode }, { messages, abortSignal, context }) => {
+  execute: async ({ mode }, { messages, abortSignal }) => {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       throw new Error("OPENAI_API_KEY is not set");
-    }
-
-    const userId = (context as any)?.userId;
-    
-    if (!userId) {
-      logger.warn("Image generation attempted without userId");
-      return {
-        images: [],
-        mode,
-        model: "gpt-image-1-mini",
-        limitError: "User authentication required",
-        guide: "I apologize, but I couldn't verify your account. Please make sure you're logged in and try again.",
-      };
-    }
-
-    const limitCheck = await checkImageGenerationLimit(userId);
-    
-    if (!limitCheck.allowed) {
-      logger.info(`Image generation blocked for user ${userId}: ${limitCheck.reason}`);
-      return {
-        images: [],
-        mode,
-        model: "gpt-image-1-mini",
-        limitError: limitCheck.reason,
-        guide: `I apologize, but ${limitCheck.reason}.\n\nCurrent usage:\n• Daily: ${limitCheck.dailyUsed}/${limitCheck.dailyLimit === -1 ? 'Unlimited' : limitCheck.dailyLimit} images\n• Monthly: ${limitCheck.monthlyUsed}/${limitCheck.monthlyLimit === -1 ? 'Unlimited' : limitCheck.monthlyLimit} images\n\nTo generate more images, please upgrade your plan or wait for your limits to reset.`,
-      };
     }
 
     let hasFoundImage = false;
@@ -249,22 +202,24 @@ export const openaiImageTool = createTool({
             );
           });
 
-        const promptText = latestMessages
-          .filter(m => m.role === 'user')
-          .map(m => m.content)
-          .flat()
-          .filter(p => typeof p === 'string' || (typeof p === 'object' && 'text' in p))
-          .map(p => typeof p === 'string' ? p : p.text)
-          .join(' ')
-          .slice(0, 500);
+        if (currentUserId) {
+          const promptText = latestMessages
+            .filter(m => m.role === 'user')
+            .map(m => m.content)
+            .flat()
+            .filter(p => typeof p === 'string' || (typeof p === 'object' && 'text' in p))
+            .map(p => typeof p === 'string' ? p : p.text)
+            .join(' ')
+            .slice(0, 500);
 
-        await recordImageGeneration(
-          userId,
-          promptText || "Image generated via OpenAI tool",
-          "gpt-image-1-mini",
-        ).catch((error) => {
-          logger.error("Failed to record image generation:", error);
-        });
+          await recordImageGeneration(
+            currentUserId,
+            promptText || "Image generated via OpenAI tool",
+            "gpt-image-1-mini",
+          ).catch((error) => {
+            logger.error("Failed to record image generation:", error);
+          });
+        }
 
         return {
           images: [{ url: uploadedImage.sourceUrl, mimeType: "image/webp" }],
