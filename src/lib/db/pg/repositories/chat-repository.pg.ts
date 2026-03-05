@@ -9,6 +9,7 @@ import {
 } from "../schema.pg";
 
 import { and, desc, eq, gte, sql } from "drizzle-orm";
+import { checkDailyMessageLimit } from "lib/auth/usage-limits";
 
 export const pgChatRepository: ChatRepository = {
   insertThread: async (
@@ -142,19 +143,27 @@ export const pgChatRepository: ChatRepository = {
   },
 
   deleteThread: async (id: string): Promise<void> => {
-    // 1. Delete all messages in the thread
     await db.delete(ChatMessageTable).where(eq(ChatMessageTable.threadId, id));
-
-    // 2. Remove thread from all archives
     await db.delete(ArchiveItemTable).where(eq(ArchiveItemTable.itemId, id));
-
-    // 3. Delete the thread itself
     await db.delete(ChatThreadTable).where(eq(ChatThreadTable.id, id));
   },
 
   insertMessage: async (
     message: Omit<ChatMessage, "createdAt">,
   ): Promise<ChatMessage> => {
+    const thread = await db
+      .select({ userId: ChatThreadTable.userId })
+      .from(ChatThreadTable)
+      .where(eq(ChatThreadTable.id, message.threadId))
+      .limit(1);
+
+    if (thread[0] && message.role === "user") {
+      const limitCheck = await checkDailyMessageLimit(thread[0].userId);
+      if (!limitCheck.allowed) {
+        throw new Error(limitCheck.reason || "Daily message limit exceeded");
+      }
+    }
+
     const entity = {
       ...message,
       id: message.id,
@@ -193,7 +202,6 @@ export const pgChatRepository: ChatRepository = {
     if (!message) {
       return;
     }
-    // Delete messages that are in the same thread AND created before or at the same time as the target message
     await db
       .delete(ChatMessageTable)
       .where(
@@ -239,6 +247,24 @@ export const pgChatRepository: ChatRepository = {
   insertMessages: async (
     messages: PartialBy<ChatMessage, "createdAt">[],
   ): Promise<ChatMessage[]> => {
+    if (messages.length > 0 && messages[0].threadId) {
+      const thread = await db
+        .select({ userId: ChatThreadTable.userId })
+        .from(ChatThreadTable)
+        .where(eq(ChatThreadTable.id, messages[0].threadId))
+        .limit(1);
+
+      if (thread[0]) {
+        const userMessages = messages.filter((m) => m.role === "user");
+        if (userMessages.length > 0) {
+          const limitCheck = await checkDailyMessageLimit(thread[0].userId);
+          if (!limitCheck.allowed) {
+            throw new Error(limitCheck.reason || "Daily message limit exceeded");
+          }
+        }
+      }
+    }
+
     const result = await db
       .insert(ChatMessageTable)
       .values(messages)
