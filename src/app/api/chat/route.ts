@@ -49,7 +49,7 @@ import { getUserSubscription, type SubscriptionPlan } from "lib/auth/subscriptio
 import { canAccessModel, getRequiredPlan } from "lib/subscription/model-access";
 import { colorize } from "consola/utils";
 import { generateUUID } from "lib/utils";
-import { nanoBananaTool, openaiImageTool } from "lib/ai/tools/image";
+import { nanoBananaTool, openaiImageTool, setImageToolUserId } from "lib/ai/tools/image";
 import { ImageToolName } from "lib/ai/tools";
 import { buildCsvIngestionPreviewParts } from "@/lib/ai/ingest/csv-ingest";
 import { serverFileStorage } from "lib/file-storage";
@@ -142,6 +142,8 @@ export async function POST(request: Request) {
           { status: 429 },
         );
       }
+      
+      setImageToolUserId(session.user.id);
     }
 
     const estimatedTokens = message.parts
