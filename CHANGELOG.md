@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.7.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.7.0...hebronai-v2-v5.7.1) (2026-03-05)
+
+
+### Bug Fixes
+
+* Add only usage recording after image generation (limit check handled by Chat API) ([a35d80a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a35d80a5e8fa97de1bf6b73fe67f89ee4ebe6213))
+
 ## [5.7.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.6.0...hebronai-v2-v5.7.0) (2026-03-04)
 
 
