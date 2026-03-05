@@ -10,6 +10,7 @@ import {
 
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { checkDailyMessageLimit } from "lib/auth/usage-limits";
+import { createDailyMessageLimitError, createNoSubscriptionError } from "lib/usage/limit-errors";
 
 export const pgChatRepository: ChatRepository = {
   insertThread: async (
@@ -160,7 +161,13 @@ export const pgChatRepository: ChatRepository = {
     if (thread[0] && message.role === "user") {
       const limitCheck = await checkDailyMessageLimit(thread[0].userId);
       if (!limitCheck.allowed) {
-        throw new Error(limitCheck.reason || "Daily message limit exceeded");
+        if (limitCheck.reason?.includes("No active subscription")) {
+          throw createNoSubscriptionError();
+        }
+        throw createDailyMessageLimitError(
+          limitCheck.current || 0,
+          limitCheck.max || 0
+        );
       }
     }
 
@@ -259,7 +266,13 @@ export const pgChatRepository: ChatRepository = {
         if (userMessages.length > 0) {
           const limitCheck = await checkDailyMessageLimit(thread[0].userId);
           if (!limitCheck.allowed) {
-            throw new Error(limitCheck.reason || "Daily message limit exceeded");
+            if (limitCheck.reason?.includes("No active subscription")) {
+              throw createNoSubscriptionError();
+            }
+            throw createDailyMessageLimitError(
+              limitCheck.current || 0,
+              limitCheck.max || 0
+            );
           }
         }
       }
