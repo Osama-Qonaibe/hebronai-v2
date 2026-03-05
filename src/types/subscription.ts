@@ -21,6 +21,7 @@ export interface SubscriptionPlan {
   models: {
     allowed: string[];
     default: string;
+    count?: number;
     limits: {
       [key: string]: {
         maxTokensPerRequest: number;
