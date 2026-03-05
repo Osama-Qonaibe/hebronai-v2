@@ -35,7 +35,7 @@ export async function proxy(request: NextRequest) {
     const response = NextResponse.redirect(url);
     response.cookies.set(COOKIE_KEY_LOCALE, locale, {
       path: "/",
-      maxAge: 60 * 60 * 24 * 365, // 1 year
+      maxAge: 60 * 60 * 24 * 365,
       sameSite: "lax",
     });
 
@@ -54,7 +54,7 @@ export async function proxy(request: NextRequest) {
     const response = NextResponse.redirect(url);
     response.cookies.set(COOKIE_KEY_LOCALE, queryLocale, {
       path: "/",
-      maxAge: 60 * 60 * 24 * 365, // 1 year
+      maxAge: 60 * 60 * 24 * 365,
       sameSite: "lax",
     });
 
@@ -69,13 +69,14 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/admin/users", request.url));
   }
 
-  // Skip authentication check for public pages
+  // Skip authentication check for public pages and cron API routes
   if (
     pathname.startsWith("/sign-in") ||
     pathname.startsWith("/sign-up") ||
     pathname.startsWith("/forgot-password") ||
     pathname.startsWith("/reset-password") ||
-    pathname.startsWith("/export")
+    pathname.startsWith("/export") ||
+    pathname.startsWith("/api/cron/")
   ) {
     return NextResponse.next();
   }
@@ -91,14 +92,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - api/auth (auth API routes)
-     * - favicon.ico, sitemap.xml, robots.txt
-     * - Files with extensions
-     */
     "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|api/auth|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|xml|txt)$).*)",
   ],
 };
