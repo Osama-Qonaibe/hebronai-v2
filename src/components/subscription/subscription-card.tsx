@@ -394,7 +394,7 @@ export function SubscriptionCard({
                       </div>
                       <div className="pl-6 space-y-1">
                         <div className="text-sm">
-                          {plan.modelsCount || 0} {locale === 'ar' ? 'نموذج AI' : 'AI models'}
+                          {plan.modelsCount || plan.models?.count || 0} {locale === 'ar' ? 'نموذج AI' : 'AI models'}
                         </div>
                         {plan.featuredModels && plan.featuredModels.length > 0 && (
                           <div className="flex flex-wrap gap-1">
