@@ -5,7 +5,7 @@
 
 ### Bug Fixes
 
-* resolve duplicate subscription plan cards display ([9580bcf](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9580bcf5d0785f85d054b6d70928c3868647d303))
+* resolve duplicate subscription plan cards display ([9580bcf](https://github.com/Osama-Qonaibe/hebronai-v2/commit/9580bcf5d0785f85d054b6d70928c3868647d303)) by @Osama-Qonaibe
 
 ## [5.7.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.7.0...hebronai-v2-v5.7.1) (2026-03-05)
 
