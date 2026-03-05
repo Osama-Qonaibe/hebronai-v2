@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.7.3](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.7.2...hebronai-v2-v5.7.3) (2026-03-05)
+
+
+### Bug Fixes
+
+* add count property to models type definition ([70dd544](https://github.com/Osama-Qonaibe/hebronai-v2/commit/70dd544923cb33dabdcb4615569ed7d22130305e))
+* read models count from database for subscription cards ([f1d7ffe](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f1d7ffeeb3cfdaa7efabf3715e0e0d7a53d68167))
+
 ## [5.7.2](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.7.1...hebronai-v2-v5.7.2) (2026-03-05)
 
 
