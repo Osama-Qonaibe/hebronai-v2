@@ -14,6 +14,7 @@ import { ImageToolName } from "..";
 import logger from "logger";
 import { openai } from "@ai-sdk/openai";
 import { toAny } from "lib/utils";
+import { checkImageGenerationLimit, recordImageGeneration } from "@/lib/subscription/image-limits";
 
 export type ImageToolResult = {
   images: {
@@ -23,6 +24,7 @@ export type ImageToolResult = {
   mode?: "create" | "edit" | "composite";
   guide?: string;
   model: string;
+  limitError?: string;
 };
 
 export const nanoBananaTool = createTool({
@@ -37,21 +39,45 @@ export const nanoBananaTool = createTool({
         "Image generation mode: 'create' for new images, 'edit' for modifying existing images, 'composite' for combining multiple images",
       ),
   }),
-  execute: async ({ mode }, { messages, abortSignal }) => {
+  execute: async ({ mode }, { messages, abortSignal, context }) => {
     try {
+      const userId = (context as any)?.userId;
+      
+      if (!userId) {
+        logger.warn("Image generation attempted without userId");
+        return {
+          images: [],
+          mode,
+          model: "gemini-2.5-flash-image",
+          limitError: "User authentication required",
+          guide: "I apologize, but I couldn't verify your account. Please make sure you're logged in and try again.",
+        };
+      }
+
+      const limitCheck = await checkImageGenerationLimit(userId);
+      
+      if (!limitCheck.allowed) {
+        logger.info(`Image generation blocked for user ${userId}: ${limitCheck.reason}`);
+        return {
+          images: [],
+          mode,
+          model: "gemini-2.5-flash-image",
+          limitError: limitCheck.reason,
+          guide: `I apologize, but ${limitCheck.reason}.\n\nCurrent usage:\n• Daily: ${limitCheck.dailyUsed}/${limitCheck.dailyLimit === -1 ? 'Unlimited' : limitCheck.dailyLimit} images\n• Monthly: ${limitCheck.monthlyUsed}/${limitCheck.monthlyLimit === -1 ? 'Unlimited' : limitCheck.monthlyLimit} images\n\nTo generate more images, please upgrade your plan or wait for your limits to reset.`,
+        };
+      }
+
       let hasFoundImage = false;
 
-      // Get latest 6 messages and extract only the most recent image for editing context
-      // This prevents multiple image references that could confuse the image generation model
       const latestMessages = messages
         .slice(-6)
         .reverse()
         .map((m) => {
           if (m.role != "tool") return m;
-          if (hasFoundImage) return m; // Skip if we already found an image
+          if (hasFoundImage) return m;
           const fileParts = m.content.flatMap(convertToImageToolPartToFilePart);
           if (fileParts.length === 0) return m;
-          hasFoundImage = true; // Mark that we found the most recent image
+          hasFoundImage = true;
           return {
             ...m,
             role: "assistant",
@@ -97,6 +123,25 @@ export const nanoBananaTool = createTool({
         })
         .unwrap();
 
+      if (resultImages.length > 0) {
+        const promptText = latestMessages
+          .filter(m => m.role === 'user')
+          .map(m => m.content)
+          .flat()
+          .filter(p => typeof p === 'string' || (typeof p === 'object' && 'text' in p))
+          .map(p => typeof p === 'string' ? p : p.text)
+          .join(' ')
+          .slice(0, 500);
+
+        await recordImageGeneration(
+          userId,
+          promptText || "Image generated via tool",
+          "gemini-2.5-flash-image",
+        ).catch((error) => {
+          logger.error("Failed to record image generation:", error);
+        });
+      }
+
       return {
         images: resultImages,
         mode,
@@ -125,10 +170,36 @@ export const openaiImageTool = createTool({
         "Image generation mode: 'create' for new images, 'edit' for modifying existing images, 'composite' for combining multiple images",
       ),
   }),
-  execute: async ({ mode }, { messages, abortSignal }) => {
+  execute: async ({ mode }, { messages, abortSignal, context }) => {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       throw new Error("OPENAI_API_KEY is not set");
+    }
+
+    const userId = (context as any)?.userId;
+    
+    if (!userId) {
+      logger.warn("Image generation attempted without userId");
+      return {
+        images: [],
+        mode,
+        model: "gpt-image-1-mini",
+        limitError: "User authentication required",
+        guide: "I apologize, but I couldn't verify your account. Please make sure you're logged in and try again.",
+      };
+    }
+
+    const limitCheck = await checkImageGenerationLimit(userId);
+    
+    if (!limitCheck.allowed) {
+      logger.info(`Image generation blocked for user ${userId}: ${limitCheck.reason}`);
+      return {
+        images: [],
+        mode,
+        model: "gpt-image-1-mini",
+        limitError: limitCheck.reason,
+        guide: `I apologize, but ${limitCheck.reason}.\n\nCurrent usage:\n• Daily: ${limitCheck.dailyUsed}/${limitCheck.dailyLimit === -1 ? 'Unlimited' : limitCheck.dailyLimit} images\n• Monthly: ${limitCheck.monthlyUsed}/${limitCheck.monthlyLimit === -1 ? 'Unlimited' : limitCheck.monthlyLimit} images\n\nTo generate more images, please upgrade your plan or wait for your limits to reset.`,
+      };
     }
 
     let hasFoundImage = false;
@@ -137,10 +208,10 @@ export const openaiImageTool = createTool({
       .reverse()
       .flatMap((m) => {
         if (m.role != "tool") return m;
-        if (hasFoundImage) return m; // Skip if we already found an image)
+        if (hasFoundImage) return m;
         const fileParts = m.content.flatMap(convertToImageToolPartToImagePart);
         if (fileParts.length === 0) return m;
-        hasFoundImage = true; // Mark that we found the most recent image
+        hasFoundImage = true;
         return [
           {
             role: "user",
@@ -151,6 +222,7 @@ export const openaiImageTool = createTool({
       })
       .filter((v) => Boolean(v?.content?.length))
       .reverse() as ModelMessage[];
+      
     const result = await generateText({
       model: openai("gpt-4.1-mini"),
       abortSignal,
@@ -176,6 +248,24 @@ export const openaiImageTool = createTool({
               "Image generation was successful, but file upload failed. Please check your file upload configuration and try again.",
             );
           });
+
+        const promptText = latestMessages
+          .filter(m => m.role === 'user')
+          .map(m => m.content)
+          .flat()
+          .filter(p => typeof p === 'string' || (typeof p === 'object' && 'text' in p))
+          .map(p => typeof p === 'string' ? p : p.text)
+          .join(' ')
+          .slice(0, 500);
+
+        await recordImageGeneration(
+          userId,
+          promptText || "Image generated via OpenAI tool",
+          "gpt-image-1-mini",
+        ).catch((error) => {
+          logger.error("Failed to record image generation:", error);
+        });
+
         return {
           images: [{ url: uploadedImage.sourceUrl, mimeType: "image/webp" }],
           mode,
