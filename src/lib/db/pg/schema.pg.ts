@@ -143,6 +143,7 @@ export const SubscriptionPlanTable = pgTable(
         maxPerMonth: number;
       };
       files: { maxSize: number; maxCount: number; allowedTypes: string[] };
+      images: { maxPerDay: number; maxPerMonth: number };
       api: { rateLimit: number; burstLimit: number };
     }>(),
     features: json("features").notNull().$type<{
