@@ -11,14 +11,13 @@ import { config } from "dotenv";
 
 import { TEST_USERS } from "../tests/constants/test-users";
 
-// Load environment variables FIRST
 if (process.env.CI) {
   config({ path: ".env.test" });
 } else {
   config();
 }
 
-import { auth } from "auth/auth-instance";
+import { auth } from "lib/auth/auth-script";
 import { USER_ROLES } from "app-types/roles";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
@@ -30,13 +29,11 @@ import {
 } from "lib/db/pg/schema.pg";
 import { like, eq } from "drizzle-orm";
 
-// Create database connection with Pool
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL!,
 });
 const db = drizzle(pool);
 
-// Helper function to get user by email
 async function getUserByEmail(email: string) {
   const [user] = await db
     .select()
@@ -49,16 +46,14 @@ async function clearExistingTestUsers() {
   console.log("🧹 Clearing existing test users...");
 
   try {
-    // Clean up ALL test users with reliable patterns
     const testEmailPatterns = [
-      "%@test-seed.local%", // Our main seeded test domain
-      "%playwright%", // Dynamically created playwright users
-      "%@example.com%", // General test signup users
-      "%testuser%@testuser.com%", // Legacy test users
-      "%testuser%@gmail.com%", // Legacy test users
+      "%@test-seed.local%",
+      "%playwright%",
+      "%@example.com%",
+      "%testuser%@testuser.com%",
+      "%testuser%@gmail.com%",
     ];
 
-    // First, get all test user IDs
     const testUsers: { id: string }[] = [];
     for (const pattern of testEmailPatterns) {
       const users = await db
@@ -68,7 +63,6 @@ async function clearExistingTestUsers() {
       testUsers.push(...users);
     }
 
-    // Also get legacy test users by exact email match
     const legacyTestEmails = [
       "admin@testuser.com",
       "editor@testuser.com",
@@ -92,9 +86,7 @@ async function clearExistingTestUsers() {
       const userIds = testUsers.map((u) => u.id);
       console.log(`Found ${userIds.length} test users to clean up`);
 
-      // Delete in dependency order
       console.log("Deleting chat messages...");
-      // Messages reference threads, not users directly
       if (userIds.length > 0) {
         const threads = await db
           .select({ id: ChatThreadTable.id })
@@ -115,7 +107,6 @@ async function clearExistingTestUsers() {
           .where(sql`${ChatThreadTable.userId} = ${userId}`);
       }
 
-      // Now delete the users
       console.log("Deleting users...");
       for (const pattern of testEmailPatterns) {
         await db.delete(UserTable).where(like(UserTable.email, pattern));
@@ -141,7 +132,6 @@ async function createUserWithBetterAuth(userData: {
   banReason?: string;
 }) {
   try {
-    // First, check if user already exists
     const existingUser = await getUserByEmail(userData.email);
 
     let user;
@@ -151,7 +141,6 @@ async function createUserWithBetterAuth(userData: {
       );
       user = existingUser;
     } else {
-      // Use Better Auth's signUp API to create user with proper password hashing
       const result = await auth.api.signUpEmail({
         body: {
           email: userData.email,
@@ -171,19 +160,12 @@ async function createUserWithBetterAuth(userData: {
       console.log(`  Created new user ${userData.email} (ID: ${user.id})`);
     }
 
-    // Update user role if needed
-    // IMPORTANT: Check current role first to avoid overwriting first-user admin
     const [currentUser] = await db
       .select()
       .from(UserTable)
       .where(sql`id = ${user.id}`);
 
     if (userData.role && currentUser) {
-      // If this is the first user and they already have admin role from Better Auth hook,
-      // and we're trying to set admin role, that's fine - they match
-      // const _isFirstUserAdmin = currentUser.role === USER_ROLES.ADMIN && userData.role === USER_ROLES.ADMIN;
-
-      // Only update if the role is different and it's not the first-user-admin case
       if (currentUser.role !== userData.role) {
         try {
           console.log(
@@ -203,7 +185,6 @@ async function createUserWithBetterAuth(userData: {
       }
     }
 
-    // Ban user if needed - do this via direct database update since we don't have admin auth
     if (userData.banned && userData.banReason) {
       try {
         await db
@@ -211,7 +192,7 @@ async function createUserWithBetterAuth(userData: {
           .set({
             banned: true,
             banReason: userData.banReason,
-            banExpires: null, // Permanent ban for testing
+            banExpires: null,
           })
           .where(sql`id = ${user.id}`);
       } catch (error) {
@@ -223,7 +204,6 @@ async function createUserWithBetterAuth(userData: {
   } catch (error) {
     console.error(`Failed to create user ${userData.email}:`, error);
 
-    // Try to get existing user as fallback
     try {
       const existingUser = await getUserByEmail(userData.email);
       if (existingUser) {
@@ -247,13 +227,11 @@ async function seedTestUsers() {
   console.log("🌱 Starting test user seeding using Better Auth APIs...");
 
   try {
-    // Clear existing test users first
     await clearExistingTestUsers();
     console.log("✅ Existing test users cleared");
 
     console.log("👤 Creating main test users...");
 
-    // 1. Admin User
     const adminUser = await createUserWithBetterAuth({
       email: TEST_USERS.admin.email,
       password: TEST_USERS.admin.password,
@@ -262,7 +240,6 @@ async function seedTestUsers() {
     });
     console.log("✅ Created admin user:", adminUser?.id);
 
-    // 2. Editor User
     const editorUser = await createUserWithBetterAuth({
       email: TEST_USERS.editor.email,
       password: TEST_USERS.editor.password,
@@ -271,7 +248,6 @@ async function seedTestUsers() {
     });
     console.log("✅ Created editor user:", editorUser?.id);
 
-    // 3. Editor2 User
     const editor2User = await createUserWithBetterAuth({
       email: TEST_USERS.editor2.email,
       password: TEST_USERS.editor2.password,
@@ -280,7 +256,6 @@ async function seedTestUsers() {
     });
     console.log("✅ Created editor2 user:", editor2User?.id);
 
-    // 4. Regular User
     const regularUser = await createUserWithBetterAuth({
       email: TEST_USERS.regular.email,
       password: TEST_USERS.regular.password,
@@ -289,7 +264,6 @@ async function seedTestUsers() {
     });
     console.log("✅ Created regular user:", regularUser?.id);
 
-    // 5. Create additional test users
     console.log("👥 Creating additional test users...");
     let createdCount = 4;
 
@@ -314,7 +288,6 @@ async function seedTestUsers() {
       }
     }
 
-    // 6. Seed some basic message/model data for stats testing
     console.log("📊 Creating sample AI usage data for stats testing...");
     const userIdsForSampleData = [
       adminUser?.id,
@@ -370,7 +343,6 @@ async function seedSampleUsageData(userIds: string[]) {
         continue;
       }
 
-      // Create sample threads and messages for user (should have stats)
       const thread = await db
         .insert(ChatThreadTable)
         .values({
@@ -380,7 +352,6 @@ async function seedSampleUsageData(userIds: string[]) {
         .returning();
 
       if (thread[0]) {
-        // Create sample messages with token usage
         const timestamp = Date.now();
         await db.insert(ChatMessageTable).values([
           {
@@ -426,7 +397,6 @@ async function seedSampleUsageData(userIds: string[]) {
 
     console.log(`✅ Created sample usage data for admin user`);
 
-    // Editor user has no messages (should show empty state)
     console.log(
       `✅ Editor user left without usage data for empty state testing`,
     );
@@ -435,7 +405,6 @@ async function seedSampleUsageData(userIds: string[]) {
   }
 }
 
-// Run the seeding if this script is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   seedTestUsers()
     .then(async () => {
