@@ -12,6 +12,20 @@ import {
   ChatThreadTable,
 } from "lib/db/pg/schema.pg";
 import { eq, count, and, gte, lt, sql } from "drizzle-orm";
+import {
+  createNoSubscriptionError,
+  createAgentLimitError,
+  createWorkflowLimitError,
+  createMCPServerLimitError,
+  createDailyMessageLimitError,
+  createDailyImageLimitError,
+  createMonthlyImageLimitError,
+  createMonthlyTokenLimitError,
+  createStorageLimitError,
+  createAPICallLimitError,
+  createDocumentLimitError,
+  createFeatureNotAvailableError,
+} from "lib/usage/limit-errors";
 
 export interface LimitCheckResult {
   allowed: boolean;
@@ -26,10 +40,7 @@ export async function checkAgentCreationLimit(
   const plan = await getUserPlan(userId);
 
   if (!plan || !plan.isActive) {
-    return {
-      allowed: false,
-      reason: "No active subscription found",
-    };
+    throw createNoSubscriptionError();
   }
 
   const maxAgents = plan.limits.features.agents.maxCustomAgents;
@@ -46,12 +57,7 @@ export async function checkAgentCreationLimit(
   const currentCount = result?.count || 0;
 
   if (currentCount >= maxAgents) {
-    return {
-      allowed: false,
-      reason: `You have reached the maximum number of agents (${maxAgents}) for your ${plan.name} plan. Please upgrade.`,
-      current: currentCount,
-      max: maxAgents,
-    };
+    throw createAgentLimitError(currentCount, maxAgents);
   }
 
   return {
@@ -67,10 +73,7 @@ export async function checkWorkflowCreationLimit(
   const plan = await getUserPlan(userId);
 
   if (!plan || !plan.isActive) {
-    return {
-      allowed: false,
-      reason: "No active subscription found",
-    };
+    throw createNoSubscriptionError();
   }
 
   const maxWorkflows = plan.limits.features.workflows.maxWorkflows;
@@ -87,12 +90,7 @@ export async function checkWorkflowCreationLimit(
   const currentCount = result?.count || 0;
 
   if (currentCount >= maxWorkflows) {
-    return {
-      allowed: false,
-      reason: `You have reached the maximum number of workflows (${maxWorkflows}) for your ${plan.name} plan.`,
-      current: currentCount,
-      max: maxWorkflows,
-    };
+    throw createWorkflowLimitError(currentCount, maxWorkflows);
   }
 
   return {
@@ -108,10 +106,7 @@ export async function checkMCPServerCreationLimit(
   const plan = await getUserPlan(userId);
 
   if (!plan || !plan.isActive) {
-    return {
-      allowed: false,
-      reason: "No active subscription found",
-    };
+    throw createNoSubscriptionError();
   }
 
   const maxServers = plan.limits.features.mcpServers.maxServers;
@@ -128,12 +123,7 @@ export async function checkMCPServerCreationLimit(
   const currentCount = result?.count || 0;
 
   if (currentCount >= maxServers) {
-    return {
-      allowed: false,
-      reason: `You have reached the maximum number of MCP servers (${maxServers}) for your ${plan.name} plan.`,
-      current: currentCount,
-      max: maxServers,
-    };
+    throw createMCPServerLimitError(currentCount, maxServers);
   }
 
   return {
@@ -149,10 +139,7 @@ export async function checkDailyMessageLimit(
   const plan = await getUserPlan(userId);
 
   if (!plan || !plan.isActive) {
-    return {
-      allowed: false,
-      reason: "No active subscription found",
-    };
+    throw createNoSubscriptionError();
   }
 
   const maxPerDay = plan.limits.messages.maxPerDay;
@@ -176,6 +163,7 @@ export async function checkDailyMessageLimit(
     .where(
       and(
         eq(ChatThreadTable.userId, userId),
+        eq(ChatMessageTable.role, "user"),
         gte(ChatMessageTable.createdAt, today),
         lt(ChatMessageTable.createdAt, tomorrow),
       ),
@@ -184,12 +172,7 @@ export async function checkDailyMessageLimit(
   const currentCount = Number(result?.count || 0);
 
   if (currentCount >= maxPerDay) {
-    return {
-      allowed: false,
-      reason: `Daily message limit (${maxPerDay}) reached. Resets tomorrow.`,
-      current: currentCount,
-      max: maxPerDay,
-    };
+    throw createDailyMessageLimitError(currentCount, maxPerDay);
   }
 
   return {
@@ -205,29 +188,18 @@ export async function checkImageGenerationLimit(
   const plan = await getUserPlan(userId);
 
   if (!plan || !plan.isActive) {
-    return {
-      allowed: false,
-      reason: "No active subscription found",
-    };
+    throw createNoSubscriptionError();
   }
 
   const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
   if (!planLimits) {
-    return {
-      allowed: false,
-      reason: `Unknown plan: ${plan.slug}`,
-    };
+    throw new Error(`Unknown plan: ${plan.slug}`);
   }
 
   const maxPerDay = planLimits.maxImagesPerDay || 0;
 
   if (maxPerDay === 0) {
-    return {
-      allowed: false,
-      reason: `Image generation is not available in your ${plan.name} plan. Please upgrade to Basic or higher.`,
-      current: 0,
-      max: 0,
-    };
+    throw createFeatureNotAvailableError("Image generation", plan.name);
   }
 
   if (isUnlimited(maxPerDay)) {
@@ -254,12 +226,7 @@ export async function checkImageGenerationLimit(
   const currentCount = result?.count || 0;
 
   if (currentCount >= maxPerDay) {
-    return {
-      allowed: false,
-      reason: `Daily image generation limit (${maxPerDay}) reached. Resets at midnight. Current: ${currentCount}/${maxPerDay}`,
-      current: currentCount,
-      max: maxPerDay,
-    };
+    throw createDailyImageLimitError(currentCount, maxPerDay);
   }
 
   return {
@@ -275,27 +242,18 @@ export async function checkImageGenerationMonthlyLimit(
   const plan = await getUserPlan(userId);
 
   if (!plan || !plan.isActive) {
-    return {
-      allowed: false,
-      reason: "No active subscription found",
-    };
+    throw createNoSubscriptionError();
   }
 
   const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
   if (!planLimits) {
-    return {
-      allowed: false,
-      reason: `Unknown plan: ${plan.slug}`,
-    };
+    throw new Error(`Unknown plan: ${plan.slug}`);
   }
 
   const maxPerMonth = planLimits.maxImagesPerMonth || 0;
 
   if (maxPerMonth === 0) {
-    return {
-      allowed: false,
-      reason: `Image generation is not available in your ${plan.name} plan.`,
-    };
+    throw createFeatureNotAvailableError("Image generation", plan.name);
   }
 
   if (isUnlimited(maxPerMonth)) {
@@ -324,12 +282,7 @@ export async function checkImageGenerationMonthlyLimit(
   const currentCount = result?.count || 0;
 
   if (currentCount >= maxPerMonth) {
-    return {
-      allowed: false,
-      reason: `Monthly image generation limit (${maxPerMonth}) reached. Resets next month. Current: ${currentCount}/${maxPerMonth}`,
-      current: currentCount,
-      max: maxPerMonth,
-    };
+    throw createMonthlyImageLimitError(currentCount, maxPerMonth);
   }
 
   return {
@@ -346,18 +299,12 @@ export async function checkTotalTokenLimit(
   const plan = await getUserPlan(userId);
 
   if (!plan || (plan.isActive !== undefined && !plan.isActive)) {
-    return {
-      allowed: false,
-      reason: "No active subscription found",
-    };
+    throw createNoSubscriptionError();
   }
 
   const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
   if (!planLimits) {
-    return {
-      allowed: false,
-      reason: `Unknown plan: ${plan.slug}`,
-    };
+    throw new Error(`Unknown plan: ${plan.slug}`);
   }
 
   const maxTokensPerMonth = planLimits.maxTokensPerMonth;
@@ -391,12 +338,7 @@ export async function checkTotalTokenLimit(
   const afterUsage = currentUsage + tokensToUse;
 
   if (afterUsage > maxTokensPerMonth) {
-    return {
-      allowed: false,
-      reason: `This request would exceed your total monthly token limit (${maxTokensPerMonth.toLocaleString()}) across all models. Current usage: ${currentUsage.toLocaleString()}, Requested: ${tokensToUse.toLocaleString()}. Upgrade your plan for more tokens.`,
-      current: currentUsage,
-      max: maxTokensPerMonth,
-    };
+    throw createMonthlyTokenLimitError(currentUsage, maxTokensPerMonth);
   }
 
   return {
@@ -413,18 +355,12 @@ export async function checkStorageLimit(
   const plan = await getUserPlan(userId);
 
   if (!plan || (plan.isActive !== undefined && !plan.isActive)) {
-    return {
-      allowed: false,
-      reason: "No active subscription found",
-    };
+    throw createNoSubscriptionError();
   }
 
   const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
   if (!planLimits) {
-    return {
-      allowed: false,
-      reason: `Unknown plan: ${plan.slug}`,
-    };
+    throw new Error(`Unknown plan: ${plan.slug}`);
   }
 
   const maxStorageGB = planLimits.maxStorageGB;
@@ -450,12 +386,7 @@ export async function checkStorageLimit(
   const afterUsageGB = (currentUsageMB + fileSizeMB) / 1024;
 
   if (afterUsageGB > maxStorageGB) {
-    return {
-      allowed: false,
-      reason: `This upload would exceed your storage limit (${maxStorageGB} GB). Current usage: ${currentUsageGB.toFixed(2)} GB. Upgrade for more storage.`,
-      current: Math.round(currentUsageGB * 100) / 100,
-      max: maxStorageGB,
-    };
+    throw createStorageLimitError(currentUsageGB, maxStorageGB);
   }
 
   return {
@@ -471,18 +402,12 @@ export async function checkAPICallLimit(
   const plan = await getUserPlan(userId);
 
   if (!plan || (plan.isActive !== undefined && !plan.isActive)) {
-    return {
-      allowed: false,
-      reason: "No active subscription found",
-    };
+    throw createNoSubscriptionError();
   }
 
   const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
   if (!planLimits) {
-    return {
-      allowed: false,
-      reason: `Unknown plan: ${plan.slug}`,
-    };
+    throw new Error(`Unknown plan: ${plan.slug}`);
   }
 
   const maxCallsPerDay = planLimits.maxAPICallsPerDay;
@@ -513,12 +438,7 @@ export async function checkAPICallLimit(
   const currentCalls = Number(result?.total || 0);
 
   if (currentCalls >= maxCallsPerDay) {
-    return {
-      allowed: false,
-      reason: `Daily API call limit (${maxCallsPerDay}) reached. Resets at midnight. Current: ${currentCalls}/${maxCallsPerDay}`,
-      current: currentCalls,
-      max: maxCallsPerDay,
-    };
+    throw createAPICallLimitError(currentCalls, maxCallsPerDay);
   }
 
   return {
@@ -534,18 +454,12 @@ export async function checkDocumentLimit(
   const plan = await getUserPlan(userId);
 
   if (!plan || (plan.isActive !== undefined && !plan.isActive)) {
-    return {
-      allowed: false,
-      reason: "No active subscription found",
-    };
+    throw createNoSubscriptionError();
   }
 
   const planLimits = PLAN_LIMITS[plan.slug as keyof typeof PLAN_LIMITS];
   if (!planLimits) {
-    return {
-      allowed: false,
-      reason: `Unknown plan: ${plan.slug}`,
-    };
+    throw new Error(`Unknown plan: ${plan.slug}`);
   }
 
   const maxDocsPerMonth = planLimits.maxDocumentsPerMonth;
@@ -578,12 +492,7 @@ export async function checkDocumentLimit(
   const currentDocs = Number(result?.total || 0);
 
   if (currentDocs >= maxDocsPerMonth) {
-    return {
-      allowed: false,
-      reason: `Monthly document limit (${maxDocsPerMonth}) reached. Resets next month. Current: ${currentDocs}/${maxDocsPerMonth}`,
-      current: currentDocs,
-      max: maxDocsPerMonth,
-    };
+    throw createDocumentLimitError(currentDocs, maxDocsPerMonth);
   }
 
   return {
@@ -601,25 +510,16 @@ export async function checkTokenLimit(
   const plan = await getUserPlan(userId);
 
   if (!plan || !plan.isActive) {
-    return {
-      allowed: false,
-      reason: "No active subscription found",
-    };
+    throw createNoSubscriptionError();
   }
 
   if (!plan.limits.models.allowed.includes(modelName)) {
-    return {
-      allowed: false,
-      reason: `Model "${modelName}" is not available in your ${plan.name} plan.`,
-    };
+    throw createFeatureNotAvailableError(`Model ${modelName}`, plan.name);
   }
 
   const modelLimits = plan.limits.models.limits[modelName];
   if (!modelLimits) {
-    return {
-      allowed: false,
-      reason: `No limits defined for model "${modelName}".`,
-    };
+    throw new Error(`No limits defined for model "${modelName}".`);
   }
 
   const maxTokensPerMonth = modelLimits.maxTokensPerMonth;
@@ -654,12 +554,7 @@ export async function checkTokenLimit(
   const afterUsage = currentUsage + tokensToUse;
 
   if (afterUsage > maxTokensPerMonth) {
-    return {
-      allowed: false,
-      reason: `This request would exceed your monthly token limit (${maxTokensPerMonth.toLocaleString()}) for ${modelName}.`,
-      current: currentUsage,
-      max: maxTokensPerMonth,
-    };
+    throw createMonthlyTokenLimitError(currentUsage, maxTokensPerMonth);
   }
 
   return {
@@ -677,27 +572,21 @@ export async function checkFileUploadLimit(
   const plan = await getUserPlan(userId);
 
   if (!plan || !plan.isActive) {
-    return {
-      allowed: false,
-      reason: "No active subscription found",
-    };
+    throw createNoSubscriptionError();
   }
 
   const { maxSize, allowedTypes } = plan.limits.files;
 
   if (fileSizeMB > maxSize) {
-    return {
-      allowed: false,
-      reason: `File size (${fileSizeMB}MB) exceeds limit (${maxSize}MB) for your ${plan.name} plan.`,
-      max: maxSize,
-    };
+    throw new Error(
+      `File size (${fileSizeMB}MB) exceeds limit (${maxSize}MB) for your ${plan.name} plan.`,
+    );
   }
 
   if (!allowedTypes.includes("*") && !allowedTypes.includes(fileType)) {
-    return {
-      allowed: false,
-      reason: `File type "${fileType}" is not allowed in your ${plan.name} plan.`,
-    };
+    throw new Error(
+      `File type "${fileType}" is not allowed in your ${plan.name} plan.`,
+    );
   }
 
   return { allowed: true };
@@ -742,6 +631,7 @@ export async function getUserUsageLimits(userId: string) {
     .where(
       and(
         eq(ChatThreadTable.userId, userId),
+        eq(ChatMessageTable.role, "user"),
         gte(ChatMessageTable.createdAt, today),
         lt(ChatMessageTable.createdAt, tomorrow),
       ),
@@ -897,7 +787,8 @@ export async function getUserUsageLimits(userId: string) {
         ),
       },
       storage: {
-        current: Math.round((Number(storageResult?.total || 0) / 1024) * 100) / 100,
+        current:
+          Math.round((Number(storageResult?.total || 0) / 1024) * 100) / 100,
         max: planLimits?.maxStorageGB || 0,
         percentage: calculatePercentage(
           Number(storageResult?.total || 0) / 1024,
