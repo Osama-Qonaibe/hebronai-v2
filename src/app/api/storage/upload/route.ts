@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "auth/server";
 import { serverFileStorage, storageDriver } from "lib/file-storage";
 import { checkStorageAction } from "../actions";
+import { checkFileUploadLimit } from "lib/auth/usage-limits";
 
 export async function POST(request: Request) {
   const session = await getSession();
@@ -31,6 +32,23 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "No file provided. Use 'file' field in FormData." },
         { status: 400 },
+      );
+    }
+
+    // Check file upload limits (size, type)
+    const fileSizeMB = file.size / (1024 * 1024);
+    const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
+
+    try {
+      await checkFileUploadLimit(
+        session.user.id,
+        fileSizeMB,
+        fileExtension
+      );
+    } catch (error: any) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 403 }
       );
     }
 
