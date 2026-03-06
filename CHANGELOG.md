@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.8.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.7.4...hebronai-v2-v5.8.0) (2026-03-06)
+
+
+### Features
+
+* Add file upload limit enforcement ([a5ab14a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a5ab14ab8ee14276f42b523d8fd123ccf4d5faa8))
+
 ## [5.7.4](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.7.3...hebronai-v2-v5.7.4) (2026-03-05)
 
 
