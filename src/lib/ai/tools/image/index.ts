@@ -35,6 +35,12 @@ export function setImageToolUserId(userId: string) {
   currentUserId = userId;
 }
 
+const SUCCESS_GUIDE =
+  "The image has been successfully generated and is now displayed above. Do NOT mention or display any image URLs or storage links in your response. If the user needs edits or adjustments, let them know they can ask.";
+
+const FAILURE_GUIDE =
+  "Image generation was not successful. Ask the user for more details such as style, colors, mood, or specific objects. Do NOT mention or display any URLs.";
+
 export const nanoBananaTool = createTool({
   name: ImageToolName,
   description: `Generate, edit, or composite images based on the conversation context. This tool automatically analyzes recent messages to create images without requiring explicit input parameters. It includes all user-uploaded images from the recent conversation and only the most recent AI-generated image to avoid confusion. Use the 'mode' parameter to specify the operation type: 'create' for new images, 'edit' for modifying existing images, or 'composite' for combining multiple images. Use this when the user requests image creation, modification, or visual content generation.`,
@@ -143,10 +149,7 @@ export const nanoBananaTool = createTool({
         images: resultImages,
         mode,
         model: "gemini-2.5-flash-image",
-        guide:
-          resultImages.length > 0
-            ? "The image has been successfully generated and is now displayed above. If you need any edits, modifications, or adjustments to the image, please let me know."
-            : "I apologize, but the image generation was not successful. To help me create a better image for you, could you please provide more specific details about what you'd like to see? For example:\\n\\n• What style are you looking for? (realistic, cartoon, abstract, etc.)\\n• What colors or mood should the image have?\\n• Are there any specific objects, people, or scenes you want included?\\n• What size or format would work best for your needs?\\n\\nPlease share these details and I'll try generating the image again with your specifications.",
+        guide: resultImages.length > 0 ? SUCCESS_GUIDE : FAILURE_GUIDE,
       };
     } catch (e) {
       logger.error(e);
@@ -256,8 +259,7 @@ export const openaiImageTool = createTool({
           images: [{ url: uploadedImage.sourceUrl, mimeType: "image/webp" }],
           mode,
           model: "gpt-image-1-mini",
-          guide:
-            "The image has been successfully generated and is now displayed above. If you need any edits, modifications, or adjustments to the image, please let me know.",
+          guide: SUCCESS_GUIDE,
         };
       }
     }
@@ -266,7 +268,7 @@ export const openaiImageTool = createTool({
       images: [],
       mode,
       model: "gpt-image-1-mini",
-      guide: "",
+      guide: FAILURE_GUIDE,
     };
   },
 });
