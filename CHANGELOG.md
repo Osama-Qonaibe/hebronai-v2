@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.9.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.8.0...hebronai-v2-v5.9.0) (2026-03-15)
+
+
+### Features
+
+* update usage limits and subscription rules ([0701f34](https://github.com/Osama-Qonaibe/hebronai-v2/commit/0701f346a23c349b3378ca635c68eaa59649b96e))
+
 ## [5.8.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.7.4...hebronai-v2-v5.8.0) (2026-03-06)
 
 
