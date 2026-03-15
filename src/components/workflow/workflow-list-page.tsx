@@ -47,8 +47,14 @@ const createWithExample = async (exampleWorkflow: {
     }),
   });
 
-  if (!response.ok) return toast.error("Error creating workflow");
+  if (!response.ok) {
+    const data = await response.json();
+    toast.error(data.error || "Error creating workflow");
+    return;
+  }
+
   const workflow = await response.json();
+
   const structureResponse = await fetch(
     `/api/workflow/${workflow.id}/structure`,
     {
@@ -59,7 +65,12 @@ const createWithExample = async (exampleWorkflow: {
       }),
     },
   );
-  if (!structureResponse.ok) return toast.error("Error creating workflow");
+
+  if (!structureResponse.ok) {
+    toast.error("Error creating workflow structure");
+    return;
+  }
+
   return workflow.id as string;
 };
 
@@ -86,7 +97,6 @@ export default function WorkflowListPage({
     },
   );
 
-  // Separate workflows into user's own and shared
   const myWorkflows =
     workflows?.filter((w) => w.userId === currentUserId) || [];
   const sharedWorkflows =
@@ -98,6 +108,7 @@ export default function WorkflowListPage({
     edges: Partial<DBEdge>[];
   }) => {
     const workflowId = await createWithExample(exampleWorkflow);
+    if (!workflowId) return;
     mutate("/api/workflow");
     router.push(`/workflow/${workflowId}`);
   };
@@ -116,7 +127,6 @@ export default function WorkflowListPage({
 
       if (!response.ok) throw new Error("Failed to update visibility");
 
-      // Refresh the workflows data
       mutate("/api/workflow");
       toast.success(t("Workflow.visibilityUpdated"));
     } catch {
@@ -149,10 +159,8 @@ export default function WorkflowListPage({
     }
   };
 
-  // Check if user can create workflows using Better Auth permissions
   const canCreate = canCreateWorkflow(userRole);
 
-  // For regular users, combine all workflows into one list
   const displayWorkflows = canCreate
     ? myWorkflows
     : [...myWorkflows, ...sharedWorkflows];
@@ -199,7 +207,6 @@ export default function WorkflowListPage({
         )}
       </div>
 
-      {/* My Workflows / Available Workflows Section */}
       {(canCreate || displayWorkflows.length > 0) && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
@@ -270,7 +277,6 @@ export default function WorkflowListPage({
         </div>
       )}
 
-      {/* Only show Shared Workflows section for users who can create (to differentiate between owned and shared) */}
       {canCreate && sharedWorkflows.length > 0 && (
         <div className="flex flex-col gap-4 mt-8">
           <div className="flex items-center gap-2">
@@ -294,7 +300,6 @@ export default function WorkflowListPage({
         </div>
       )}
 
-      {/* Empty state for users without create permission and no available workflows */}
       {!canCreate && displayWorkflows.length === 0 && !isLoading && (
         <Card className="col-span-full bg-transparent border-none">
           <CardHeader className="text-center py-12">

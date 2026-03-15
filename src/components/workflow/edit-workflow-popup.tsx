@@ -106,7 +106,6 @@ export function EditWorkflowPopup({
   );
 
   const router = useRouter();
-
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -118,6 +117,10 @@ export function EditWorkflowPopup({
             method: "POST",
             body: JSON.stringify(body),
           });
+          if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || "Error creating workflow");
+          }
           const data = await response.json();
           return data as DBWorkflow;
         })
@@ -160,7 +163,6 @@ export function EditWorkflowPopup({
         </DialogHeader>
 
         <div className="flex w-full h-full gap-10">
-          {/* Left: Form */}
           <div className="gap-6 flex flex-col justify-center w-full">
             <div className="flex gap-2">
               <div className="flex flex-col gap-2 flex-1">
@@ -188,14 +190,14 @@ export function EditWorkflowPopup({
                     <Avatar className="size-10">
                       <AvatarImage
                         src={config.icon.value}
-                        className="group-hover:scale-110  transition-transform"
+                        className="group-hover:scale-110 transition-transform"
                       />
                       <AvatarFallback></AvatarFallback>
                     </Avatar>
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="p-0 bg-transparent flex flex-col gap-2 border-none">
-                  <div className="flex gap-2 border rounded-xl p-4  bg-secondary">
+                  <div className="flex gap-2 border rounded-xl p-4 bg-secondary">
                     {BACKGROUND_COLORS.map((color, index) => (
                       <div
                         key={index}
@@ -226,7 +228,7 @@ export function EditWorkflowPopup({
                           }, 100);
                         }}
                       />
-                      <div className="w-6 h-6 rounded cursor-pointer  border-muted-foreground/50 flex items-center justify-center hover:border-muted-foreground transition-colors">
+                      <div className="w-6 h-6 rounded cursor-pointer border-muted-foreground/50 flex items-center justify-center hover:border-muted-foreground transition-colors">
                         <div
                           className="w-3 h-3 rounded-full"
                           style={{

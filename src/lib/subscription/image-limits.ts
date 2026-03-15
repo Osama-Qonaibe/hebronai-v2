@@ -1,5 +1,10 @@
 import { pgDb } from "@/lib/db/pg/db.pg";
-import { UserTable, SubscriptionPlanTable, ImageGenerationTable, DailyUsageSummaryTable } from "@/lib/db/pg/schema.pg";
+import {
+  UserTable,
+  SubscriptionPlanTable,
+  ImageGenerationTable,
+  DailyUsageSummaryTable,
+} from "@/lib/db/pg/schema.pg";
 import { eq, and, gte, sql } from "drizzle-orm";
 import { PLAN_LIMITS } from "./plans";
 import type { SubscriptionPlan } from "./plans";
@@ -37,7 +42,10 @@ export async function checkImageGenerationLimit(
     };
   }
 
-  if (user.planStatus !== "active" || new Date(user.planExpiresAt) < new Date()) {
+  if (
+    user.planStatus !== "active" ||
+    new Date(user.planExpiresAt) < new Date()
+  ) {
     return {
       allowed: false,
       reason: "Subscription expired or inactive",
@@ -159,7 +167,7 @@ export async function recordImageGeneration(
       prompt,
       model,
       cost: cost?.toString(),
-      status: "pending",
+      status: "completed",
     });
 
     const [existing] = await tx

@@ -16,9 +16,9 @@ export const ac = createAccessControl(permissions);
 export const user = ac.newRole({
   user: [],
   session: [],
-  workflow: ["view", "use", "list"],
+  workflow: ["view", "use", "list", "create", "update", "delete"],
   agent: ["view", "use", "list", "create", "update", "delete"],
-  mcp: ["view", "use", "list"],
+  mcp: ["view", "use", "list", "create", "update", "delete"],
   chat: [...Object.values(PERMISSION_TYPES)],
   temporaryChat: [...Object.values(PERMISSION_TYPES)],
 });

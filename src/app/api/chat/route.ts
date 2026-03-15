@@ -10,9 +10,7 @@ import {
 } from "ai";
 
 import { customModelProvider, isToolCallUnsupportedModel } from "lib/ai/models";
-
 import { mcpClientsManager } from "lib/ai/mcp/mcp-manager";
-
 import { agentRepository, chatRepository } from "lib/db/repository";
 import globalLogger from "logger";
 import {
@@ -25,9 +23,7 @@ import {
   ChatMention,
   ChatMetadata,
 } from "app-types/chat";
-
 import { errorIf, safe } from "ts-safe";
-
 import {
   excludeToolExecution,
   handleError,
@@ -45,15 +41,26 @@ import {
   rememberMcpServerCustomizationsAction,
 } from "./actions";
 import { getSession } from "auth/server";
-import { getUserSubscription, type SubscriptionPlan } from "lib/auth/subscription";
+import {
+  getUserSubscription,
+  type SubscriptionPlan,
+} from "lib/auth/subscription";
 import { canAccessModel, getRequiredPlan } from "lib/subscription/model-access";
 import { colorize } from "consola/utils";
 import { generateUUID } from "lib/utils";
-import { nanoBananaTool, openaiImageTool, setImageToolUserId } from "lib/ai/tools/image";
+import {
+  nanoBananaTool,
+  openaiImageTool,
+  setImageToolUserId,
+} from "lib/ai/tools/image";
 import { ImageToolName } from "lib/ai/tools";
 import { buildCsvIngestionPreviewParts } from "@/lib/ai/ingest/csv-ingest";
 import { serverFileStorage } from "lib/file-storage";
-import { checkImageGenerationLimit, checkImageGenerationMonthlyLimit, checkTotalTokenLimit } from "lib/auth/usage-limits";
+import {
+  checkImageGenerationLimit,
+  checkImageGenerationMonthlyLimit,
+  checkTotalTokenLimit,
+} from "lib/auth/usage-limits";
 
 const logger = globalLogger.withDefaults({
   message: colorize("blackBright", `Chat API: `),
@@ -62,12 +69,12 @@ const logger = globalLogger.withDefaults({
 export async function POST(request: Request) {
   try {
     const json = await request.json();
-
     const session = await getSession();
 
     if (!session?.user.id) {
       return new Response("Unauthorized", { status: 401 });
     }
+
     const {
       id,
       message,
@@ -97,7 +104,6 @@ export async function POST(request: Request) {
         chatModel.provider,
         chatModel.model,
       );
-
       if (!hasAccess) {
         const requiredPlan = getRequiredPlan(
           chatModel.provider,
@@ -129,8 +135,9 @@ export async function POST(request: Request) {
           { status: 429 },
         );
       }
-
-      const monthlyLimit = await checkImageGenerationMonthlyLimit(session.user.id);
+      const monthlyLimit = await checkImageGenerationMonthlyLimit(
+        session.user.id,
+      );
       if (!monthlyLimit.allowed) {
         return Response.json(
           {
@@ -142,13 +149,13 @@ export async function POST(request: Request) {
           { status: 429 },
         );
       }
-      
       setImageToolUserId(session.user.id);
     }
 
-    const estimatedTokens = message.parts
-      .filter((p: any) => p.type === "text")
-      .reduce((sum: number, p: any) => sum + (p.text?.length || 0), 0) / 4;
+    const estimatedTokens =
+      message.parts
+        .filter((p: any) => p.type === "text")
+        .reduce((sum: number, p: any) => sum + (p.text?.length || 0), 0) / 4;
 
     const tokenLimit = await checkTotalTokenLimit(
       session.user.id,
@@ -167,7 +174,6 @@ export async function POST(request: Request) {
     }
 
     const model = customModelProvider.getModel(chatModel);
-
     let thread = await chatRepository.selectThreadDetails(id);
 
     if (!thread) {
@@ -184,18 +190,17 @@ export async function POST(request: Request) {
       return new Response("Forbidden", { status: 403 });
     }
 
-    const messages: UIMessage[] = (thread?.messages ?? []).map((m) => {
-      return {
-        id: m.id,
-        role: m.role,
-        parts: m.parts,
-        metadata: m.metadata,
-      };
-    });
+    const messages: UIMessage[] = (thread?.messages ?? []).map((m) => ({
+      id: m.id,
+      role: m.role,
+      parts: m.parts,
+      metadata: m.metadata,
+    }));
 
     if (messages.at(-1)?.id == message.id) {
       messages.pop();
     }
+
     const ingestionPreviewParts = await buildCsvIngestionPreviewParts(
       attachments,
       (key) => serverFileStorage.download(key),
@@ -296,35 +301,24 @@ export async function POST(request: Request) {
         logger.info(
           `mcp-server count: ${mcpClients.length}, mcp-tools count :${Object.keys(mcpTools).length}`,
         );
+
         const MCP_TOOLS = await safe()
           .map(errorIf(() => !isToolCallAllowed && "Not allowed"))
-          .map(() =>
-            loadMcpTools({
-              mentions,
-              allowedMcpServers,
-            }),
-          )
+          .map(() => loadMcpTools({ mentions, allowedMcpServers }))
           .orElse({});
 
         const WORKFLOW_TOOLS = await safe()
           .map(errorIf(() => !isToolCallAllowed && "Not allowed"))
-          .map(() =>
-            loadWorkFlowTools({
-              mentions,
-              dataStream,
-            }),
-          )
+          .map(() => loadWorkFlowTools({ mentions, dataStream }))
           .orElse({});
 
         const APP_DEFAULT_TOOLS = await safe()
           .map(errorIf(() => !isToolCallAllowed && "Not allowed"))
           .map(() =>
-            loadAppDefaultTools({
-              mentions,
-              allowedAppDefaultToolkit,
-            }),
+            loadAppDefaultTools({ mentions, allowedAppDefaultToolkit }),
           )
           .orElse({});
+
         const inProgressToolParts = extractInProgressToolPart(message);
         if (inProgressToolParts.length) {
           await Promise.all(
@@ -335,7 +329,6 @@ export async function POST(request: Request) {
                 request.signal,
               );
               part.output = output;
-
               dataStream.write({
                 type: "tool-output-available",
                 toolCallId: part.toolCallId,
@@ -370,23 +363,18 @@ export async function POST(request: Request) {
                   : openaiImageTool,
             }
           : {};
-        const vercelAITooles = safe({
-          ...MCP_TOOLS,
-          ...WORKFLOW_TOOLS,
-        })
+
+        const vercelAITooles = safe({ ...MCP_TOOLS, ...WORKFLOW_TOOLS })
           .map((t) => {
             const bindingTools =
               toolChoice === "manual" ||
               (message.metadata as ChatMetadata)?.toolChoice === "manual"
                 ? excludeToolExecution(t)
                 : t;
-            return {
-              ...bindingTools,
-              ...APP_DEFAULT_TOOLS,
-              ...IMAGE_TOOL,
-            };
+            return { ...bindingTools, ...APP_DEFAULT_TOOLS, ...IMAGE_TOOL };
           })
           .unwrap();
+
         metadata.toolCount = Object.keys(vercelAITooles).length;
 
         const allowedMcpTools = Object.values(allowedMcpServers ?? {})
@@ -396,10 +384,10 @@ export async function POST(request: Request) {
         logger.info(
           `${agent ? `agent: ${agent.name}, ` : ""}tool mode: ${toolChoice}, mentions: ${mentions.length}`,
         );
-
         logger.info(
           `allowedMcpTools: ${allowedMcpTools.length ?? 0}, allowedAppDefaultToolkit: ${allowedAppDefaultToolkit?.length ?? 0}`,
         );
+
         if (useImageTool) {
           logger.info(`binding tool count Image: ${imageTool?.model}`);
         } else {
@@ -420,6 +408,7 @@ export async function POST(request: Request) {
           toolChoice: "auto",
           abortSignal: request.signal,
         });
+
         result.consumeStream();
         dataStream.merge(
           result.toUIMessageStream({
@@ -463,14 +452,53 @@ export async function POST(request: Request) {
             updatedAt: new Date(),
           } as any);
         }
+
+        if (metadata.usage) {
+          try {
+            const { pgDb } = await import("lib/db/pg/db.pg");
+            const { UsageTable } = await import("lib/db/pg/schema.pg");
+
+            const now = new Date();
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const endOfMonth = new Date(
+              now.getFullYear(),
+              now.getMonth() + 1,
+              1,
+            );
+
+            const usage = metadata.usage as any;
+            const inputTokens = usage.inputTokens ?? usage.promptTokens ?? 0;
+            const outputTokens =
+              usage.outputTokens ?? usage.completionTokens ?? 0;
+            const totalTokens = inputTokens + outputTokens;
+
+            if (totalTokens > 0) {
+              await pgDb.insert(UsageTable).values({
+                userId: session.user.id,
+                resourceType: "tokens",
+                amount: totalTokens.toString(),
+                metadata: {
+                  inputTokens,
+                  outputTokens,
+                  model: `${chatModel?.provider}/${chatModel?.model}`,
+                },
+                periodStart: startOfMonth,
+                periodEnd: endOfMonth,
+              });
+              logger.info(
+                `Token usage recorded: ${totalTokens} tokens for user ${session.user.id}`,
+              );
+            }
+          } catch (err) {
+            logger.error("Failed to record token usage:", err);
+          }
+        }
       },
       onError: handleError,
       originalMessages: messages,
     });
 
-    return createUIMessageStreamResponse({
-      stream,
-    });
+    return createUIMessageStreamResponse({ stream });
   } catch (error: any) {
     logger.error(error);
     return Response.json({ message: error.message }, { status: 500 });

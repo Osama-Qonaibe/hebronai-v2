@@ -14,7 +14,10 @@ import { ImageToolName } from "..";
 import logger from "logger";
 import { openai } from "@ai-sdk/openai";
 import { toAny } from "lib/utils";
-import { recordImageGeneration } from "@/lib/subscription/image-limits";
+import {
+  checkImageGenerationLimit,
+  recordImageGeneration,
+} from "@/lib/subscription/image-limits";
 
 export type ImageToolResult = {
   images: {
@@ -46,6 +49,15 @@ export const nanoBananaTool = createTool({
   }),
   execute: async ({ mode }, { messages, abortSignal }) => {
     try {
+      if (currentUserId) {
+        const limitCheck = await checkImageGenerationLimit(currentUserId);
+        if (!limitCheck.allowed) {
+          throw new Error(
+            limitCheck.reason || "Image generation limit reached",
+          );
+        }
+      }
+
       let hasFoundImage = false;
 
       const latestMessages = messages
@@ -104,12 +116,18 @@ export const nanoBananaTool = createTool({
 
       if (resultImages.length > 0 && currentUserId) {
         const promptText = latestMessages
-          .filter(m => m.role === 'user')
-          .map(m => m.content)
+          .filter((m) => m.role === "user")
+          .map((m) => m.content)
           .flat()
-          .filter(p => typeof p === 'string' || (typeof p === 'object' && 'text' in p))
-          .map(p => typeof p === 'string' ? p : p.text)
-          .join(' ')
+          .filter(
+            (p) =>
+              typeof p === "string" ||
+              (typeof p === "object" && p !== null && "text" in p),
+          )
+          .map((p) =>
+            typeof p === "string" ? p : (p as { text: string }).text,
+          )
+          .join(" ")
           .slice(0, 500);
 
         await recordImageGeneration(
@@ -128,7 +146,7 @@ export const nanoBananaTool = createTool({
         guide:
           resultImages.length > 0
             ? "The image has been successfully generated and is now displayed above. If you need any edits, modifications, or adjustments to the image, please let me know."
-            : "I apologize, but the image generation was not successful. To help me create a better image for you, could you please provide more specific details about what you'd like to see? For example:\n\n• What style are you looking for? (realistic, cartoon, abstract, etc.)\n• What colors or mood should the image have?\n• Are there any specific objects, people, or scenes you want included?\n• What size or format would work best for your needs?\n\nPlease share these details and I'll try generating the image again with your specifications.",
+            : "I apologize, but the image generation was not successful. To help me create a better image for you, could you please provide more specific details about what you'd like to see? For example:\\n\\n• What style are you looking for? (realistic, cartoon, abstract, etc.)\\n• What colors or mood should the image have?\\n• Are there any specific objects, people, or scenes you want included?\\n• What size or format would work best for your needs?\\n\\nPlease share these details and I'll try generating the image again with your specifications.",
       };
     } catch (e) {
       logger.error(e);
@@ -155,6 +173,13 @@ export const openaiImageTool = createTool({
       throw new Error("OPENAI_API_KEY is not set");
     }
 
+    if (currentUserId) {
+      const limitCheck = await checkImageGenerationLimit(currentUserId);
+      if (!limitCheck.allowed) {
+        throw new Error(limitCheck.reason || "Image generation limit reached");
+      }
+    }
+
     let hasFoundImage = false;
     const latestMessages = messages
       .slice(-6)
@@ -175,7 +200,7 @@ export const openaiImageTool = createTool({
       })
       .filter((v) => Boolean(v?.content?.length))
       .reverse() as ModelMessage[];
-      
+
     const result = await generateText({
       model: openai("gpt-4.1-mini"),
       abortSignal,
@@ -204,12 +229,18 @@ export const openaiImageTool = createTool({
 
         if (currentUserId) {
           const promptText = latestMessages
-            .filter(m => m.role === 'user')
-            .map(m => m.content)
+            .filter((m) => m.role === "user")
+            .map((m) => m.content)
             .flat()
-            .filter(p => typeof p === 'string' || (typeof p === 'object' && 'text' in p))
-            .map(p => typeof p === 'string' ? p : p.text)
-            .join(' ')
+            .filter(
+              (p) =>
+                typeof p === "string" ||
+                (typeof p === "object" && p !== null && "text" in p),
+            )
+            .map((p) =>
+              typeof p === "string" ? p : (p as { text: string }).text,
+            )
+            .join(" ")
             .slice(0, 500);
 
           await recordImageGeneration(
@@ -230,6 +261,7 @@ export const openaiImageTool = createTool({
         };
       }
     }
+
     return {
       images: [],
       mode,

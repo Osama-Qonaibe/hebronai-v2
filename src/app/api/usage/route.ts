@@ -1,8 +1,16 @@
 import { NextResponse } from "next/server";
 import { getSession } from "lib/auth/server";
 import { pgDb } from "@/lib/db/pg/db.pg";
-import { UserTable, ImageGenerationTable } from "@/lib/db/pg/schema.pg";
+import {
+  UserTable,
+  AgentTable,
+  WorkflowTable,
+  McpServerTable,
+  DailyUsageSummaryTable,
+} from "@/lib/db/pg/schema.pg";
 import { eq, and, gte, sql } from "drizzle-orm";
+import { PLAN_LIMITS } from "@/lib/subscription/plans";
+import type { SubscriptionPlan } from "@/lib/subscription/plans";
 
 export async function GET() {
   try {
@@ -11,156 +19,106 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await pgDb
+    const [user] = await pgDb
       .select({
         plan: UserTable.plan,
         planStatus: UserTable.planStatus,
         planExpiresAt: UserTable.planExpiresAt,
       })
       .from(UserTable)
-      .where(eq(UserTable.id, session.user.id))
-      .limit(1);
+      .where(eq(UserTable.id, session.user.id));
 
-    if (!user || user.length === 0) {
+    if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const userPlan = user[0].plan || "free";
-    const planStatus = user[0].planStatus;
-    const expiresAt = user[0].planExpiresAt;
+    const userPlan = (user.plan || "free") as SubscriptionPlan;
+    const limits = PLAN_LIMITS[userPlan] ?? PLAN_LIMITS.free;
 
-    const planLimits: Record<
-      string,
-      {
-        agents: number | null;
-        workflows: number | null;
-        mcpServers: number | null;
-        tokens: number | null;
-        imagesDaily: number | null;
-        imagesMonthly: number | null;
-        models: number;
-      }
-    > = {
-      free: { 
-        agents: 2, 
-        workflows: 1, 
-        mcpServers: 1, 
-        tokens: 50000,
-        imagesDaily: 5,
-        imagesMonthly: 50,
-        models: 12,
-      },
-      basic: { 
-        agents: 5, 
-        workflows: 3, 
-        mcpServers: 3, 
-        tokens: 200000,
-        imagesDaily: 20,
-        imagesMonthly: 300,
-        models: 17,
-      },
-      pro: { 
-        agents: 10, 
-        workflows: 10, 
-        mcpServers: 10, 
-        tokens: 1000000,
-        imagesDaily: 50,
-        imagesMonthly: 1000,
-        models: 25,
-      },
-      enterprise: { 
-        agents: null, 
-        workflows: null, 
-        mcpServers: null, 
-        tokens: null,
-        imagesDaily: null,
-        imagesMonthly: null,
-        models: 45,
-      },
+    const modelsCount: Record<SubscriptionPlan, number> = {
+      free: 12,
+      basic: 17,
+      pro: 25,
+      enterprise: 45,
     };
-
-    const limits = planLimits[userPlan] || planLimits.free;
-
-    const agentsCount =
-      (await pgDb.query.AgentTable?.findMany({
-        where: (agents, { eq }) => eq(agents.userId, session.user.id),
-      })) || [];
-
-    const workflowsCount =
-      (await pgDb.query.WorkflowTable?.findMany({
-        where: (workflows, { eq }) => eq(workflows.userId, session.user.id),
-      })) || [];
-
-    const mcpServersCount =
-      (await pgDb.query.McpServerTable?.findMany({
-        where: (mcpServers, { eq }) => eq(mcpServers.userId, session.user.id),
-      })) || [];
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    let imagesDaily = [{ count: 0 }];
-    let imagesMonthly = [{ count: 0 }];
+    const [agentsResult, workflowsResult, mcpServersResult] = await Promise.all(
+      [
+        pgDb
+          .select({ count: sql<number>`count(*)::int` })
+          .from(AgentTable)
+          .where(eq(AgentTable.userId, session.user.id)),
+        pgDb
+          .select({ count: sql<number>`count(*)::int` })
+          .from(WorkflowTable)
+          .where(eq(WorkflowTable.userId, session.user.id)),
+        pgDb
+          .select({ count: sql<number>`count(*)::int` })
+          .from(McpServerTable)
+          .where(eq(McpServerTable.userId, session.user.id)),
+      ],
+    );
 
-    try {
-      imagesDaily = await pgDb
-        .select({ count: sql<number>`count(*)::int` })
-        .from(ImageGenerationTable)
-        .where(
-          and(
-            eq(ImageGenerationTable.userId, session.user.id),
-            gte(ImageGenerationTable.createdAt, today),
-            eq(ImageGenerationTable.status, "completed")
-          )
-        );
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-      const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-      
-      imagesMonthly = await pgDb
-        .select({ count: sql<number>`count(*)::int` })
-        .from(ImageGenerationTable)
-        .where(
-          and(
-            eq(ImageGenerationTable.userId, session.user.id),
-            gte(ImageGenerationTable.createdAt, firstDayOfMonth),
-            eq(ImageGenerationTable.status, "completed")
-          )
-        );
-    } catch (imageError) {
-      console.warn("Image tracking not yet available:", imageError);
-    }
+    const [dailyRow] = await pgDb
+      .select({ imagesGenerated: DailyUsageSummaryTable.imagesGenerated })
+      .from(DailyUsageSummaryTable)
+      .where(
+        and(
+          eq(DailyUsageSummaryTable.userId, session.user.id),
+          eq(DailyUsageSummaryTable.date, today),
+        ),
+      );
+
+    const [monthlyRow] = await pgDb
+      .select({
+        total: sql<number>`COALESCE(SUM(${DailyUsageSummaryTable.imagesGenerated}), 0)`,
+      })
+      .from(DailyUsageSummaryTable)
+      .where(
+        and(
+          eq(DailyUsageSummaryTable.userId, session.user.id),
+          gte(DailyUsageSummaryTable.date, startOfMonth),
+        ),
+      );
 
     return NextResponse.json({
       plan: {
         name: userPlan.charAt(0).toUpperCase() + userPlan.slice(1),
-        status: planStatus,
-        expiresAt: expiresAt?.toISOString() || null,
-        modelsCount: limits.models,
+        status: user.planStatus,
+        expiresAt: user.planExpiresAt?.toISOString() || null,
+        modelsCount: modelsCount[userPlan] ?? 12,
       },
       agents: {
-        used: agentsCount.length,
-        limit: limits.agents,
+        used: agentsResult[0]?.count ?? 0,
+        limit: limits.maxAgents === -1 ? null : limits.maxAgents,
       },
       workflows: {
-        used: workflowsCount.length,
-        limit: limits.workflows,
+        used: workflowsResult[0]?.count ?? 0,
+        limit: limits.maxWorkflows === -1 ? null : limits.maxWorkflows,
       },
       mcpServers: {
-        used: mcpServersCount.length,
-        limit: limits.mcpServers,
+        used: mcpServersResult[0]?.count ?? 0,
+        limit: limits.maxMCPServers === -1 ? null : limits.maxMCPServers,
       },
       tokens: {
         used: 0,
-        limit: limits.tokens,
+        limit:
+          limits.maxTokensPerMonth === -1 ? null : limits.maxTokensPerMonth,
       },
       images: {
         daily: {
-          used: imagesDaily[0]?.count || 0,
-          limit: limits.imagesDaily,
+          used: dailyRow?.imagesGenerated ?? 0,
+          limit: limits.maxImagesPerDay === -1 ? null : limits.maxImagesPerDay,
         },
         monthly: {
-          used: imagesMonthly[0]?.count || 0,
-          limit: limits.imagesMonthly,
+          used: Number(monthlyRow?.total ?? 0),
+          limit:
+            limits.maxImagesPerMonth === -1 ? null : limits.maxImagesPerMonth,
         },
       },
     });
@@ -168,7 +126,7 @@ export async function GET() {
     console.error("Usage API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
