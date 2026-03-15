@@ -4,7 +4,7 @@ import { ToolUIPart } from "ai";
 import equal from "lib/equal";
 import { cn } from "lib/utils";
 import { ImagesIcon, Download, ExternalLink } from "lucide-react";
-import { memo, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { TextShimmer } from "ui/text-shimmer";
 import LetterGlitch from "ui/letter-glitch";
 
@@ -18,6 +18,7 @@ interface ImageGenerationResult {
     mimeType?: string;
   }[];
   mode?: "create" | "edit" | "composite";
+  guide?: string;
   model: string;
 }
 
@@ -70,10 +71,11 @@ function PureImageGeneratorToolInvocation({
     }
   };
 
-  const getFilename = (url: string, index: number) => {
+  const getDownloadUrl = useCallback((url: string, index: number) => {
     const ext = url.split(".").pop()?.split("?")[0] || "png";
-    return `image-${index + 1}.${ext}`;
-  };
+    const filename = `image-${index + 1}.${ext}`;
+    return `/api/image-download?url=${encodeURIComponent(url)}&filename=${filename}`;
+  }, []);
 
   if (isGenerating) {
     return (
@@ -140,8 +142,7 @@ function PureImageGeneratorToolInvocation({
                       Open
                     </a>
                     <a
-                      href={image.url}
-                      download={getFilename(image.url, index)}
+                      href={getDownloadUrl(image.url, index)}
                       className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:scale-105 transition-transform flex items-center gap-2"
                     >
                       <Download className="size-4" />
