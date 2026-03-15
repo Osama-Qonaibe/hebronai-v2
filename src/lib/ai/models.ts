@@ -70,6 +70,8 @@ const staticModels = {
     "gemini-2.5-pro": google("gemini-2.5-pro"),
   },
   anthropic: {
+    "sonnet-4.6": anthropic("claude-sonnet-4-6"),
+    "opus-4.6": anthropic("claude-opus-4-6"),
     "sonnet-4.5": anthropic("claude-sonnet-4-5"),
     "haiku-4.5": anthropic("claude-haiku-4-5"),
     "opus-4.5": anthropic("claude-opus-4-5"),
@@ -127,54 +129,25 @@ const registerFileSupport = (
 
 registerFileSupport(staticModels.openai["gpt-5.2-pro"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.openai["gpt-5.2"], OPENAI_FILE_MIME_TYPES);
-registerFileSupport(
-  staticModels.openai["gpt-5.2-chat"],
-  OPENAI_FILE_MIME_TYPES,
-);
+registerFileSupport(staticModels.openai["gpt-5.2-chat"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.openai["gpt-5-mini"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.openai["gpt-5-nano"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.openai["gpt-5.1"], OPENAI_FILE_MIME_TYPES);
-registerFileSupport(
-  staticModels.openai["gpt-5.1-chat"],
-  OPENAI_FILE_MIME_TYPES,
-);
+registerFileSupport(staticModels.openai["gpt-5.1-chat"], OPENAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.openai["gpt-4.1"], OPENAI_FILE_MIME_TYPES);
-registerFileSupport(
-  staticModels.openai["gpt-4.1-mini"],
-  OPENAI_FILE_MIME_TYPES,
-);
-registerFileSupport(
-  staticModels.openai["gpt-4.1-nano"],
-  OPENAI_FILE_MIME_TYPES,
-);
-registerFileSupport(
-  staticModels.google["gemini-2.5-flash-lite"],
-  GEMINI_FILE_MIME_TYPES,
-);
-registerFileSupport(
-  staticModels.google["gemini-2.5-flash"],
-  GEMINI_FILE_MIME_TYPES,
-);
-registerFileSupport(
-  staticModels.google["gemini-2.5-pro"],
-  GEMINI_FILE_MIME_TYPES,
-);
-registerFileSupport(
-  staticModels.anthropic["sonnet-4.5"],
-  ANTHROPIC_FILE_MIME_TYPES,
-);
-registerFileSupport(
-  staticModels.anthropic["opus-4.1"],
-  ANTHROPIC_FILE_MIME_TYPES,
-);
-registerFileSupport(staticModels.xai["grok-4-fast"], XAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.xai["grok-4"], XAI_FILE_MIME_TYPES);
-registerFileSupport(staticModels.xai["grok-3"], XAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.openai["gpt-4.1-mini"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.openai["gpt-4.1-nano"], OPENAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.google["gemini-2.5-flash-lite"], GEMINI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.google["gemini-2.5-flash"], GEMINI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.google["gemini-2.5-pro"], GEMINI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.anthropic["sonnet-4.6"], ANTHROPIC_FILE_MIME_TYPES);
+registerFileSupport(staticModels.anthropic["opus-4.6"], ANTHROPIC_FILE_MIME_TYPES);
+registerFileSupport(staticModels.anthropic["sonnet-4.5"], ANTHROPIC_FILE_MIME_TYPES);
+registerFileSupport(staticModels.anthropic["opus-4.5"], ANTHROPIC_FILE_MIME_TYPES);
+registerFileSupport(staticModels.xai["grok-4-1-fast"], XAI_FILE_MIME_TYPES);
+registerFileSupport(staticModels.xai["grok-4-1"], XAI_FILE_MIME_TYPES);
 registerFileSupport(staticModels.xai["grok-3-mini"], XAI_FILE_MIME_TYPES);
-registerFileSupport(
-  staticModels.openRouter["claude-3.5-sonnet"],
-  ANTHROPIC_FILE_MIME_TYPES,
-);
+registerFileSupport(staticModels.openRouter["claude-3.5-sonnet"], ANTHROPIC_FILE_MIME_TYPES);
 
 const openaiCompatibleProviders = openaiCompatibleModelsSafeParse(
   process.env.OPENAI_COMPATIBLE_DATA,
