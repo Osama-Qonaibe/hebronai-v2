@@ -104,6 +104,7 @@ export function SubscriptionCard({
   const locale = useLocale();
   const { plans, loading: plansLoading } = usePlans();
   const [loading, setLoading] = useState(false);
+  const [enterpriseLoading, setEnterpriseLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [subscriptionType, setSubscriptionType] = useState<SubscriptionType>("monthly");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("paypal");
@@ -228,12 +229,32 @@ export function SubscriptionCard({
     }
   };
 
-  const handleEnterpriseContact = () => {
+  const handleEnterpriseContact = async () => {
+    setEnterpriseLoading(true);
+    try {
+      await fetch("/api/user/subscription-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          requestedPlan: "enterprise",
+          subscriptionType: "monthly",
+          paymentMethod: "manual",
+          amount: 0,
+          currency: "USD",
+          notes: "طلب التواصل بشأن خطة Enterprise عبر واتساب",
+        }),
+      });
+    } catch (err) {
+      console.error("Enterprise request failed:", err);
+    } finally {
+      setEnterpriseLoading(false);
+    }
+
     const message = encodeURIComponent(
-      `مرحباً، أرغب في الاستفسار عن خطة Enterprise للشركات.\\n\\nأود معرفة المزيد عن المميزات والأسعار المخصصة.`,
+      `مرحباً، أرغب في الاستفسار عن خطة Enterprise للشركات.\n\nأود معرفة المزيد عن المميزات والأسعار المخصصة.`,
     );
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
-    window.location.href = whatsappUrl;
+    window.open(whatsappUrl, "_blank");
   };
 
   const handleWhatsAppContact = () => {
@@ -248,7 +269,7 @@ export function SubscriptionCard({
     const price = subscriptionType === "yearly" ? planDetails.pricing.yearly : planDetails.pricing.monthly;
     const period = subscriptionType === "yearly" ? "سنة" : "شهر";
     const message = encodeURIComponent(
-      `مرحباً، أرغب في الترقية إلى خطة ${planName} ($${price}/${period}).\\n\\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\\n\\nأحتاج مساعدة.`,
+      `مرحباً، أرغب في الترقية إلى خطة ${planName} ($${price}/${period}).\n\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\n\nأحتاج مساعدة.`,
     );
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
     window.location.href = whatsappUrl;
@@ -613,9 +634,14 @@ export function SubscriptionCard({
                   onClick={handleEnterpriseContact}
                   className="w-full gap-2 bg-green-600 hover:bg-green-700"
                   size="lg"
+                  disabled={enterpriseLoading}
                 >
-                  <MessageCircle className="h-5 w-5" />
-                  تواصل معنا عبر واتساب
+                  {enterpriseLoading ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <MessageCircle className="h-5 w-5" />
+                  )}
+                  {enterpriseLoading ? "جاري الإرسال..." : "تواصل معنا عبر واتساب"}
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">
