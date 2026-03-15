@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.10.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.9.0...hebronai-v2-v5.10.0) (2026-03-15)
+
+
+### Features
+
+* add Claude sonnet-4.6 and opus-4.6 models ([1165ecd](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1165ecd88bd1a7185333c363dcc6a08ce8eb6523))
+* add Claude sonnet-4.6 and opus-4.6 to enterprise plan ([f75a370](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f75a370c3d4654d859d0f3f65bbfac6a004c4a4f))
+* enterprise contact button sends admin request + opens whatsapp ([1c47c49](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1c47c492450786e427f6c40971b1c48dd80c346d))
+
 ## [5.9.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.8.0...hebronai-v2-v5.9.0) (2026-03-15)
 
 
