@@ -11,6 +11,7 @@ import {
   SessionTable,
   SubscriptionRequestTable,
   SubscriptionPlanTable,
+  DailyUsageSummaryTable,
 } from "../schema.pg";
 import {
   and,
@@ -239,6 +240,12 @@ const pgAdminRepository: AdminRepository = {
             })
             .where(eq(UserTable.id, request.userId));
         }
+
+        await tx
+          .delete(DailyUsageSummaryTable)
+          .where(eq(DailyUsageSummaryTable.userId, request.userId));
+
+        console.log("[APPROVAL] Daily usage reset for user:", request.userId);
 
         await tx
           .update(SubscriptionRequestTable)
