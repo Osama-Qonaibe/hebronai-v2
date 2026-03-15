@@ -3,7 +3,7 @@
 import { ToolUIPart } from "ai";
 import equal from "lib/equal";
 import { cn } from "lib/utils";
-import { ImagesIcon } from "lucide-react";
+import { ImagesIcon, Download, ExternalLink } from "lucide-react";
 import { memo, useMemo } from "react";
 import { TextShimmer } from "ui/text-shimmer";
 import LetterGlitch from "ui/letter-glitch";
@@ -48,7 +48,6 @@ function PureImageGeneratorToolInvocation({
     );
   }, [part.state, result]);
 
-  // Get mode-specific text
   const getModeText = (mode: string) => {
     switch (mode) {
       case "edit":
@@ -71,7 +70,11 @@ function PureImageGeneratorToolInvocation({
     }
   };
 
-  // Simple loading state like web-search
+  const getFilename = (url: string, index: number) => {
+    const ext = url.split(".").pop()?.split("?")[0] || "png";
+    return `image-${index + 1}.${ext}`;
+  };
+
   if (isGenerating) {
     return (
       <div className="flex flex-col gap-4">
@@ -126,15 +129,23 @@ function PureImageGeneratorToolInvocation({
                     alt={`Generated image ${index + 1}`}
                     className="w-full h-auto object-cover"
                   />
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 gap-3">
                     <a
                       href={image.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:scale-105 transition-transform"
+                      className="bg-white/20 backdrop-blur-sm text-white border border-white/30 px-4 py-2 rounded-full text-sm font-medium hover:bg-white/30 transition-all flex items-center gap-2"
                     >
+                      <ExternalLink className="size-4" />
                       Open
+                    </a>
+                    <a
+                      href={image.url}
+                      download={getFilename(image.url, index)}
+                      className="bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:scale-105 transition-transform flex items-center gap-2"
+                    >
+                      <Download className="size-4" />
+                      Download
                     </a>
                   </div>
                 </div>
