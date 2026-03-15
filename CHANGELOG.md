@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.10.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.9.0...hebronai-v2-v5.10.0) (2026-03-15)
+
+
+### Features
+
+* add download button and remove image URL display ([f47f353](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f47f353d74f1e9d00a2638c73b0b192be9088d7e))
+* add download translation key to en and ar ([4a8f61d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/4a8f61db7b467f33353a2d89e978825988aa3870))
+* add image download proxy route and fix download button ([0960617](https://github.com/Osama-Qonaibe/hebronai-v2/commit/09606170c00ab488b1d6bc545e5d34ea9392d87a))
+* hide image URL from AI response text ([e74443c](https://github.com/Osama-Qonaibe/hebronai-v2/commit/e74443c2deea10ba6c62947c1113876dc8dc4c7e))
+* remove Open button, keep only Download via proxy ([f1473c3](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f1473c3487cc9b107fd9128dbdc7db447df4984b))
+
 ## [5.9.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.8.0...hebronai-v2-v5.9.0) (2026-03-15)
 
 
