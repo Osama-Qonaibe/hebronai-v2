@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.12.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.12.0...hebronai-v2-v5.12.1) (2026-03-17)
+
+
+### Bug Fixes
+
+* add basic plan and GET method to seed-plans ([a3707a8](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a3707a8fd37a0746263233cbda23a908b9941ac0))
+
 ## [5.12.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.11.0...hebronai-v2-v5.12.0) (2026-03-17)
 
 
