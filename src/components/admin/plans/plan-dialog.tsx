@@ -19,6 +19,13 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { SubscriptionPlan } from "@/types/subscription";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "ui/select";
 
 interface PlanDialogProps {
   open: boolean;
@@ -40,6 +47,14 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
     isVisible: true,
     isFeatured: false,
     order: 1,
+    paymentType: "manual" as "manual" | "stripe",
+    stripePriceIdMonthly: "",
+    stripePriceIdYearly: "",
+    messagesPerDay: 50,
+    messagesPerMonth: 1000,
+    imagesPerDay: 5,
+    imagesPerMonth: 50,
+    maxActiveChats: 5,
   });
 
   useEffect(() => {
@@ -54,6 +69,14 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
         isVisible: plan.adminSettings.isVisible,
         isFeatured: plan.adminSettings.isFeatured,
         order: plan.metadata.order,
+        paymentType: (plan as any).paymentType ?? "manual",
+        stripePriceIdMonthly: (plan as any).stripePriceIdMonthly ?? "",
+        stripePriceIdYearly: (plan as any).stripePriceIdYearly ?? "",
+        messagesPerDay: plan.limits?.messages?.maxPerDay ?? 50,
+        messagesPerMonth: plan.limits?.messages?.maxPerMonth ?? 1000,
+        imagesPerDay: (plan.limits as any)?.images?.maxPerDay ?? 5,
+        imagesPerMonth: (plan.limits as any)?.images?.maxPerMonth ?? 50,
+        maxActiveChats: plan.limits?.chats?.maxActive ?? 5,
       });
     } else {
       setFormData({
@@ -66,6 +89,14 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
         isVisible: true,
         isFeatured: false,
         order: 1,
+        paymentType: "manual",
+        stripePriceIdMonthly: "",
+        stripePriceIdYearly: "",
+        messagesPerDay: 50,
+        messagesPerMonth: 1000,
+        imagesPerDay: 5,
+        imagesPerMonth: 50,
+        maxActiveChats: 5,
       });
     }
   }, [plan]);
@@ -75,9 +106,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
     setLoading(true);
 
     try {
-      const url = plan
-        ? `/api/admin/plans/${plan.id}`
-        : "/api/admin/plans";
+      const url = plan ? `/api/admin/plans/${plan.id}` : "/api/admin/plans";
       const method = plan ? "PUT" : "POST";
 
       const payload: any = {
@@ -86,6 +115,9 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
         displayName: formData.displayName,
         description: formData.description,
         pricing: formData.pricing,
+        paymentType: formData.paymentType,
+        stripePriceIdMonthly: formData.stripePriceIdMonthly || null,
+        stripePriceIdYearly: formData.stripePriceIdYearly || null,
         adminSettings: {
           isActive: formData.isActive,
           isVisible: formData.isVisible,
@@ -93,6 +125,24 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
         },
         metadata: {
           order: formData.order,
+        },
+        limits: {
+          chats: { maxActive: formData.maxActiveChats, maxHistory: 50 },
+          messages: {
+            maxPerChat: 100,
+            maxPerDay: formData.messagesPerDay,
+            maxPerMonth: formData.messagesPerMonth,
+          },
+          images: {
+            maxPerDay: formData.imagesPerDay,
+            maxPerMonth: formData.imagesPerMonth,
+          },
+          files: {
+            maxSize: 5242880,
+            maxCount: 3,
+            allowedTypes: ["pdf", "txt", "md"],
+          },
+          api: { rateLimit: 10, burstLimit: 20 },
         },
       };
 
@@ -102,24 +152,10 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
           default: "gpt-3.5-turbo",
           limits: {},
         };
-        payload.limits = {
-          chats: { maxActive: 5, maxHistory: 50 },
-          messages: { maxPerChat: 100, maxPerDay: 50, maxPerMonth: 1000 },
-          files: {
-            maxSize: 5242880,
-            maxCount: 3,
-            allowedTypes: ["pdf", "txt", "md"],
-          },
-          api: { rateLimit: 10, burstLimit: 20 },
-        };
         payload.features = {
           mcpServers: { enabled: false, maxServers: 0, customServers: false },
           workflows: { enabled: false, maxWorkflows: 0 },
-          agents: {
-            enabled: false,
-            maxCustomAgents: 0,
-            shareAgents: false,
-          },
+          agents: { enabled: false, maxCustomAgents: 0, shareAgents: false },
           advanced: {
             codeInterpreter: false,
             imageGeneration: false,
@@ -181,9 +217,10 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
 
           <div className="space-y-6 py-4">
             <Tabs defaultValue="basic" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="basic">{t("planSettings")}</TabsTrigger>
                 <TabsTrigger value="pricing">{t("pricing")}</TabsTrigger>
+                <TabsTrigger value="limits">Limits</TabsTrigger>
                 <TabsTrigger value="settings">{t("visibility")}</TabsTrigger>
               </TabsList>
 
@@ -219,19 +256,14 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="displayNameEn">
-                      {t("planName")} (EN) *
-                    </Label>
+                    <Label htmlFor="displayNameEn">{t("planName")} (EN) *</Label>
                     <Input
                       id="displayNameEn"
                       value={formData.displayName.en}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          displayName: {
-                            ...formData.displayName,
-                            en: e.target.value,
-                          },
+                          displayName: { ...formData.displayName, en: e.target.value },
                         })
                       }
                       required
@@ -239,19 +271,14 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="displayNameAr">
-                      {t("planName")} (AR) *
-                    </Label>
+                    <Label htmlFor="displayNameAr">{t("planName")} (AR) *</Label>
                     <Input
                       id="displayNameAr"
                       value={formData.displayName.ar}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          displayName: {
-                            ...formData.displayName,
-                            ar: e.target.value,
-                          },
+                          displayName: { ...formData.displayName, ar: e.target.value },
                         })
                       }
                       required
@@ -261,19 +288,14 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="descriptionEn">
-                      {t("planDescription")} (EN)
-                    </Label>
+                    <Label htmlFor="descriptionEn">{t("planDescription")} (EN)</Label>
                     <Textarea
                       id="descriptionEn"
                       value={formData.description.en}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          description: {
-                            ...formData.description,
-                            en: e.target.value,
-                          },
+                          description: { ...formData.description, en: e.target.value },
                         })
                       }
                       rows={3}
@@ -281,19 +303,14 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="descriptionAr">
-                      {t("planDescription")} (AR)
-                    </Label>
+                    <Label htmlFor="descriptionAr">{t("planDescription")} (AR)</Label>
                     <Textarea
                       id="descriptionAr"
                       value={formData.description.ar}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          description: {
-                            ...formData.description,
-                            ar: e.target.value,
-                          },
+                          description: { ...formData.description, ar: e.target.value },
                         })
                       }
                       rows={3}
@@ -315,10 +332,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          pricing: {
-                            ...formData.pricing,
-                            monthly: parseFloat(e.target.value),
-                          },
+                          pricing: { ...formData.pricing, monthly: parseFloat(e.target.value) },
                         })
                       }
                       required
@@ -336,10 +350,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          pricing: {
-                            ...formData.pricing,
-                            yearly: parseFloat(e.target.value),
-                          },
+                          pricing: { ...formData.pricing, yearly: parseFloat(e.target.value) },
                         })
                       }
                     />
@@ -354,15 +365,127 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        pricing: {
-                          ...formData.pricing,
-                          currency: e.target.value,
-                        },
+                        pricing: { ...formData.pricing, currency: e.target.value },
                       })
                     }
                     required
                     placeholder="USD"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Payment Type</Label>
+                  <Select
+                    value={formData.paymentType}
+                    onValueChange={(val) =>
+                      setFormData({ ...formData, paymentType: val as "manual" | "stripe" })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="manual">Manual</SelectItem>
+                      <SelectItem value="stripe">Stripe</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {formData.paymentType === "stripe" && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="stripePriceIdMonthly">Stripe Price ID (Monthly)</Label>
+                      <Input
+                        id="stripePriceIdMonthly"
+                        value={formData.stripePriceIdMonthly}
+                        onChange={(e) =>
+                          setFormData({ ...formData, stripePriceIdMonthly: e.target.value })
+                        }
+                        placeholder="price_xxx"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="stripePriceIdYearly">Stripe Price ID (Yearly)</Label>
+                      <Input
+                        id="stripePriceIdYearly"
+                        value={formData.stripePriceIdYearly}
+                        onChange={(e) =>
+                          setFormData({ ...formData, stripePriceIdYearly: e.target.value })
+                        }
+                        placeholder="price_xxx"
+                      />
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="limits" className="space-y-4 mt-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="messagesPerDay">Messages / Day</Label>
+                    <Input
+                      id="messagesPerDay"
+                      type="number"
+                      min="0"
+                      value={formData.messagesPerDay}
+                      onChange={(e) =>
+                        setFormData({ ...formData, messagesPerDay: parseInt(e.target.value) })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="messagesPerMonth">Messages / Month</Label>
+                    <Input
+                      id="messagesPerMonth"
+                      type="number"
+                      min="0"
+                      value={formData.messagesPerMonth}
+                      onChange={(e) =>
+                        setFormData({ ...formData, messagesPerMonth: parseInt(e.target.value) })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="imagesPerDay">Images / Day</Label>
+                    <Input
+                      id="imagesPerDay"
+                      type="number"
+                      min="0"
+                      value={formData.imagesPerDay}
+                      onChange={(e) =>
+                        setFormData({ ...formData, imagesPerDay: parseInt(e.target.value) })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="imagesPerMonth">Images / Month</Label>
+                    <Input
+                      id="imagesPerMonth"
+                      type="number"
+                      min="0"
+                      value={formData.imagesPerMonth}
+                      onChange={(e) =>
+                        setFormData({ ...formData, imagesPerMonth: parseInt(e.target.value) })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="maxActiveChats">Max Active Chats</Label>
+                    <Input
+                      id="maxActiveChats"
+                      type="number"
+                      min="1"
+                      value={formData.maxActiveChats}
+                      onChange={(e) =>
+                        setFormData({ ...formData, maxActiveChats: parseInt(e.target.value) })
+                      }
+                    />
+                  </div>
                 </div>
               </TabsContent>
 
@@ -375,10 +498,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
                     min="1"
                     value={formData.order}
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        order: parseInt(e.target.value),
-                      })
+                      setFormData({ ...formData, order: parseInt(e.target.value) })
                     }
                     required
                   />
