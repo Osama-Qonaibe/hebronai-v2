@@ -5,14 +5,14 @@
 
 ### Features
 
-* remove bank transfer payment method, keep only Stripe and Manual ([748d86d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/748d86d4ffd200891c358fa25e8946bbf47b42a2))
-* Stripe Checkout integration with auto-activation webhook ([2c286e4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2c286e4181a67c392de3bf88aac2fb0d2c8c98c8))
+* remove bank transfer payment method, keep only Stripe and Manual ([748d86d](https://github.com/Osama-Qonaibe/hebronai-v2/commit/748d86d4ffd200891c358fa25e8946bbf47b42a2)) by @Osama-Qonaibe
+* Stripe Checkout integration with auto-activation webhook ([2c286e4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/2c286e4181a67c392de3bf88aac2fb0d2c8c98c8)) by @Osama-Qonaibe
 
 
 ### Bug Fixes
 
-* lazy Stripe client initialization to avoid build-time errors ([1d64852](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1d648523fc1b5d93d7d9e2acaebff94ff5e5d983))
-* update stripe apiVersion to 2025-08-27.basil ([a1d523a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a1d523af747aa68f9f3d05113b62b77968fc8811))
+* lazy Stripe client initialization to avoid build-time errors ([1d64852](https://github.com/Osama-Qonaibe/hebronai-v2/commit/1d648523fc1b5d93d7d9e2acaebff94ff5e5d983)) by @Osama-Qonaibe
+* update stripe apiVersion to 2025-08-27.basil ([a1d523a](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a1d523af747aa68f9f3d05113b62b77968fc8811)) by @Osama-Qonaibe
 
 ## [5.11.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.10.0...hebronai-v2-v5.11.0) (2026-03-15)
 
