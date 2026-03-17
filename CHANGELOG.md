@@ -1,5 +1,24 @@
 # Changelog
 
+## [5.13.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.12.0...hebronai-v2-v5.13.0) (2026-03-17)
+
+
+### Features
+
+* add paymentType and stripe price IDs to enhanced plan dialog pricing tab ([c475323](https://github.com/Osama-Qonaibe/hebronai-v2/commit/c47532320dc691e8ee48d1a93da5ec55e31eb53e))
+* add paymentType, stripe price IDs, and limits fields to plan dialog ([f0363c4](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f0363c4005bd267490934c2088194005856e5ad4))
+* add stripeCustomerId, stripeSubscriptionId to UserTable and paymentType, stripePriceIds to SubscriptionPlanTable ([a7e6b14](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a7e6b14290d4eb78ae1d6e6ed938fc549ca8a27b))
+* migration for plan service upgrade - add stripe fields, paymentType, expand limits ([3237924](https://github.com/Osama-Qonaibe/hebronai-v2/commit/32379245083ae5a28b1612de925acb80a0bd99eb))
+* rewrite getUserPlan to read from DB when planId exists, fallback to hardcoded for legacy users ([84f6692](https://github.com/Osama-Qonaibe/hebronai-v2/commit/84f6692fc4dae3af3b52603961d8a397f31a3fc2))
+* update updateSubscription to support planId, stripeCustomerId, stripeSubscriptionId ([a4487fb](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a4487fbdcee4be59ed72f297482a2ba9d2977f0c))
+
+
+### Bug Fixes
+
+* merge built-in plans with DB plans in admin GET endpoint ([39e0740](https://github.com/Osama-Qonaibe/hebronai-v2/commit/39e074055037470d14944ff804dd7c30825c5cfb))
+* use PATCH instead of PUT for plan update ([817113f](https://github.com/Osama-Qonaibe/hebronai-v2/commit/817113f32ca0aab6ddb741971df7d538ecf9b497))
+* widen plan type to string | null in BasicUser to match schema change ([805b544](https://github.com/Osama-Qonaibe/hebronai-v2/commit/805b544a2e291c4957864700d1ec25f4249ea6e8))
+
 ## [5.12.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.11.0...hebronai-v2-v5.12.0) (2026-03-17)
 
 
