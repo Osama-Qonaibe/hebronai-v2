@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.4](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.3...hebronai-v2-v4.0.4) (2026-03-17)
+
+
+### Bug Fixes
+
+* RTL support for dropdown menu with proper icon placement ([a7cae30](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a7cae30aa9982ecdc147ca0afc74c08cb7640c4a))
+
 ## [4.0.3](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v4.0.2...hebronai-v2-v4.0.3) (2026-03-01)
 
 
