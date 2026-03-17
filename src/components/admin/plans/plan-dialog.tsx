@@ -107,7 +107,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
 
     try {
       const url = plan ? `/api/admin/plans/${plan.id}` : "/api/admin/plans";
-      const method = plan ? "PUT" : "POST";
+      const method = plan ? "PATCH" : "POST";
 
       const payload: any = {
         name: formData.name,
@@ -175,7 +175,7 @@ export function PlanDialog({ open, onOpenChange, plan }: PlanDialogProps) {
         };
         payload.metadata = {
           ...payload.metadata,
-          color: "#gray",
+          color: "gray",
           icon: "package",
         };
       }
