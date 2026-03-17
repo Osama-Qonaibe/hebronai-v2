@@ -61,6 +61,9 @@ const DEFAULT_PLAN_DATA = {
   displayName: { en: "", ar: "" },
   description: { en: "", ar: "" },
   pricing: { monthly: 0, yearly: 0, currency: "USD" },
+  paymentType: "manual" as "manual" | "stripe",
+  stripePriceIdMonthly: "",
+  stripePriceIdYearly: "",
   models: {
     allowed: [] as string[],
     default: "",
@@ -135,6 +138,9 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
       const mergedData = {
         ...DEFAULT_PLAN_DATA,
         ...plan,
+        paymentType: ((plan as any).paymentType ?? "manual") as "manual" | "stripe",
+        stripePriceIdMonthly: (plan as any).stripePriceIdMonthly ?? "",
+        stripePriceIdYearly: (plan as any).stripePriceIdYearly ?? "",
         limits: {
           ...DEFAULT_PLAN_DATA.limits,
           ...plan.limits,
@@ -174,10 +180,16 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
       const url = plan ? `/api/admin/plans/${plan.id}` : "/api/admin/plans";
       const method = plan ? "PUT" : "POST";
 
+      const payload = {
+        ...formData,
+        stripePriceIdMonthly: formData.stripePriceIdMonthly || null,
+        stripePriceIdYearly: formData.stripePriceIdYearly || null,
+      };
+
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -200,7 +212,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
     const allowed = formData.models.allowed.includes(modelValue)
       ? formData.models.allowed.filter((m) => m !== modelValue)
       : [...formData.models.allowed, modelValue];
-    
+
     let defaultModel = formData.models.default;
     if (!allowed.includes(defaultModel) && allowed.length > 0) {
       defaultModel = allowed[0];
@@ -438,9 +450,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                 <Card>
                   <CardHeader>
                     <CardTitle>{t("monthlyYearlyPricing")}</CardTitle>
-                    <CardDescription>
-                      {t("monthlyPricingDesc")}
-                    </CardDescription>
+                    <CardDescription>{t("monthlyPricingDesc")}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
@@ -489,6 +499,57 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
 
                 <Card>
                   <CardHeader>
+                    <CardTitle>Payment Type</CardTitle>
+                    <CardDescription>Select how users pay for this plan</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Payment Type</Label>
+                      <Select
+                        value={formData.paymentType}
+                        onValueChange={(val) =>
+                          setFormData({ ...formData, paymentType: val as "manual" | "stripe" })
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="manual">Manual (Admin assigns)</SelectItem>
+                          <SelectItem value="stripe">Stripe (Auto billing)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {formData.paymentType === "stripe" && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Stripe Price ID (Monthly)</Label>
+                          <Input
+                            value={formData.stripePriceIdMonthly}
+                            onChange={(e) =>
+                              setFormData({ ...formData, stripePriceIdMonthly: e.target.value })
+                            }
+                            placeholder="price_xxx"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Stripe Price ID (Yearly)</Label>
+                          <Input
+                            value={formData.stripePriceIdYearly}
+                            onChange={(e) =>
+                              setFormData({ ...formData, stripePriceIdYearly: e.target.value })
+                            }
+                            placeholder="price_xxx"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
                     <CardTitle>{t("trialSettings")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -510,9 +571,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         }
                         placeholder="0"
                       />
-                      <p className="text-xs text-muted-foreground">
-                        {t("trialDaysHint")}
-                      </p>
+                      <p className="text-xs text-muted-foreground">{t("trialDaysHint")}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -539,9 +598,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         }
                         placeholder={t("unlimitedValue")}
                       />
-                      <p className="text-xs text-muted-foreground">
-                        {t("maxUsersHint")}
-                      </p>
+                      <p className="text-xs text-muted-foreground">{t("maxUsersHint")}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -554,19 +611,13 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       <span>{t("availableModels")}</span>
                       {loadingModels && <Loader2 className="h-4 w-4 animate-spin" />}
                     </CardTitle>
-                    <CardDescription>
-                      {t("modelsLoadedDynamically")}
-                    </CardDescription>
+                    <CardDescription>{t("modelsLoadedDynamically")}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {loadingModels ? (
-                      <div className="text-center py-8 text-muted-foreground">
-                        {t("loadingModels")}
-                      </div>
+                      <div className="text-center py-8 text-muted-foreground">{t("loadingModels")}</div>
                     ) : availableModels.length === 0 ? (
-                      <div className="text-center py-8 text-muted-foreground">
-                        {t("noModels")}
-                      </div>
+                      <div className="text-center py-8 text-muted-foreground">{t("noModels")}</div>
                     ) : (
                       Object.entries(groupedModels).map(([provider, models]) => (
                         <div key={provider} className="space-y-2">
@@ -647,9 +698,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                 <Card>
                   <CardHeader>
                     <CardTitle>{t("mcpServersCard")}</CardTitle>
-                    <CardDescription>
-                      {t("mcpServersCardDesc")}
-                    </CardDescription>
+                    <CardDescription>{t("mcpServersCardDesc")}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -812,126 +861,32 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                     <CardTitle>{t("advancedFeatures")}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label>{t("codeInterpreter")}</Label>
-                      <Switch
-                        checked={formData.features.advanced.codeInterpreter}
-                        onCheckedChange={(checked) =>
-                          setFormData({
-                            ...formData,
-                            features: {
-                              ...formData.features,
-                              advanced: { ...formData.features.advanced, codeInterpreter: checked },
-                            },
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label>{t("imageGeneration")}</Label>
-                      <Switch
-                        checked={formData.features.advanced.imageGeneration}
-                        onCheckedChange={(checked) =>
-                          setFormData({
-                            ...formData,
-                            features: {
-                              ...formData.features,
-                              advanced: { ...formData.features.advanced, imageGeneration: checked },
-                            },
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label>{t("voiceChat")}</Label>
-                      <Switch
-                        checked={formData.features.advanced.voiceChat}
-                        onCheckedChange={(checked) =>
-                          setFormData({
-                            ...formData,
-                            features: {
-                              ...formData.features,
-                              advanced: { ...formData.features.advanced, voiceChat: checked },
-                            },
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label>{t("documentAnalysis")}</Label>
-                      <Switch
-                        checked={formData.features.advanced.documentAnalysis}
-                        onCheckedChange={(checked) =>
-                          setFormData({
-                            ...formData,
-                            features: {
-                              ...formData.features,
-                              advanced: { ...formData.features.advanced, documentAnalysis: checked },
-                            },
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label>{t("apiAccess")}</Label>
-                      <Switch
-                        checked={formData.features.advanced.apiAccess}
-                        onCheckedChange={(checked) =>
-                          setFormData({
-                            ...formData,
-                            features: {
-                              ...formData.features,
-                              advanced: { ...formData.features.advanced, apiAccess: checked },
-                            },
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label>{t("prioritySupport")}</Label>
-                      <Switch
-                        checked={formData.features.advanced.prioritySupport}
-                        onCheckedChange={(checked) =>
-                          setFormData({
-                            ...formData,
-                            features: {
-                              ...formData.features,
-                              advanced: { ...formData.features.advanced, prioritySupport: checked },
-                            },
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label>{t("teamWorkspace")}</Label>
-                      <Switch
-                        checked={formData.features.advanced.teamWorkspace}
-                        onCheckedChange={(checked) =>
-                          setFormData({
-                            ...formData,
-                            features: {
-                              ...formData.features,
-                              advanced: { ...formData.features.advanced, teamWorkspace: checked },
-                            },
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <Label>{t("exportData")}</Label>
-                      <Switch
-                        checked={formData.features.advanced.exportData}
-                        onCheckedChange={(checked) =>
-                          setFormData({
-                            ...formData,
-                            features: {
-                              ...formData.features,
-                              advanced: { ...formData.features.advanced, exportData: checked },
-                            },
-                          })
-                        }
-                      />
-                    </div>
+                    {([
+                      ["codeInterpreter", t("codeInterpreter")],
+                      ["imageGeneration", t("imageGeneration")],
+                      ["voiceChat", t("voiceChat")],
+                      ["documentAnalysis", t("documentAnalysis")],
+                      ["apiAccess", t("apiAccess")],
+                      ["prioritySupport", t("prioritySupport")],
+                      ["teamWorkspace", t("teamWorkspace")],
+                      ["exportData", t("exportData")],
+                    ] as [keyof typeof formData.features.advanced, string][]).map(([key, label]) => (
+                      <div key={key} className="flex items-center justify-between">
+                        <Label>{label}</Label>
+                        <Switch
+                          checked={formData.features.advanced[key]}
+                          onCheckedChange={(checked) =>
+                            setFormData({
+                              ...formData,
+                              features: {
+                                ...formData.features,
+                                advanced: { ...formData.features.advanced, [key]: checked },
+                              },
+                            })
+                          }
+                        />
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -949,10 +904,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         onValueChange={([value]) =>
                           setFormData({
                             ...formData,
-                            limits: {
-                              ...formData.limits,
-                              chats: { ...formData.limits.chats, maxActive: value },
-                            },
+                            limits: { ...formData.limits, chats: { ...formData.limits.chats, maxActive: value } },
                           })
                         }
                         max={100}
@@ -966,10 +918,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         onValueChange={([value]) =>
                           setFormData({
                             ...formData,
-                            limits: {
-                              ...formData.limits,
-                              chats: { ...formData.limits.chats, maxHistory: value },
-                            },
+                            limits: { ...formData.limits, chats: { ...formData.limits.chats, maxHistory: value } },
                           })
                         }
                         max={500}
@@ -991,10 +940,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         onValueChange={([value]) =>
                           setFormData({
                             ...formData,
-                            limits: {
-                              ...formData.limits,
-                              messages: { ...formData.limits.messages, maxPerChat: value },
-                            },
+                            limits: { ...formData.limits, messages: { ...formData.limits.messages, maxPerChat: value } },
                           })
                         }
                         max={1000}
@@ -1008,10 +954,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         onValueChange={([value]) =>
                           setFormData({
                             ...formData,
-                            limits: {
-                              ...formData.limits,
-                              messages: { ...formData.limits.messages, maxPerDay: value },
-                            },
+                            limits: { ...formData.limits, messages: { ...formData.limits.messages, maxPerDay: value } },
                           })
                         }
                         max={1000}
@@ -1025,10 +968,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         onValueChange={([value]) =>
                           setFormData({
                             ...formData,
-                            limits: {
-                              ...formData.limits,
-                              messages: { ...formData.limits.messages, maxPerMonth: value },
-                            },
+                            limits: { ...formData.limits, messages: { ...formData.limits.messages, maxPerMonth: value } },
                           })
                         }
                         max={10000}
@@ -1045,8 +985,8 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                       {t("imageLimits")}
                     </CardTitle>
                     <CardDescription>
-                      {formData.features.advanced.imageGeneration 
-                        ? t("imageLimitsDesc") 
+                      {formData.features.advanced.imageGeneration
+                        ? t("imageLimitsDesc")
                         : t("imageLimitsDisabledDesc")}
                     </CardDescription>
                   </CardHeader>
@@ -1060,10 +1000,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                             onValueChange={([value]) =>
                               setFormData({
                                 ...formData,
-                                limits: {
-                                  ...formData.limits,
-                                  images: { ...formData.limits.images, maxPerDay: value },
-                                },
+                                limits: { ...formData.limits, images: { ...formData.limits.images, maxPerDay: value } },
                               })
                             }
                             max={500}
@@ -1077,10 +1014,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                             onValueChange={([value]) =>
                               setFormData({
                                 ...formData,
-                                limits: {
-                                  ...formData.limits,
-                                  images: { ...formData.limits.images, maxPerMonth: value },
-                                },
+                                limits: { ...formData.limits, images: { ...formData.limits.images, maxPerMonth: value } },
                               })
                             }
                             max={5000}
@@ -1094,10 +1028,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                             onValueChange={(value) =>
                               setFormData({
                                 ...formData,
-                                limits: {
-                                  ...formData.limits,
-                                  images: { ...formData.limits.images, maxResolution: value },
-                                },
+                                limits: { ...formData.limits, images: { ...formData.limits.images, maxResolution: value } },
                               })
                             }
                           >
@@ -1128,9 +1059,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-2">
-                      <Label>
-                        {t("fileSize").replace("{size}", (formData.limits.files.maxSize / 1048576).toFixed(1))}
-                      </Label>
+                      <Label>{t("fileSize").replace("{size}", (formData.limits.files.maxSize / 1048576).toFixed(1))}</Label>
                       <Slider
                         value={[formData.limits.files.maxSize / 1048576]}
                         onValueChange={([value]) =>
@@ -1138,10 +1067,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                             ...formData,
                             limits: {
                               ...formData.limits,
-                              files: {
-                                ...formData.limits.files,
-                                maxSize: Math.round(value * 1048576),
-                              },
+                              files: { ...formData.limits.files, maxSize: Math.round(value * 1048576) },
                             },
                           })
                         }
@@ -1156,10 +1082,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         onValueChange={([value]) =>
                           setFormData({
                             ...formData,
-                            limits: {
-                              ...formData.limits,
-                              files: { ...formData.limits.files, maxCount: value },
-                            },
+                            limits: { ...formData.limits, files: { ...formData.limits.files, maxCount: value } },
                           })
                         }
                         max={50}
@@ -1181,10 +1104,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         onValueChange={([value]) =>
                           setFormData({
                             ...formData,
-                            limits: {
-                              ...formData.limits,
-                              api: { ...formData.limits.api, rateLimit: value },
-                            },
+                            limits: { ...formData.limits, api: { ...formData.limits.api, rateLimit: value } },
                           })
                         }
                         max={100}
@@ -1198,10 +1118,7 @@ export function PlanDialogEnhanced({ open, onOpenChange, plan }: PlanDialogProps
                         onValueChange={([value]) =>
                           setFormData({
                             ...formData,
-                            limits: {
-                              ...formData.limits,
-                              api: { ...formData.limits.api, burstLimit: value },
-                            },
+                            limits: { ...formData.limits, api: { ...formData.limits.api, burstLimit: value } },
                           })
                         }
                         max={200}
