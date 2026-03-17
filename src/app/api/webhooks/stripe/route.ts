@@ -3,9 +3,14 @@ import Stripe from "stripe";
 import { pgUserRepository } from "@/lib/db/pg/repositories/user-repository.pg";
 import { subscriptionRequestRepository } from "@/lib/db/pg/repositories/subscription-request-repository.pg";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-08-27.basil",
-});
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("STRIPE_SECRET_KEY is not configured");
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: "2025-08-27.basil",
+  });
+}
 
 function calculateExpiry(subscriptionType: string): Date {
   const date = new Date();
@@ -28,6 +33,7 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event;
 
   try {
+    const stripe = getStripe();
     event = stripe.webhooks.constructEvent(
       body,
       sig,

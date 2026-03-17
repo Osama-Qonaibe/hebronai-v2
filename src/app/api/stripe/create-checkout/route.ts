@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "auth/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-08-27.basil",
-});
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("STRIPE_SECRET_KEY is not configured");
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: "2025-08-27.basil",
+  });
+}
 
 const PRICE_IDS: Record<string, Record<string, string>> = {
   basic: {
@@ -32,6 +37,7 @@ export async function POST(req: NextRequest) {
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://hebronai-v2.vercel.app";
+    const stripe = getStripe();
 
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: "subscription",
