@@ -178,15 +178,32 @@ export const pgUserRepository: UserRepository = {
     plan: string,
     planStatus: string,
     planExpiresAt: Date | null,
+    options?: {
+      planId?: string;
+      stripeCustomerId?: string;
+      stripeSubscriptionId?: string;
+    },
   ): Promise<void> => {
     const updateData: any = {
-      plan: plan as "free" | "basic" | "pro" | "enterprise",
+      plan,
       planStatus: planStatus as "trial" | "active" | "expired",
       updatedAt: new Date(),
     };
 
     if (planExpiresAt !== null) {
       updateData.planExpiresAt = planExpiresAt;
+    }
+
+    if (options?.planId !== undefined) {
+      updateData.planId = options.planId;
+    }
+
+    if (options?.stripeCustomerId !== undefined) {
+      updateData.stripeCustomerId = options.stripeCustomerId;
+    }
+
+    if (options?.stripeSubscriptionId !== undefined) {
+      updateData.stripeSubscriptionId = options.stripeSubscriptionId;
     }
 
     await db.update(UserTable).set(updateData).where(eq(UserTable.id, userId));
