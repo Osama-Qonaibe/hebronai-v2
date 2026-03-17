@@ -32,7 +32,7 @@ export type BasicUser = Omit<
   banned?: boolean | null;
   banReason?: string | null;
   banExpires?: Date | null;
-  plan?: "free" | "basic" | "pro" | "enterprise" | null; // ✅ Allow null for hybrid system
+  plan?: string | null;
   planStatus?: "trial" | "active" | "expired";
   planExpiresAt?: Date;
 };
