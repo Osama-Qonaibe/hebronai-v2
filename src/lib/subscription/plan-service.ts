@@ -1,6 +1,6 @@
 import "server-only";
 import { pgDb as db } from "@/lib/db/pg/db.pg";
-import { UserTable } from "@/lib/db/pg/schema.pg";
+import { UserTable, SubscriptionPlanTable } from "@/lib/db/pg/schema.pg";
 import { eq } from "drizzle-orm";
 import { PLAN_LIMITS, PLANS, type SubscriptionPlan } from "./plans";
 
@@ -16,7 +16,6 @@ export interface UnifiedPlanLimits {
       };
     };
   };
-
   chats: {
     maxActive: number;
     maxHistory: number;
@@ -26,18 +25,15 @@ export interface UnifiedPlanLimits {
     maxPerDay: number;
     maxPerMonth: number;
   };
-
   files: {
     maxSize: number;
     maxCount: number;
     allowedTypes: string[];
   };
-
   api: {
     rateLimit: number;
     burstLimit: number;
   };
-
   features: {
     mcpServers: {
       enabled: boolean;
@@ -81,6 +77,9 @@ export interface UnifiedPlan {
   limits: UnifiedPlanLimits;
   isBuiltIn: boolean;
   isActive: boolean;
+  paymentType: "stripe" | "manual" | "free";
+  stripePriceIdMonthly?: string | null;
+  stripePriceIdYearly?: string | null;
   metadata: {
     order: number;
     badge?: string;
@@ -108,7 +107,7 @@ const MODEL_CONFIGS: Record<SubscriptionPlan, { allowed: string[]; default: stri
   }
 };
 
-function mapPlanToUnified(planSlug: SubscriptionPlan, isActive: boolean): UnifiedPlan {
+function mapHardcodedPlanToUnified(planSlug: SubscriptionPlan, isActive: boolean): UnifiedPlan {
   const planDetails = PLANS[planSlug];
   const planLimits = PLAN_LIMITS[planSlug];
   const modelConfig = MODEL_CONFIGS[planSlug];
@@ -125,6 +124,9 @@ function mapPlanToUnified(planSlug: SubscriptionPlan, isActive: boolean): Unifie
       currency: "USD",
       discount: { yearly: 20 }
     },
+    paymentType: planSlug === "free" ? "free" : "manual",
+    stripePriceIdMonthly: null,
+    stripePriceIdYearly: null,
     limits: {
       models: {
         allowed: modelConfig.allowed,
@@ -132,7 +134,7 @@ function mapPlanToUnified(planSlug: SubscriptionPlan, isActive: boolean): Unifie
         limits: {}
       },
       chats: { maxActive: 100, maxHistory: 1000 },
-      messages: { maxPerChat: 1000, maxPerDay: 1000, maxPerMonth: 30000 },
+      messages: { maxPerChat: 1000, maxPerDay: planLimits.maxTokensPerMonth > 0 ? 1000 : 20, maxPerMonth: 30000 },
       files: { maxSize: 10, maxCount: 100, allowedTypes: ["*"] },
       api: { rateLimit: planLimits.maxAPICallsPerDay, burstLimit: 100 },
       features: {
@@ -173,11 +175,70 @@ function mapPlanToUnified(planSlug: SubscriptionPlan, isActive: boolean): Unifie
   };
 }
 
+function mapDbPlanToUnified(dbPlan: any, isActive: boolean): UnifiedPlan {
+  const l = dbPlan.limits;
+  const f = dbPlan.features;
+  const m = dbPlan.models;
+
+  return {
+    id: dbPlan.id,
+    slug: dbPlan.slug,
+    name: dbPlan.name,
+    displayName: dbPlan.displayName,
+    description: dbPlan.description,
+    pricing: dbPlan.pricing,
+    paymentType: dbPlan.paymentType ?? "manual",
+    stripePriceIdMonthly: dbPlan.stripePriceIdMonthly ?? null,
+    stripePriceIdYearly: dbPlan.stripePriceIdYearly ?? null,
+    limits: {
+      models: {
+        allowed: m?.allowed ?? ["*"],
+        default: m?.default ?? "groq-llama-3.1-8b",
+        limits: m?.limits ?? {}
+      },
+      chats: l?.chats ?? { maxActive: 100, maxHistory: 1000 },
+      messages: l?.messages ?? { maxPerChat: 1000, maxPerDay: 100, maxPerMonth: 3000 },
+      files: l?.files ?? { maxSize: 10, maxCount: 10, allowedTypes: ["*"] },
+      api: l?.api ?? { rateLimit: 100, burstLimit: 20 },
+      features: {
+        mcpServers: {
+          enabled: f?.mcpServers?.enabled ?? false,
+          maxServers: f?.mcpServers?.maxServers ?? 0,
+          customServers: f?.mcpServers?.customServers ?? false
+        },
+        workflows: {
+          enabled: f?.workflows?.enabled ?? false,
+          maxWorkflows: f?.workflows?.maxWorkflows ?? 0
+        },
+        agents: {
+          enabled: f?.agents?.enabled ?? false,
+          maxCustomAgents: f?.agents?.maxCustomAgents ?? 0,
+          shareAgents: f?.agents?.shareAgents ?? false
+        },
+        advanced: {
+          codeInterpreter: f?.advanced?.codeInterpreter ?? false,
+          imageGeneration: f?.advanced?.imageGeneration ?? false,
+          voiceChat: f?.advanced?.voiceChat ?? false,
+          documentAnalysis: f?.advanced?.documentAnalysis ?? false,
+          apiAccess: f?.advanced?.apiAccess ?? false,
+          prioritySupport: f?.advanced?.prioritySupport ?? false,
+          teamWorkspace: f?.advanced?.teamWorkspace ?? false,
+          exportData: f?.advanced?.exportData ?? false
+        }
+      }
+    },
+    isBuiltIn: dbPlan.isBuiltIn ?? false,
+    isActive,
+    metadata: dbPlan.metadata ?? { order: 99, color: "gray", icon: "star" }
+  };
+}
+
 export async function getUserPlan(userId: string): Promise<UnifiedPlan | null> {
   try {
     const [user] = await db
       .select({
         plan: UserTable.plan,
+        planId: UserTable.planId,
         planStatus: UserTable.planStatus,
         planExpiresAt: UserTable.planExpiresAt,
       })
@@ -191,33 +252,91 @@ export async function getUserPlan(userId: string): Promise<UnifiedPlan | null> {
       user.planStatus !== "expired" &&
       (!user.planExpiresAt || new Date(user.planExpiresAt) > new Date());
 
+    if (user.planId) {
+      const [dbPlan] = await db
+        .select()
+        .from(SubscriptionPlanTable)
+        .where(eq(SubscriptionPlanTable.id, user.planId))
+        .limit(1);
+
+      if (dbPlan) {
+        return mapDbPlanToUnified(dbPlan, isActive);
+      }
+    }
+
     const planSlug = (user.plan || "free") as SubscriptionPlan;
-    return mapPlanToUnified(planSlug, isActive);
+    const validSlugs: SubscriptionPlan[] = ["free", "basic", "pro", "enterprise"];
+    const safeSlug = validSlugs.includes(planSlug) ? planSlug : "free";
+    return mapHardcodedPlanToUnified(safeSlug, isActive);
   } catch (error) {
     console.error("Error getting user plan:", error);
-    return mapPlanToUnified("free", true);
+    return mapHardcodedPlanToUnified("free", true);
   }
 }
 
 export async function getBuiltInPlan(slug: string): Promise<UnifiedPlan | null> {
   if (!PLANS[slug as SubscriptionPlan]) return null;
-  return mapPlanToUnified(slug as SubscriptionPlan, true);
+  return mapHardcodedPlanToUnified(slug as SubscriptionPlan, true);
+}
+
+export async function getPlanFromDb(planId: string): Promise<UnifiedPlan | null> {
+  try {
+    const [dbPlan] = await db
+      .select()
+      .from(SubscriptionPlanTable)
+      .where(eq(SubscriptionPlanTable.id, planId))
+      .limit(1);
+    if (!dbPlan) return null;
+    return mapDbPlanToUnified(dbPlan, true);
+  } catch {
+    return null;
+  }
 }
 
 export async function getActivePlans(): Promise<UnifiedPlan[]> {
-  return [
-    mapPlanToUnified("free", true),
-    mapPlanToUnified("basic", true),
-    mapPlanToUnified("pro", true),
-    mapPlanToUnified("enterprise", true)
-  ];
+  try {
+    const dbPlans = await db
+      .select()
+      .from(SubscriptionPlanTable)
+      .where(eq(SubscriptionPlanTable.isBuiltIn, false));
+
+    const customPlans = dbPlans
+      .filter((p) => p.adminSettings?.isActive)
+      .map((p) => mapDbPlanToUnified(p, true));
+
+    const builtInPlans: UnifiedPlan[] = [
+      mapHardcodedPlanToUnified("free", true),
+      mapHardcodedPlanToUnified("basic", true),
+      mapHardcodedPlanToUnified("pro", true),
+      mapHardcodedPlanToUnified("enterprise", true),
+    ];
+
+    return [...builtInPlans, ...customPlans];
+  } catch {
+    return [
+      mapHardcodedPlanToUnified("free", true),
+      mapHardcodedPlanToUnified("basic", true),
+      mapHardcodedPlanToUnified("pro", true),
+      mapHardcodedPlanToUnified("enterprise", true),
+    ];
+  }
 }
 
 export async function getPlanById(planId: string): Promise<UnifiedPlan | null> {
+  const dbPlan = await getPlanFromDb(planId);
+  if (dbPlan) return dbPlan;
   return getBuiltInPlan(planId);
 }
 
 export async function getPlanBySlug(slug: string): Promise<UnifiedPlan | null> {
+  try {
+    const [dbPlan] = await db
+      .select()
+      .from(SubscriptionPlanTable)
+      .where(eq(SubscriptionPlanTable.slug, slug))
+      .limit(1);
+    if (dbPlan) return mapDbPlanToUnified(dbPlan, true);
+  } catch {}
   return getBuiltInPlan(slug);
 }
 
