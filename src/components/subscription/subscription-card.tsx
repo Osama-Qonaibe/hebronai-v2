@@ -13,8 +13,6 @@ import { Badge } from "ui/badge";
 import {
   Check,
   Sparkles,
-  Copy,
-  CheckCheck,
   MessageCircle,
   Send,
   Loader2,
@@ -26,7 +24,6 @@ import {
   Infinity,
   CreditCard,
 } from "lucide-react";
-import { getBankTransferDetails } from "@/lib/payment/config";
 import {
   Dialog,
   DialogContent,
@@ -38,7 +35,6 @@ import {
 import { Label } from "ui/label";
 import { RadioGroup, RadioGroupItem } from "ui/radio-group";
 import { Alert, AlertDescription } from "ui/alert";
-import { Input } from "ui/input";
 import { Textarea } from "ui/textarea";
 import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
@@ -46,7 +42,7 @@ import { usePlans } from "@/hooks/use-plans";
 import { Separator } from "ui/separator";
 
 type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
-type PaymentMethod = "stripe" | "bank_transfer" | "manual";
+type PaymentMethod = "stripe" | "manual";
 type SubscriptionType = "monthly" | "yearly";
 
 interface SubscriptionCardProps {
@@ -102,11 +98,8 @@ export function SubscriptionCard({
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [subscriptionType, setSubscriptionType] = useState<SubscriptionType>("monthly");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("stripe");
-  const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [transactionId, setTransactionId] = useState("");
   const [notes, setNotes] = useState("");
 
-  const bankDetails = getBankTransferDetails();
   const WHATSAPP_NUMBER = "+972534414330";
   const isAr = locale === "ar";
 
@@ -119,7 +112,6 @@ export function SubscriptionCard({
     setSelectedPlan(planSlug);
     setSubscriptionType("monthly");
     setPaymentMethod("stripe");
-    setTransactionId("");
     setNotes("");
   };
 
@@ -166,7 +158,6 @@ export function SubscriptionCard({
           paymentMethod,
           amount,
           currency: planDetails.pricing.currency,
-          transactionId: transactionId || undefined,
           notes: notes || `Payment method: ${paymentMethod}`,
         }),
       });
@@ -178,7 +169,6 @@ export function SubscriptionCard({
             : "Your request will be reviewed and you will be contacted.",
         });
         setSelectedPlan(null);
-        setTransactionId("");
         setNotes("");
         setTimeout(() => window.location.reload(), 2000);
       } else {
@@ -191,17 +181,6 @@ export function SubscriptionCard({
       toast.error(isAr ? "فشل في إرسال الطلب" : "Failed to submit request");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleCopy = async (text: string, field: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedField(field);
-      toast.success(isAr ? "✅ تم النسخ" : "✅ Copied");
-      setTimeout(() => setCopiedField(null), 2000);
-    } catch {
-      toast.error(isAr ? "فشل في النسخ" : "Copy failed");
     }
   };
 
@@ -259,10 +238,7 @@ export function SubscriptionCard({
   const hasYearlyPrice =
     selectedPlanDetails?.pricing.yearly && selectedPlanDetails.pricing.yearly > 0;
   const showDurationOptions = isCustomPlan && hasYearlyPrice && !isEnterprisePlan;
-  const showBankFields = paymentMethod === "bank_transfer" && !isEnterprisePlan;
   const showManualNotes = paymentMethod === "manual" && !isEnterprisePlan;
-  const canSubmit =
-    !loading && (!showBankFields || transactionId.trim().length > 0);
   const freePlan = activePlans.find((p) => p.slug === "free");
 
   if (plansLoading) {
@@ -658,12 +634,6 @@ export function SubscriptionCard({
                       </Label>
                     </div>
                     <div className="flex items-center gap-2">
-                      <RadioGroupItem value="bank_transfer" id="bank" />
-                      <Label htmlFor="bank" className="cursor-pointer font-normal">
-                        🏦 {isAr ? "تحويل بنكي" : "Bank Transfer"}
-                      </Label>
-                    </div>
-                    <div className="flex items-center gap-2">
                       <RadioGroupItem value="manual" id="manual" />
                       <Label htmlFor="manual" className="cursor-pointer font-normal">
                         👤 {isAr ? "دفع يدوي (عبر المشرف)" : "Manual (via Admin)"}
@@ -678,8 +648,6 @@ export function SubscriptionCard({
                       isAr
                         ? "🔒 ستُحوَّل إلى صفحة دفع آمنة عبر Stripe. يتم التفعيل تلقائياً فور الدفع."
                         : "🔒 You will be redirected to a secure Stripe checkout. Activated instantly after payment."
-                    ) : paymentMethod === "bank_transfer" ? (
-                      isAr ? "🏦 أدخل تفاصيل التحويل البنكي أدناه" : "🏦 Enter bank transfer details below"
                     ) : (
                       isAr
                         ? "📋 سيتم إرسال الطلب للمشرف للتواصل معك وترتيب الدفع"
@@ -706,83 +674,29 @@ export function SubscriptionCard({
                   </Button>
                 )}
 
-                {showBankFields && (
-                  <Card className="bg-muted/50">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base">
-                        {isAr ? "تفاصيل التحويل البنكي" : "Bank Transfer Details"}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      {[
-                        { label: isAr ? "رقم الحساب" : "Account Number", value: bankDetails.accountNumber, key: "account" },
-                        { label: isAr ? "دفع لصديق" : "Friend Pay", value: bankDetails.friendPayNumber, key: "friend" },
-                        { label: isAr ? "محفظة ريفلكت" : "Reflect Wallet", value: bankDetails.reflectWallet, key: "reflect" },
-                      ].map(({ label, value, key }) => (
-                        <div key={key} className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">{label}</Label>
-                          <div className="flex items-center gap-2">
-                            <code className="flex-1 rounded bg-background px-2 sm:px-3 py-2 text-xs sm:text-sm font-mono break-all">
-                              {value}
-                            </code>
-                            <Button size="sm" variant="ghost" className="shrink-0" onClick={() => handleCopy(value, key)}>
-                              {copiedField === key ? <CheckCheck className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                      <div className="pt-2 border-t">
-                        <p className="text-sm font-medium">{bankDetails.bankName}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {showBankFields && (
-                  <div className="space-y-2">
-                    <Label htmlFor="transaction" className="text-sm">
-                      {isAr ? "رقم المعاملة *" : "Transaction ID *"}
-                    </Label>
-                    <Input
-                      id="transaction"
-                      value={transactionId}
-                      onChange={(e) => setTransactionId(e.target.value)}
-                      placeholder={isAr ? "أدخل رقم المعاملة بعد التحويل" : "Enter transaction ID after transfer"}
-                      className="text-sm"
-                      required
-                    />
-                  </div>
-                )}
-
-                {(showManualNotes || showBankFields) && (
+                {showManualNotes && (
                   <div className="space-y-2">
                     <Label htmlFor="notes" className="text-sm">
-                      {showManualNotes
-                        ? (isAr ? "ملاحظات أو طريقة دفع مفضلة" : "Notes or preferred payment method")
-                        : (isAr ? "ملاحظات" : "Notes")}{" "}
+                      {isAr ? "ملاحظات أو طريقة دفع مفضلة" : "Notes or preferred payment method"}{" "}
                       ({isAr ? "اختياري" : "Optional"})
                     </Label>
                     <Textarea
                       id="notes"
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
-                      placeholder={
-                        showManualNotes
-                          ? (isAr ? "مثال: أفضل الدفع عن طريق التحويل المباشر / ريفلكت / صديق لصديق..." : "e.g. I prefer bank transfer / Reflect...")
-                          : (isAr ? "معلومات إضافية..." : "Additional info...")
-                      }
-                      rows={showManualNotes ? 3 : 2}
+                      placeholder={isAr ? "مثال: أفضل الدفع عن طريق التحويل المباشر / ريفلكت / صديق لصديق..." : "e.g. I prefer bank transfer / Reflect..."}
+                      rows={3}
                       className="text-sm resize-none"
                     />
                   </div>
                 )}
 
-                {(paymentMethod === "manual" || paymentMethod === "bank_transfer") && (
+                {paymentMethod === "manual" && (
                   <Button
                     onClick={handleSubmitRequest}
                     className="w-full gap-2"
                     size="lg"
-                    disabled={!canSubmit}
+                    disabled={loading}
                   >
                     {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
                     {loading
