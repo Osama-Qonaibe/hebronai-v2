@@ -1,15 +1,14 @@
 export const PAYMENT_CONFIG = {
-  paypal: {
-    username: "virallinkup",
-    links: {
-      basic: "https://paypal.me/virallinkup/9",
-      pro: "https://paypal.me/virallinkup/29",
-    },
-  },
   stripe: {
-    links: {
-      basic: process.env.NEXT_PUBLIC_STRIPE_BASIC_LINK || "",
-      pro: process.env.NEXT_PUBLIC_STRIPE_PRO_LINK || "",
+    priceIds: {
+      basic: {
+        monthly: process.env.STRIPE_PRICE_BASIC_MONTHLY || "",
+        yearly: process.env.STRIPE_PRICE_BASIC_YEARLY || "",
+      },
+      pro: {
+        monthly: process.env.STRIPE_PRICE_PRO_MONTHLY || "",
+        yearly: process.env.STRIPE_PRICE_PRO_YEARLY || "",
+      },
     },
   },
   bankTransfer: {
@@ -19,16 +18,6 @@ export const PAYMENT_CONFIG = {
     reflectWallet: "566223014",
   },
 };
-
-export function getPaymentLink(
-  method: "paypal" | "stripe",
-  plan: "basic" | "pro",
-): string {
-  if (method === "paypal") {
-    return PAYMENT_CONFIG.paypal.links[plan];
-  }
-  return PAYMENT_CONFIG.stripe.links[plan];
-}
 
 export function getPlanPrice(plan: string): number {
   const prices: Record<string, number> = {
