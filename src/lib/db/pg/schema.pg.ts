@@ -124,6 +124,13 @@ export const SubscriptionPlanTable = pgTable(
     })
       .notNull()
       .default("months"),
+    paymentType: varchar("payment_type", {
+      enum: ["stripe", "manual", "free"],
+    })
+      .notNull()
+      .default("manual"),
+    stripePriceIdMonthly: text("stripe_price_id_monthly"),
+    stripePriceIdYearly: text("stripe_price_id_yearly"),
     models: json("models").notNull().$type<{
       allowed: string[];
       default: string;
@@ -144,7 +151,14 @@ export const SubscriptionPlanTable = pgTable(
       };
       files: { maxSize: number; maxCount: number; allowedTypes: string[] };
       images: { maxPerDay: number; maxPerMonth: number };
+      storage: { maxGB: number };
       api: { rateLimit: number; burstLimit: number };
+      agents: { maxCustomAgents: number };
+      workflows: { maxWorkflows: number };
+      mcpServers: { maxServers: number };
+      tokens: { maxPerMonth: number };
+      documents: { maxPerMonth: number };
+      voice: { maxMinutesPerMonth: number };
     }>(),
     features: json("features").notNull().$type<{
       mcpServers: {
@@ -222,9 +236,7 @@ export const UserTable = pgTable("user", {
 
   planId: uuid("plan_id").references(() => SubscriptionPlanTable.id),
 
-  plan: varchar("plan", {
-    enum: ["free", "basic", "pro", "enterprise"],
-  }).default("free"),
+  plan: text("plan").default("free"),
 
   planStatus: varchar("plan_status", {
     enum: ["trial", "active", "expired"],
@@ -235,6 +247,9 @@ export const UserTable = pgTable("user", {
   planExpiresAt: timestamp("plan_expires_at")
     .notNull()
     .default(sql`CURRENT_TIMESTAMP + INTERVAL '30 days'`),
+
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
 });
 
 export const PaymentGatewayTable = pgTable("payment_gateway", {
@@ -367,7 +382,7 @@ export const McpToolCustomizationTable = pgTable(
 export const McpServerCustomizationTable = pgTable(
   "mcp_server_custom_instructions",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    id: uuid("id").primaryKey().notNull().defaultRandom(),
     userId: uuid("user_id")
       .notNull()
       .references(() => UserTable.id, { onDelete: "cascade" }),
