@@ -6,7 +6,7 @@ import { z } from "zod";
 const createRequestSchema = z.object({
   requestedPlan: z.string().min(1),
   subscriptionType: z.enum(["monthly", "yearly"]).default("monthly"),
-  paymentMethod: z.enum(["stripe", "paypal", "bank_transfer", "manual"]),
+  paymentMethod: z.enum(["stripe", "manual"]),
   amount: z.number().optional(),
   currency: z.string().default("USD"),
   proofImageUrl: z.string().optional(),

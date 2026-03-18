@@ -13,8 +13,6 @@ import { Badge } from "ui/badge";
 import {
   Check,
   Sparkles,
-  Copy,
-  CheckCheck,
   MessageCircle,
   Send,
   Loader2,
@@ -25,7 +23,7 @@ import {
   HardDrive,
   Infinity,
 } from "lucide-react";
-import { getPaymentLink, getBankTransferDetails } from "@/lib/payment/config";
+import { getPaymentLink } from "@/lib/payment/config";
 import {
   Dialog,
   DialogContent,
@@ -37,7 +35,6 @@ import {
 import { Label } from "ui/label";
 import { RadioGroup, RadioGroupItem } from "ui/radio-group";
 import { Alert, AlertDescription } from "ui/alert";
-import { Input } from "ui/input";
 import { Textarea } from "ui/textarea";
 import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
@@ -45,7 +42,7 @@ import { usePlans } from "@/hooks/use-plans";
 import { Separator } from "ui/separator";
 
 type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
-type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "manual";
+type PaymentMethod = "stripe" | "manual";
 type SubscriptionType = "monthly" | "yearly";
 
 interface SubscriptionCardProps {
@@ -107,12 +104,9 @@ export function SubscriptionCard({
   const [enterpriseLoading, setEnterpriseLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [subscriptionType, setSubscriptionType] = useState<SubscriptionType>("monthly");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("paypal");
-  const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [transactionId, setTransactionId] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("stripe");
   const [notes, setNotes] = useState("");
 
-  const bankDetails = getBankTransferDetails();
   const WHATSAPP_NUMBER = "+972534414330";
 
   const handleUpgradeClick = (planSlug: string) => {
@@ -127,7 +121,6 @@ export function SubscriptionCard({
 
     setSelectedPlan(planSlug);
     setSubscriptionType("monthly");
-    setTransactionId("");
     setNotes("");
   };
 
@@ -141,8 +134,8 @@ export function SubscriptionCard({
         throw new Error("Invalid plan selection");
       }
 
-      const amount = subscriptionType === "yearly" 
-        ? planDetails.pricing.yearly 
+      const amount = subscriptionType === "yearly"
+        ? planDetails.pricing.yearly
         : planDetails.pricing.monthly;
 
       const response = await fetch("/api/user/subscription-request", {
@@ -154,37 +147,26 @@ export function SubscriptionCard({
           paymentMethod,
           amount,
           currency: planDetails.pricing.currency,
-          transactionId: transactionId || undefined,
           notes:
             notes ||
-            `Payment method: ${getPaymentMethodArabic(paymentMethod)}`,
+            `Payment method: ${getPaymentMethodLabel(paymentMethod)}`,
         }),
       });
 
       if (response.ok) {
         const isLegacyPlan = LEGACY_PLANS.includes(selectedPlan) && selectedPlan !== 'free';
-        const shouldRedirectToGateway = isLegacyPlan && (paymentMethod === "paypal" || paymentMethod === "stripe");
+        const shouldRedirectToGateway = isLegacyPlan && paymentMethod === "stripe";
 
         if (shouldRedirectToGateway) {
-          const link = getPaymentLink(
-            paymentMethod as "paypal" | "stripe",
-            selectedPlan as "basic" | "pro",
-          );
-
+          const link = getPaymentLink(selectedPlan as "basic" | "pro");
           toast.success("✅ تم إرسال الطلب", {
             description: "سيتم فتح بوابة الدفع الآن...",
           });
-
           setTimeout(() => {
             if (link) {
               window.location.href = link;
             }
           }, 1500);
-        } else if (paymentMethod === "bank_transfer") {
-          toast.success("✅ تم إرسال الطلب", {
-            description:
-              "سيتم التحقق من رقم المعاملة والموافقة على الطلب قريباً.",
-          });
         } else {
           toast.success("✅ تم إرسال الطلب", {
             description: "سيتم مراجعة طلبك والتواصل معك لإتمام عملية الدفع.",
@@ -193,7 +175,6 @@ export function SubscriptionCard({
 
         setSelectedPlan(null);
         setSubscriptionType("monthly");
-        setTransactionId("");
         setNotes("");
 
         if (!shouldRedirectToGateway) {
@@ -214,18 +195,6 @@ export function SubscriptionCard({
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleCopy = async (text: string, field: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedField(field);
-      toast.success("✅ تم النسخ");
-      setTimeout(() => setCopiedField(null), 2000);
-    } catch (err) {
-      console.error("Failed to copy:", err);
-      toast.error("فشل في النسخ");
     }
   };
 
@@ -263,23 +232,21 @@ export function SubscriptionCard({
     const planDetails = plans.find((p) => p.slug === selectedPlan);
     if (!planDetails) return;
 
-    const planName = locale === 'ar' 
+    const planName = locale === 'ar'
       ? (planDetails.displayName.ar || planDetails.displayName.en)
       : (planDetails.displayName.en || planDetails.displayName.ar);
     const price = subscriptionType === "yearly" ? planDetails.pricing.yearly : planDetails.pricing.monthly;
     const period = subscriptionType === "yearly" ? "سنة" : "شهر";
     const message = encodeURIComponent(
-      `مرحباً، أرغب في الترقية إلى خطة ${planName} ($${price}/${period}).\n\nطريقة الدفع: ${getPaymentMethodArabic(paymentMethod)}\n\nأحتاج مساعدة.`,
+      `مرحباً، أرغب في الترقية إلى خطة ${planName} ($${price}/${period}).\n\nطريقة الدفع: ${getPaymentMethodLabel(paymentMethod)}\n\nأحتاج مساعدة.`,
     );
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
     window.location.href = whatsappUrl;
   };
 
-  function getPaymentMethodArabic(method: PaymentMethod): string {
+  function getPaymentMethodLabel(method: PaymentMethod): string {
     const methods = {
-      paypal: "PayPal",
       stripe: "Stripe (Card)",
-      bank_transfer: "تحويل بنكي",
       manual: "دفع يدوي عبر المشرف",
     };
     return methods[method] || method;
@@ -293,9 +260,8 @@ export function SubscriptionCard({
   const isCustomPlan = selectedPlan && !LEGACY_PLANS.includes(selectedPlan);
   const hasYearlyPrice = selectedPlanDetails?.pricing.yearly && selectedPlanDetails.pricing.yearly > 0;
   const showDurationOptions = isCustomPlan && hasYearlyPrice && !isEnterprisePlan;
-  const showBankFields = paymentMethod === "bank_transfer" && !isEnterprisePlan;
   const showManualNotes = paymentMethod === "manual" && !isEnterprisePlan;
-  const canSubmit = !loading && (!showBankFields || transactionId.trim().length > 0);
+  const canSubmit = !loading;
 
   if (plansLoading) {
     return (
@@ -392,7 +358,7 @@ export function SubscriptionCard({
                     )}
                     {plan.pricing.monthly > 0 && plan.slug !== 'enterprise' && (
                       <p className="text-xs text-muted-foreground">
-                        {locale === 'ar' 
+                        {locale === 'ar'
                           ? plan.slug === 'basic' ? 'للمستخدمين المبتدئين' : 'للمحترفين والمستخدمين المتقدمين'
                           : plan.slug === 'basic' ? 'For beginners' : 'For professionals'
                         }
@@ -660,19 +626,13 @@ export function SubscriptionCard({
                     >
                       <div className="flex items-center gap-2">
                         <RadioGroupItem value="monthly" id="duration-monthly" />
-                        <Label
-                          htmlFor="duration-monthly"
-                          className="cursor-pointer font-normal"
-                        >
+                        <Label htmlFor="duration-monthly" className="cursor-pointer font-normal">
                           شهري - ${selectedPlanDetails?.pricing.monthly}
                         </Label>
                       </div>
                       <div className="flex items-center gap-2">
                         <RadioGroupItem value="yearly" id="duration-yearly" />
-                        <Label
-                          htmlFor="duration-yearly"
-                          className="cursor-pointer font-normal"
-                        >
+                        <Label htmlFor="duration-yearly" className="cursor-pointer font-normal">
                           سنوي - ${selectedPlanDetails?.pricing.yearly}
                         </Label>
                       </div>
@@ -688,38 +648,14 @@ export function SubscriptionCard({
                     className="space-y-3"
                   >
                     <div className="flex items-center gap-2">
-                      <RadioGroupItem value="paypal" id="paypal" />
-                      <Label
-                        htmlFor="paypal"
-                        className="cursor-pointer font-normal"
-                      >
-                        PayPal
-                      </Label>
-                    </div>
-                    <div className="flex items-center gap-2">
                       <RadioGroupItem value="stripe" id="stripe" />
-                      <Label
-                        htmlFor="stripe"
-                        className="cursor-pointer font-normal"
-                      >
+                      <Label htmlFor="stripe" className="cursor-pointer font-normal">
                         Stripe (Card)
                       </Label>
                     </div>
                     <div className="flex items-center gap-2">
-                      <RadioGroupItem value="bank_transfer" id="bank" />
-                      <Label
-                        htmlFor="bank"
-                        className="cursor-pointer font-normal"
-                      >
-                        تحويل بنكي
-                      </Label>
-                    </div>
-                    <div className="flex items-center gap-2">
                       <RadioGroupItem value="manual" id="manual" />
-                      <Label
-                        htmlFor="manual"
-                        className="cursor-pointer font-normal"
-                      >
+                      <Label htmlFor="manual" className="cursor-pointer font-normal">
                         دفع يدوي (عبر المشرف)
                       </Label>
                     </div>
@@ -728,127 +664,17 @@ export function SubscriptionCard({
 
                 <Alert className="bg-blue-50 border-blue-200">
                   <AlertDescription className="text-sm leading-relaxed">
-                    {paymentMethod === "paypal" || paymentMethod === "stripe" ? (
+                    {paymentMethod === "stripe" ? (
                       LEGACY_PLANS.includes(selectedPlan || "") && selectedPlan !== 'free' ? (
                         <>🌐 سيتم إرسال الطلب للمراجعة وفتح بوابة الدفع تلقائياً</>
                       ) : (
                         <>📋 سيتم إرسال الطلب للمراجعة والموافقة من المشرف</>
                       )
-                    ) : paymentMethod === "bank_transfer" ? (
-                      <>🏦 أدخل تفاصيل التحويل البنكي أدناه</>
                     ) : (
                       <>📋 سيتم إرسال الطلب للمشرف للتواصل معك وترتيب الدفع</>
                     )}
                   </AlertDescription>
                 </Alert>
-
-                {showBankFields && (
-                  <Card className="bg-muted/50">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-base">
-                        تفاصيل التحويل البنكي
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="space-y-1">
-                        <Label className="text-xs text-muted-foreground">
-                          رقم الحساب
-                        </Label>
-                        <div className="flex items-center gap-2">
-                          <code className="flex-1 rounded bg-background px-2 sm:px-3 py-2 text-xs sm:text-sm font-mono break-all">
-                            {bankDetails.accountNumber}
-                          </code>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="shrink-0"
-                            onClick={() =>
-                              handleCopy(bankDetails.accountNumber, "account")
-                            }
-                          >
-                            {copiedField === "account" ? (
-                              <CheckCheck className="h-4 w-4" />
-                            ) : (
-                              <Copy className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-1">
-                        <Label className="text-xs text-muted-foreground">
-                          دفع لصديق
-                        </Label>
-                        <div className="flex items-center gap-2">
-                          <code className="flex-1 rounded bg-background px-2 sm:px-3 py-2 text-xs sm:text-sm font-mono break-all">
-                            {bankDetails.friendPayNumber}
-                          </code>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="shrink-0"
-                            onClick={() =>
-                              handleCopy(bankDetails.friendPayNumber, "friend")
-                            }
-                          >
-                            {copiedField === "friend" ? (
-                              <CheckCheck className="h-4 w-4" />
-                            ) : (
-                              <Copy className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="space-y-1">
-                        <Label className="text-xs text-muted-foreground">
-                          محفظة ريفلكت
-                        </Label>
-                        <div className="flex items-center gap-2">
-                          <code className="flex-1 rounded bg-background px-2 sm:px-3 py-2 text-xs sm:text-sm font-mono break-all">
-                            {bankDetails.reflectWallet}
-                          </code>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="shrink-0"
-                            onClick={() =>
-                              handleCopy(bankDetails.reflectWallet, "reflect")
-                            }
-                          >
-                            {copiedField === "reflect" ? (
-                              <CheckCheck className="h-4 w-4" />
-                            ) : (
-                              <Copy className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="pt-2 border-t">
-                        <p className="text-sm font-medium">
-                          {bankDetails.bankName}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-
-                {showBankFields && (
-                  <div className="space-y-2">
-                    <Label htmlFor="transaction" className="text-sm">
-                      رقم المعاملة *
-                    </Label>
-                    <Input
-                      id="transaction"
-                      value={transactionId}
-                      onChange={(e) => setTransactionId(e.target.value)}
-                      placeholder="أدخل رقم المعاملة بعد التحويل"
-                      className="text-sm"
-                      required
-                    />
-                  </div>
-                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="notes" className="text-sm">
@@ -896,7 +722,7 @@ export function SubscriptionCard({
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setSelectedPlan(null)}>
-              {isEnterprisePlan ? "إغلاق" : "إلغاء"}
+              {isEnterprisePlan ? "إغلاق" : "إلغاق"}
             </Button>
           </DialogFooter>
         </DialogContent>

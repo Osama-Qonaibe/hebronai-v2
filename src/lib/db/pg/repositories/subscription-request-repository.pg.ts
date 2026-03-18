@@ -3,7 +3,7 @@ import { SubscriptionRequestTable } from "../schema.pg";
 import { eq, and, desc } from "drizzle-orm";
 
 export type RequestStatus = "pending" | "approved" | "rejected" | "processing";
-export type PaymentMethod = "stripe" | "paypal" | "bank_transfer" | "manual";
+export type PaymentMethod = "stripe" | "manual";
 export type SubscriptionType = "monthly" | "yearly";
 export type RequestedPlan = string;
 
