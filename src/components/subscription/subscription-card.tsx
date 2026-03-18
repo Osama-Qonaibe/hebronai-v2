@@ -159,8 +159,8 @@ export function SubscriptionCard({
 
         if (shouldRedirectToGateway) {
           const link = getPaymentLink(selectedPlan as "basic" | "pro");
-          toast.success("✅ تم إرسال الطلب", {
-            description: "سيتم فتح بوابة الدفع الآن...",
+          toast.success(locale === 'ar' ? "✅ تم إرسال الطلب" : "✅ Request sent", {
+            description: locale === 'ar' ? "سيتم فتح بوابة الدفع الآن..." : "Payment gateway will open now...",
           });
           setTimeout(() => {
             if (link) {
@@ -168,8 +168,10 @@ export function SubscriptionCard({
             }
           }, 1500);
         } else {
-          toast.success("✅ تم إرسال الطلب", {
-            description: "سيتم مراجعة طلبك والتواصل معك لإتمام عملية الدفع.",
+          toast.success(locale === 'ar' ? "✅ تم إرسال الطلب" : "✅ Request sent", {
+            description: locale === 'ar'
+              ? "سيتم مراجعة طلبك والتواصل معك لإتمام عملية الدفع."
+              : "Your request will be reviewed and we will contact you to complete the payment.",
           });
         }
 
@@ -184,14 +186,14 @@ export function SubscriptionCard({
         }
       } else {
         const error = await response.json();
-        toast.error("خطأ", {
-          description: error.error || "فشل في إرسال الطلب. حاول مرة أخرى.",
+        toast.error(locale === 'ar' ? "خطأ" : "Error", {
+          description: error.error || (locale === 'ar' ? "فشل في إرسال الطلب. حاول مرة أخرى." : "Failed to submit request. Please try again."),
         });
       }
     } catch (error) {
       console.error("Request failed:", error);
-      toast.error("خطأ", {
-        description: "فشل في إرسال الطلب. حاول مرة أخرى.",
+      toast.error(locale === 'ar' ? "خطأ" : "Error", {
+        description: locale === 'ar' ? "فشل في إرسال الطلب. حاول مرة أخرى." : "Failed to submit request. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -210,7 +212,9 @@ export function SubscriptionCard({
           paymentMethod: "manual",
           amount: 0,
           currency: "USD",
-          notes: "طلب التواصل بشأن خطة Enterprise عبر واتساب",
+          notes: locale === 'ar'
+            ? "طلب التواصل بشأن خطة Enterprise عبر واتساب"
+            : "Contact request for Enterprise plan via WhatsApp",
         }),
       });
     } catch (err) {
@@ -220,7 +224,9 @@ export function SubscriptionCard({
     }
 
     const message = encodeURIComponent(
-      `مرحباً، أرغب في الاستفسار عن خطة Enterprise للشركات.\n\nأود معرفة المزيد عن المميزات والأسعار المخصصة.`,
+      locale === 'ar'
+        ? `مرحباً، أرغب في الاستفسار عن خطة Enterprise للشركات.\n\nأود معرفة المزيد عن المميزات والأسعار المخصصة.`
+        : `Hello, I would like to inquire about the Enterprise plan.\n\nI'd like to know more about the features and custom pricing.`,
     );
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
     window.open(whatsappUrl, "_blank");
@@ -236,18 +242,22 @@ export function SubscriptionCard({
       ? (planDetails.displayName.ar || planDetails.displayName.en)
       : (planDetails.displayName.en || planDetails.displayName.ar);
     const price = subscriptionType === "yearly" ? planDetails.pricing.yearly : planDetails.pricing.monthly;
-    const period = subscriptionType === "yearly" ? "سنة" : "شهر";
+    const period = subscriptionType === "yearly"
+      ? (locale === 'ar' ? "سنة" : "year")
+      : (locale === 'ar' ? "شهر" : "month");
     const message = encodeURIComponent(
-      `مرحباً، أرغب في الترقية إلى خطة ${planName} ($${price}/${period}).\n\nطريقة الدفع: ${getPaymentMethodLabel(paymentMethod)}\n\nأحتاج مساعدة.`,
+      locale === 'ar'
+        ? `مرحباً، أرغب في الترقية إلى خطة ${planName} ($${price}/${period}).\n\nطريقة الدفع: ${getPaymentMethodLabel(paymentMethod)}\n\nأحتاج مساعدة.`
+        : `Hello, I would like to upgrade to the ${planName} plan ($${price}/${period}).\n\nPayment method: ${getPaymentMethodLabel(paymentMethod)}\n\nI need assistance.`,
     );
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}?text=${message}`;
     window.location.href = whatsappUrl;
   };
 
   function getPaymentMethodLabel(method: PaymentMethod): string {
-    const methods = {
+    const methods: Record<PaymentMethod, string> = {
       stripe: "Stripe (Card)",
-      manual: "دفع يدوي عبر المشرف",
+      manual: locale === 'ar' ? "دفع يدوي عبر المشرف" : "Manual payment via admin",
     };
     return methods[method] || method;
   }
@@ -552,14 +562,14 @@ export function SubscriptionCard({
                 selectedPlanDetails.pricing.monthly > 0 &&
                 !isEnterprisePlan && (
                   <span className="mr-2 text-primary">
-                    ${subscriptionType === "yearly" ? selectedPlanDetails.pricing.yearly : selectedPlanDetails.pricing.monthly}/{subscriptionType === "yearly" ? "سنة" : t("month")}
+                    ${subscriptionType === "yearly" ? selectedPlanDetails.pricing.yearly : selectedPlanDetails.pricing.monthly}/{subscriptionType === "yearly" ? (locale === 'ar' ? "سنة" : "year") : t("month")}
                   </span>
                 )}
             </DialogTitle>
             <DialogDescription className="text-sm">
               {isEnterprisePlan
-                ? "تواصل معنا للحصول على عرض مخصص يناسب احتياجات مؤسستك"
-                : "اختر طريقة الدفع وأرسل الطلب"}
+                ? (locale === 'ar' ? "تواصل معنا للحصول على عرض مخصص يناسب احتياجات مؤسستك" : "Contact us for a custom offer tailored to your organization's needs")
+                : (locale === 'ar' ? "اختر طريقة الدفع وأرسل الطلب" : "Choose a payment method and submit your request")}
             </DialogDescription>
           </DialogHeader>
 
@@ -569,27 +579,30 @@ export function SubscriptionCard({
                 <Card className="bg-primary/5 border-primary/20">
                   <CardContent className="pt-6">
                     <div className="space-y-3 text-center">
-                      <h3 className="font-semibold text-lg">خطة الشركات</h3>
+                      <h3 className="font-semibold text-lg">
+                        {locale === 'ar' ? 'خطة الشركات' : 'Enterprise Plan'}
+                      </h3>
                       <p className="text-sm text-muted-foreground">
-                        احصل على حلول مخصصة بالكامل لاحتياجات مؤسستك مع دعم مخصص
-                        وأولوية في الخدمة
+                        {locale === 'ar'
+                          ? 'احصل على حلول مخصصة بالكامل لاحتياجات مؤسستك مع دعم مخصص وأولوية في الخدمة'
+                          : 'Get fully customized solutions for your organization with dedicated support and priority service'}
                       </p>
                       <div className="pt-2 space-y-2">
                         <div className="flex items-center gap-2 text-sm">
                           <Check className="h-4 w-4 text-primary" />
-                          <span>أسعار مخصصة حسب الاستخدام</span>
+                          <span>{locale === 'ar' ? 'أسعار مخصصة حسب الاستخدام' : 'Custom pricing based on usage'}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                           <Check className="h-4 w-4 text-primary" />
-                          <span>دعم فني مخصص 24/7</span>
+                          <span>{locale === 'ar' ? 'دعم فني مخصص 24/7' : 'Dedicated technical support 24/7'}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                           <Check className="h-4 w-4 text-primary" />
-                          <span>مميزات وتخصيصات خاصة</span>
+                          <span>{locale === 'ar' ? 'مميزات وتخصيصات خاصة' : 'Custom features and configurations'}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
                           <Check className="h-4 w-4 text-primary" />
-                          <span>SLA مضمون</span>
+                          <span>{locale === 'ar' ? 'SLA مضمون' : 'Guaranteed SLA'}</span>
                         </div>
                       </div>
                     </div>
@@ -607,18 +620,24 @@ export function SubscriptionCard({
                   ) : (
                     <MessageCircle className="h-5 w-5" />
                   )}
-                  {enterpriseLoading ? "جاري الإرسال..." : "تواصل معنا عبر واتساب"}
+                  {enterpriseLoading
+                    ? (locale === 'ar' ? "جاري الإرسال..." : "Sending...")
+                    : (locale === 'ar' ? "تواصل معنا عبر واتساب" : "Contact us via WhatsApp")}
                 </Button>
 
                 <p className="text-xs text-center text-muted-foreground">
-                  سيقوم فريقنا بالتواصل معك لمناقشة احتياجاتك وتقديم عرض مخصص
+                  {locale === 'ar'
+                    ? 'سيقوم فريقنا بالتواصل معك لمناقشة احتياجاتك وتقديم عرض مخصص'
+                    : 'Our team will contact you to discuss your needs and provide a custom offer'}
                 </p>
               </>
             ) : (
               <>
                 {showDurationOptions && (
                   <div className="space-y-2">
-                    <Label className="text-sm">مدة الاشتراك</Label>
+                    <Label className="text-sm">
+                      {locale === 'ar' ? 'مدة الاشتراك' : 'Subscription Duration'}
+                    </Label>
                     <RadioGroup
                       value={subscriptionType}
                       onValueChange={(v) => setSubscriptionType(v as SubscriptionType)}
@@ -627,13 +646,13 @@ export function SubscriptionCard({
                       <div className="flex items-center gap-2">
                         <RadioGroupItem value="monthly" id="duration-monthly" />
                         <Label htmlFor="duration-monthly" className="cursor-pointer font-normal">
-                          شهري - ${selectedPlanDetails?.pricing.monthly}
+                          {locale === 'ar' ? 'شهري' : 'Monthly'} - ${selectedPlanDetails?.pricing.monthly}
                         </Label>
                       </div>
                       <div className="flex items-center gap-2">
                         <RadioGroupItem value="yearly" id="duration-yearly" />
                         <Label htmlFor="duration-yearly" className="cursor-pointer font-normal">
-                          سنوي - ${selectedPlanDetails?.pricing.yearly}
+                          {locale === 'ar' ? 'سنوي' : 'Yearly'} - ${selectedPlanDetails?.pricing.yearly}
                         </Label>
                       </div>
                     </RadioGroup>
@@ -641,7 +660,9 @@ export function SubscriptionCard({
                 )}
 
                 <div className="space-y-2">
-                  <Label className="text-sm">طريقة الدفع</Label>
+                  <Label className="text-sm">
+                    {locale === 'ar' ? 'طريقة الدفع' : 'Payment Method'}
+                  </Label>
                   <RadioGroup
                     value={paymentMethod}
                     onValueChange={(v) => setPaymentMethod(v as PaymentMethod)}
@@ -656,7 +677,7 @@ export function SubscriptionCard({
                     <div className="flex items-center gap-2">
                       <RadioGroupItem value="manual" id="manual" />
                       <Label htmlFor="manual" className="cursor-pointer font-normal">
-                        دفع يدوي (عبر المشرف)
+                        {locale === 'ar' ? 'دفع يدوي (عبر المشرف)' : 'Manual payment (via admin)'}
                       </Label>
                     </div>
                   </RadioGroup>
@@ -666,12 +687,18 @@ export function SubscriptionCard({
                   <AlertDescription className="text-sm leading-relaxed">
                     {paymentMethod === "stripe" ? (
                       LEGACY_PLANS.includes(selectedPlan || "") && selectedPlan !== 'free' ? (
-                        <>🌐 سيتم إرسال الطلب للمراجعة وفتح بوابة الدفع تلقائياً</>
+                        locale === 'ar'
+                          ? <>🌐 سيتم إرسال الطلب للمراجعة وفتح بوابة الدفع تلقائياً</>
+                          : <>🌐 Request will be sent for review and payment gateway will open automatically</>
                       ) : (
-                        <>📋 سيتم إرسال الطلب للمراجعة والموافقة من المشرف</>
+                        locale === 'ar'
+                          ? <>📋 سيتم إرسال الطلب للمراجعة والموافقة من المشرف</>
+                          : <>📋 Request will be sent for admin review and approval</>
                       )
                     ) : (
-                      <>📋 سيتم إرسال الطلب للمشرف للتواصل معك وترتيب الدفع</>
+                      locale === 'ar'
+                        ? <>📋 سيتم إرسال الطلب للمشرف للتواصل معك وترتيب الدفع</>
+                        : <>📋 Request will be sent to admin to contact you and arrange payment</>
                     )}
                   </AlertDescription>
                 </Alert>
@@ -679,9 +706,9 @@ export function SubscriptionCard({
                 <div className="space-y-2">
                   <Label htmlFor="notes" className="text-sm">
                     {showManualNotes
-                      ? "ملاحظات أو طريقة دفع مفضلة"
-                      : "ملاحظات"}{" "}
-                    (اختياري)
+                      ? (locale === 'ar' ? 'ملاحظات أو طريقة دفع مفضلة' : 'Notes or preferred payment method')
+                      : (locale === 'ar' ? 'ملاحظات' : 'Notes')}{" "}
+                    ({locale === 'ar' ? 'اختياري' : 'optional'})
                   </Label>
                   <Textarea
                     id="notes"
@@ -689,8 +716,8 @@ export function SubscriptionCard({
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder={
                       showManualNotes
-                        ? "مثال: أفضل الدفع عن طريق التحويل المباشر / ريفلكت / صديق لصديق..."
-                        : "معلومات إضافية..."
+                        ? (locale === 'ar' ? 'مثال: أفضل الدفع عن طريق التحويل المباشر / ريفلكت / صديق لصديق...' : 'Example: I prefer direct transfer / Reflect / friend to friend...')
+                        : (locale === 'ar' ? 'معلومات إضافية...' : 'Additional information...')
                     }
                     rows={showManualNotes ? 3 : 2}
                     className="text-sm resize-none"
@@ -704,7 +731,9 @@ export function SubscriptionCard({
                   disabled={!canSubmit}
                 >
                   <Send className="h-5 w-5" />
-                  {loading ? "جاري الإرسال..." : "إرسال الطلب"}
+                  {loading
+                    ? (locale === 'ar' ? 'جاري الإرسال...' : 'Sending...')
+                    : (locale === 'ar' ? 'إرسال الطلب' : 'Submit Request')}
                 </Button>
 
                 <Button
@@ -714,7 +743,7 @@ export function SubscriptionCard({
                   size="sm"
                 >
                   <MessageCircle className="h-4 w-4" />
-                  تواصل عبر واتساب (للمساعدة)
+                  {locale === 'ar' ? 'تواصل عبر واتساب (للمساعدة)' : 'Contact via WhatsApp (for help)'}
                 </Button>
               </>
             )}
@@ -722,7 +751,9 @@ export function SubscriptionCard({
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setSelectedPlan(null)}>
-              {isEnterprisePlan ? "إغلاق" : "إلغاق"}
+              {isEnterprisePlan
+                ? (locale === 'ar' ? 'إغلاق' : 'Close')
+                : (locale === 'ar' ? 'إلغاء' : 'Cancel')}
             </Button>
           </DialogFooter>
         </DialogContent>
