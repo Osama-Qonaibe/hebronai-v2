@@ -1,5 +1,21 @@
 # Changelog
 
+## [5.12.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.11.1...hebronai-v2-v5.12.0) (2026-03-18)
+
+
+### Features
+
+* add Stripe webhook for automatic subscription activation ([3180966](https://github.com/Osama-Qonaibe/hebronai-v2/commit/3180966c7d270da9a16b788f167503e30f6b4894))
+* append client_reference_id to Stripe payment links ([aac2745](https://github.com/Osama-Qonaibe/hebronai-v2/commit/aac2745003ae81da42beb54965d060a68005f28a))
+
+
+### Bug Fixes
+
+* add English support to subscription dialog ([a59f820](https://github.com/Osama-Qonaibe/hebronai-v2/commit/a59f820bc85038228e263bba569f1af5457a9eae))
+* add stripe package ([94d59f3](https://github.com/Osama-Qonaibe/hebronai-v2/commit/94d59f3d801aaf5811bfff38bbf60eb1c036561d))
+* correct auth-client import path ([f0e7690](https://github.com/Osama-Qonaibe/hebronai-v2/commit/f0e76908b13082f5213a9337fac7a3dddd8a5ab8))
+* replace useSession import with authClient ([79ea844](https://github.com/Osama-Qonaibe/hebronai-v2/commit/79ea844eec67c4834a23ff42e89a28bbfb04d583))
+
 ## [5.11.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.11.0...hebronai-v2-v5.11.1) (2026-03-18)
 
 
