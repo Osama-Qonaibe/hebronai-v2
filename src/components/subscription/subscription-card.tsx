@@ -40,7 +40,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { usePlans } from "@/hooks/use-plans";
 import { Separator } from "ui/separator";
-import { useSession } from "@/hooks/use-session";
+import { authClient } from "@/lib/auth/auth-client";
 
 type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
 type PaymentMethod = "stripe" | "manual";
@@ -93,7 +93,7 @@ export function SubscriptionCard({
   const t = useTranslations("Subscription");
   const locale = useLocale();
   const { plans, loading: plansLoading } = usePlans();
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
   const [loading, setLoading] = useState(false);
   const [enterpriseLoading, setEnterpriseLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
