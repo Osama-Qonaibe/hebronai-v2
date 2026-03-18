@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.11.1](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.11.0...hebronai-v2-v5.11.1) (2026-03-18)
+
+
+### Bug Fixes
+
+* restore paypal-icon for MCP overview ([bbd1d76](https://github.com/Osama-Qonaibe/hebronai-v2/commit/bbd1d76006835a8b3e49e0adacd38e560bf6c76e))
+
 ## [5.11.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.10.0...hebronai-v2-v5.11.0) (2026-03-15)
 
 
