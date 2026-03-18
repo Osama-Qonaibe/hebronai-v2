@@ -40,7 +40,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import { usePlans } from "@/hooks/use-plans";
 import { Separator } from "ui/separator";
-import { authClient } from "@/lib/auth/auth-client";
+import { authClient } from "@/lib/auth/client";
 
 type SubscriptionStatus = "active" | "expired" | "cancelled" | "trial";
 type PaymentMethod = "stripe" | "manual";
