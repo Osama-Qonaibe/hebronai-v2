@@ -5,7 +5,7 @@
 
 ### Bug Fixes
 
-* restore paypal-icon for MCP overview ([bbd1d76](https://github.com/Osama-Qonaibe/hebronai-v2/commit/bbd1d76006835a8b3e49e0adacd38e560bf6c76e))
+* restore paypal-icon for MCP overview ([bbd1d76](https://github.com/Osama-Qonaibe/hebronai-v2/commit/bbd1d76006835a8b3e49e0adacd38e560bf6c76e)) by @Osama-Qonaibe
 
 ## [5.11.0](https://github.com/Osama-Qonaibe/hebronai-v2/compare/hebronai-v2-v5.10.0...hebronai-v2-v5.11.0) (2026-03-15)
 
