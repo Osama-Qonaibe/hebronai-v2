@@ -49,6 +49,108 @@
     "mcpAddingDisabled": "MCP server addition has been disabled by the administrator.",
     "vercelSyncDelay": "Running on Vercel\n\nMCP changes may take 10-15 seconds to sync. Please wait a moment after adding, editing, or deleting servers if changes don't appear immediately."
   },
+  "landing": {
+    "nav": {
+      "features": "Features",
+      "pricing": "Pricing",
+      "about": "About",
+      "signIn": "Sign In",
+      "startFree": "Start Free"
+    },
+    "hero": {
+      "badge": "AI-Powered Platform",
+      "title": "The Smartest AI",
+      "titleHighlight": "Built for Arabs",
+      "description": "Access the most powerful AI models in one place. Create agents, automate workflows, and chat in Arabic or English.",
+      "ctaPrimary": "Get Started Free",
+      "ctaSecondary": "Sign In",
+      "screenshotPlaceholder": "App preview coming soon"
+    },
+    "models": {
+      "title": "Powered by the world's leading AI models",
+      "moreModels": "more models"
+    },
+    "features": {
+      "title": "Everything You Need",
+      "subtitle": "A complete AI platform built for productivity, creativity, and control.",
+      "items": {
+        "agents": {
+          "title": "Custom Agents",
+          "description": "Build specialized AI assistants with custom instructions and tools."
+        },
+        "mcp": {
+          "title": "MCP Servers",
+          "description": "Connect external tools and services via Model Context Protocol."
+        },
+        "code": {
+          "title": "Code Interpreter",
+          "description": "Execute code, analyze data, and generate visualizations."
+        },
+        "search": {
+          "title": "Web Search",
+          "description": "Real-time web search integrated directly into your conversations."
+        },
+        "multimodal": {
+          "title": "Multimodal",
+          "description": "Upload images, documents, and files for AI analysis."
+        },
+        "arabic": {
+          "title": "Arabic First",
+          "description": "Full RTL support and optimized Arabic language experience."
+        },
+        "control": {
+          "title": "Full Control",
+          "description": "Admin panel, user management, and subscription controls."
+        },
+        "fast": {
+          "title": "Lightning Fast",
+          "description": "Optimized for speed with streaming responses and low latency."
+        }
+      }
+    },
+    "comparison": {
+      "title": "How We Compare",
+      "subtitle": "See why HebronAI stands out from the competition.",
+      "feature": "Feature",
+      "rows": {
+        "models": "Multiple AI Models",
+        "agents": "Custom Agents",
+        "mcp": "MCP Tool Servers",
+        "code": "Code Interpreter",
+        "arabic": "Arabic Language Support",
+        "search": "Web Search",
+        "price": "Affordable Pricing",
+        "identity": "Palestinian Identity"
+      }
+    },
+    "pricing": {
+      "title": "Simple Pricing",
+      "subtitle": "Start for free. Upgrade when you need more.",
+      "popular": "Most Popular",
+      "free": "Free",
+      "startFree": "Get Started Free",
+      "subscribe": "Subscribe Now",
+      "codeInterpreter": "Code Interpreter",
+      "imageGeneration": "Image Generation",
+      "fullPlans": "View full plan details on the",
+      "viewAll": "pricing page"
+    },
+    "identity": {
+      "title": "Built in Palestine, For the World",
+      "description": "HebronAI is proudly built by a Palestinian team from Hebron. We believe in the power of technology to empower communities and bridge gaps.",
+      "mission": "Our mission is to make advanced AI accessible to Arabic speakers and support the growth of tech talent in Palestine and the Arab world."
+    },
+    "footer": {
+      "tagline": "The most powerful AI platform built for Arabic speakers and beyond.",
+      "product": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "signUp": "Sign Up",
+      "social": "Follow Us",
+      "rights": "All rights reserved.",
+      "madeIn": "Made with ❤️ in Palestine"
+    }
+  },
   "Workflow": {
     "title": "Workflow",
     "whatIsWorkflow": "What is a Workflow?",
@@ -68,8 +170,8 @@
     "descriptionPlaceholder": "Chatbot will see this as tool description",
     "inputNodeCannotBeDeleted": "Input node cannot be deleted",
     "autoSaveDescription": "Auto saved every 10 seconds",
-    "draftDescription": "Currently in Draft.\n\nClick Publish to make it available to chatbot\n(but no longer editable).",
-    "publishedDescription": "Currently Published and available to chatbot.\n\nClick Draft to make it editable\n(but unavailable to chatbot).",
+    "draftDescription": "Currently in Draft.\\n\\nClick Publish to make it available to chatbot\\n(but no longer editable).",
+    "publishedDescription": "Currently Published and available to chatbot.\\n\\nClick Draft to make it editable\\n(but unavailable to chatbot).",
     "private": "Private",
     "readonly": "Read Only",
     "public": "Public",
@@ -83,7 +185,7 @@
     "addNextNode": "Add Next Node",
     "inputFields": "Input Fields",
     "addInputField": "Add Input Field",
-    "inputFieldsDescription": "Define the parameter schema for this workflow.\n\nWhen the chatbot uses this as a tool,\nit will provide values according to this schema.",
+    "inputFieldsDescription": "Define the parameter schema for this workflow.\\n\\nWhen the chatbot uses this as a tool,\\nit will provide values according to this schema.",
     "fieldEditor": "Field Editor",
     "variableName": "Variable Name",
     "variableNamePlaceholder": "Enter variable name...",
@@ -100,10 +202,10 @@
     "addOutputVariable": "Add Output Variable",
     "outputSchema": "Output Schema",
     "addMessage": "Add Message",
-    "messagesDescription": "Generate data through LLM processing.\n\nUse '/' to mention and reference data from previous nodes as input.\n\nWith Structured Output enabled, perfect for data transformation, formatting, and validation.",
+    "messagesDescription": "Generate data through LLM processing.\\n\\nUse '/' to mention and reference data from previous nodes as input.\\n\\nWith Structured Output enabled, perfect for data transformation, formatting, and validation.",
     "descriptionAndSchema": "Description & Schema",
     "noDescriptionAndSchema": "No description and schema",
-    "toolDescription": "Provide information needed for LLM to generate tool parameters.\n\nUse '/' to mention data from previous nodes.",
+    "toolDescription": "Provide information needed for LLM to generate tool parameters.\\n\\nUse '/' to mention data from previous nodes.",
     "generateInputWithAIDescription": "Write a prompt to generate input for the workflow",
     "selectVariable": "Select Variable",
     "structuredOutput": "Structured Output",
@@ -112,13 +214,13 @@
     "addField": "Add Field",
     "saveSchema": "Save Schema",
     "generateSchemaWithAI": "Generate Schema with AI",
-    "describeOutputDataRequest": "Provide example JSON data that represents what this node should output\n\nExample: {eg}",
+    "describeOutputDataRequest": "Provide example JSON data that represents what this node should output\\n\\nExample: {eg}",
     "generatingJsonSchemaWithAI": "Generating JSON Schema with AI...",
     "jsonSchemaGeneratedSuccessfully": "JSON Schema generated successfully!",
     "failedToGenerateSchema": "Failed to generate schema",
     "jsonSchemaEditorDescription": "Direct JSON Schema editing with AI assistance. Supports complex nested structures and arrays.",
     "template": "Template",
-    "templateDescription": "Generate template documents.\n\nUse '/' to reference and use output values from other nodes.",
+    "templateDescription": "Generate template documents.\\n\\nUse '/' to reference and use output values from other nodes.",
     "greeting": {
       "buildAutomationTitle": "Build Automation by Connecting Nodes",
       "buildAutomationDescription": "Connect various nodes to automate complex tasks. Each node handles specific functions, and data flows sequentially for processing.",
@@ -127,7 +229,7 @@
       "parameterBasedTitle": "Parameter-Based Start",
       "parameterBasedDescription": "Input nodes define parameter structures, not triggers. They specify the data format needed when chatbot calls this workflow as a tool.",
       "exampleTitle": "Usage Example",
-      "exampleDescription": "Create an \"Email Writing â†’ Translation â†’ Send\" workflow, then easily execute it in chatbot conversations with \"@email_workflow\".",
+      "exampleDescription": "Create an \\\"Email Writing → Translation → Send\\\" workflow, then easily execute it in chatbot conversations with \\\"@email_workflow\\\".",
       "availableNodesTitle": "Available Nodes",
       "upcomingNodesTitle": "Upcoming Nodes",
       "ctaMessage": "Start creating workflows now to expand your chatbot's capabilities!",
@@ -138,20 +240,20 @@
       "getWeather": "Get Weather"
     },
     "kindsDescription": {
-      "input": "Define input parameters that the chatbot will provide when using this workflow as a tool.\n\nSpecify the data structure and validation rules for tool execution.",
-      "output": "Collect and return the final results from your workflow execution.\n\nCombine data from multiple nodes into the final tool response.",
-      "llm": "Generate text or structured data using AI models.\n\nReference previous node outputs with '/' mentions to create context-aware responses.\n\nUse Structured Output to transform, format, and validate data - not just for text generation.",
-      "tool": "Execute MCP tools or external services.\n\nWrite instructions in messages, and LLM will generate the required tool parameters from your context.",
-      "note": "Add documentation and comments to organize your workflow logic.\n\nHelp team members understand complex workflow processes.",
-      "code": "Execute custom code scripts with access to previous node data.\n\nRun JavaScript, Python, or other languages within your workflow (coming soon).",
-      "http": "Fetch data from external APIs and web services via HTTP requests.\n\nIntegrate with REST APIs, webhooks, and third-party services.",
-      "template": "Create dynamic documents by combining text with data from previous nodes.\n\nGenerate emails, reports, or formatted content using variable substitution.",
-      "condition": "Add conditional logic to branch your workflow based on data evaluation.\n\nCreate if-else logic to handle different scenarios and data conditions."
+      "input": "Define input parameters that the chatbot will provide when using this workflow as a tool.\\n\\nSpecify the data structure and validation rules for tool execution.",
+      "output": "Collect and return the final results from your workflow execution.\\n\\nCombine data from multiple nodes into the final tool response.",
+      "llm": "Generate text or structured data using AI models.\\n\\nReference previous node outputs with '/' mentions to create context-aware responses.\\n\\nUse Structured Output to transform, format, and validate data - not just for text generation.",
+      "tool": "Execute MCP tools or external services.\\n\\nWrite instructions in messages, and LLM will generate the required tool parameters from your context.",
+      "note": "Add documentation and comments to organize your workflow logic.\\n\\nHelp team members understand complex workflow processes.",
+      "code": "Execute custom code scripts with access to previous node data.\\n\\nRun JavaScript, Python, or other languages within your workflow (coming soon).",
+      "http": "Fetch data from external APIs and web services via HTTP requests.\\n\\nIntegrate with REST APIs, webhooks, and third-party services.",
+      "template": "Create dynamic documents by combining text with data from previous nodes.\\n\\nGenerate emails, reports, or formatted content using variable substitution.",
+      "condition": "Add conditional logic to branch your workflow based on data evaluation.\\n\\nCreate if-else logic to handle different scenarios and data conditions."
     },
-    "structuredOutputSwitchConfirm": "You currently have structured output enabled.\n What would you like to do?",
+    "structuredOutputSwitchConfirm": "You currently have structured output enabled.\\n What would you like to do?",
     "structuredOutputSwitchConfirmOk": "Edit Structured Output",
     "structuredOutputSwitchConfirmCancel": "Change to Text Output",
-    "noTools": "No published workflows available.\nCreate workflows to build custom tools.",
+    "noTools": "No published workflows available.\\nCreate workflows to build custom tools.",
     "arrangeNodes": "Auto Layout",
     "nodesArranged": "Layout applied successfully",
     "visibilityUpdated": "Visibility updated successfully"
@@ -176,7 +278,7 @@
       "signUpDescription": "Start your journey with us",
       "signUpDescriptionAdmin": "Welcome first user! You will be the admin of the system.",
       "signUpInstructionsEmailOnly": "Sign up to your account via your email address",
-      "signUpInstructionsEmailAndSocial": "Either click \"Email\" or use a provider to sign up",
+      "signUpInstructionsEmailAndSocial": "Either click \\\"Email\\\" or use a provider to sign up",
       "signUpSocialOnly": "Use a provider to sign up",
       "step1": "Start your journey with us by entering your email address",
       "step2": "I'll use this name when we chat",
@@ -263,7 +365,7 @@
       "tools": "Tools",
       "webSearching": "Searching the Web...",
       "searchedTheWeb": "Searched the Web",
-      "toolsSetupDescription": "Select tools that the chatbot can use.\nThe chatbot will use selected tools based on its own judgment.\n\nYou can also force the use of specific tools through @mention.",
+      "toolsSetupDescription": "Select tools that the chatbot can use.\\nThe chatbot will use selected tools based on its own judgment.\\n\\nYou can also force the use of specific tools through @mention.",
       "selectToolMode": "Select a tool mode",
       "autoToolModeDescription": "Decides when to use tools without asking you",
       "manualToolModeDescription": "Asks your permission before using any tools",
@@ -297,7 +399,7 @@
       "openMic": "Open Mic",
       "endConversation": "End conversation",
       "toggleVoiceChat": "Toggle Voice Chat",
-      "readyWhenYouAreJustStartTalking": "Ready when you areâ€”just start talking.",
+      "readyWhenYouAreJustStartTalking": "Ready when you are—just start talking.",
       "yourMicIsOff": "Your mic is off.",
       "preparing": "Preparing...",
       "startVoiceChat": "Start voice chat?"
@@ -670,7 +772,7 @@
         "summary": "Summary",
         "tokensAcross": "{tokens} tokens across {count} model{count, plural, =1 {} other {s}} in {period}.",
         "mostActive": "Most active: {model} ({tokens} tokens).",
-        "summaryPrefix": "ðŸ“Š Summary: ",
+        "summaryPrefix": "📊 Summary: ",
         "uploadPhoto": "Upload Photo",
         "chooseDefault": "Choose Default",
         "useEmoji": "Use Emoji",
@@ -981,7 +1083,7 @@
     "nameAlreadyExists": "Name already exists",
     "additionalInstructions": "Tool Customization Instructions",
     "inputSchema": "Input Schema",
-    "toolCustomizationInstructions": "Tool Customization Instructions will be added to the system prompt when this tool is available.\nExample) Always enter email in the format example@example.com.",
+    "toolCustomizationInstructions": "Tool Customization Instructions will be added to the system prompt when this tool is available.\\nExample) Always enter email in the format example@example.com.",
     "mcpServerCustomization": "MCP Customization",
     "mcpServerCustomizationDescription": "MCP Server Customization Instructions will be added to the system prompt when this MCP server is available.",
     "toolCustomizationInstructionsPlaceholder": "Tool Customization Instructions not available.",
